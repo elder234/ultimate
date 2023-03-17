@@ -47,13 +47,16 @@ async def rssMenu(event):
     msg = f'Rss Menu | Users: {len(rss_dict)} | Running: {scheduler.running}'
     return msg, button
 
+
 async def updateRssMenu(query):
     msg, button = await rssMenu(query)
     await editMessage(query.message, msg, button)
 
+
 async def getRssMenu(client, message):
     msg, button = await rssMenu(message)
     await sendMessage(message, msg, button)
+
 
 async def rssSub(client, message, pre_event):
     user_id = message.from_user.id
@@ -124,11 +127,12 @@ async def rssSub(client, message, pre_event):
             async with rss_dict_lock:
                 if rss_dict.get(user_id, False):
                     rss_dict[user_id][title] = {'link': feed_link, 'last_feed': last_link, 'last_title': last_title,
-                                     'inf': inf_lists, 'exf': exf_lists, 'paused': False, 'command': cmd, 'tag': tag}
+                                                'inf': inf_lists, 'exf': exf_lists, 'paused': False, 'command': cmd, 'tag': tag}
                 else:
                     rss_dict[user_id] = {title: {'link': feed_link, 'last_feed': last_link, 'last_title': last_title,
-                                     'inf': inf_lists, 'exf': exf_lists, 'paused': False, 'command': cmd, 'tag': tag}}
-            LOGGER.info(f"Rss Feed Added: id: {user_id} - title: {title} - link: {feed_link} - c: {cmd} - inf: {inf} - exf: {exf}")
+                                                 'inf': inf_lists, 'exf': exf_lists, 'paused': False, 'command': cmd, 'tag': tag}}
+            LOGGER.info(
+                f"Rss Feed Added: id: {user_id} - title: {title} - link: {feed_link} - c: {cmd} - inf: {inf} - exf: {exf}")
         except (IndexError, AttributeError) as e:
             emsg = f"The link: {feed_link} doesn't seem to be a RSS feed or it's region-blocked!"
             await sendMessage(message, emsg + '\nError: ' + str(e))
@@ -140,9 +144,11 @@ async def rssSub(client, message, pre_event):
         await sendMessage(message, msg)
     await updateRssMenu(pre_event)
 
+
 async def getUserId(title):
     async with rss_dict_lock:
         return next(((True, user_id) for user_id, feed in list(rss_dict.items()) if feed['title'] == title), (False, False))
+
 
 async def rssUpdate(client, message, pre_event, state):
     user_id = message.from_user.id
@@ -192,6 +198,7 @@ async def rssUpdate(client, message, pre_event, state):
         await DbManger().rss_update(user_id)
     await updateRssMenu(pre_event)
 
+
 async def rssList(query, start, all_users=False):
     user_id = query.from_user.id
     buttons = ButtonMaker()
@@ -226,11 +233,13 @@ async def rssList(query, start, all_users=False):
     buttons.ibutton("Close", f"rss close {user_id}")
     if keysCount > 5:
         for x in range(0, keysCount, 5):
-            buttons.ibutton(f'{int(x/5)}', f"rss list {user_id} {x}", position='footer')
+            buttons.ibutton(
+                f'{int(x/5)}', f"rss list {user_id} {x}", position='footer')
     button = buttons.build_menu(2)
     if query.message.text.html == list_feed:
         return
     await editMessage(query.message, list_feed, button)
+
 
 async def rssGet(client, message, pre_event):
     user_id = message.from_user.id
@@ -270,6 +279,7 @@ async def rssGet(client, message, pre_event):
         LOGGER.error(str(e))
         await sendMessage(message, f"Enter a vaild value!. {e}")
     await updateRssMenu(pre_event)
+
 
 async def rssEdit(client, message, pre_event):
     user_id = message.from_user.id
@@ -324,6 +334,7 @@ async def rssEdit(client, message, pre_event):
         await DbManger().rss_update(user_id)
     await updateRssMenu(pre_event)
 
+
 async def rssDelete(client, message, pre_event):
     handler_dict[message.from_user.id] = False
     users = message.text.split()
@@ -335,20 +346,24 @@ async def rssDelete(client, message, pre_event):
             await DbManger().rss_delete(user)
     await updateRssMenu(pre_event)
 
+
 async def event_handler(client, query, pfunc):
     user_id = query.from_user.id
     handler_dict[user_id] = True
     start_time = time()
+
     async def event_filter(_, __, event):
-         return bool(event.from_user.id or event.sender_chat.id == user_id and 
-                     event.chat.id == query.message.chat.id and event.text)
-    handler = client.add_handler(MessageHandler(pfunc, create(event_filter)), group=-1)
+        user = event.from_user or event.sender_chat
+        return bool(user.id == user_id and event.chat.id == query.message.chat.id and event.text)
+    handler = client.add_handler(MessageHandler(
+        pfunc, create(event_filter)), group=-1)
     while handler_dict[user_id]:
         await sleep(0.5)
         if time() - start_time > 60:
             handler_dict[user_id] = False
             await updateRssMenu(query)
     client.remove_handler(*handler)
+
 
 @new_thread
 async def rssListener(client, query):
@@ -427,7 +442,8 @@ Timeout: 60 sec.
             if data[1] == 'pause':
                 buttons.ibutton("Pause AllMyFeeds", f"rss uallpause {user_id}")
             elif data[1] == 'resume':
-                buttons.ibutton("Resume AllMyFeeds", f"rss uallresume {user_id}")
+                buttons.ibutton("Resume AllMyFeeds",
+                                f"rss uallresume {user_id}")
             elif data[1] == 'unsubscribe':
                 buttons.ibutton("Unsub AllMyFeeds", f"rss uallunsub {user_id}")
             buttons.ibutton("Close", f"rss close {user_id}")
@@ -551,6 +567,7 @@ Timeout: 60 sec.
         else:
             await query.answer(text="Already Running!", show_alert=True)
 
+
 async def rssMonitor():
     if not config_dict['RSS_CHAT_ID']:
         LOGGER.warning('RSS_CHAT_ID not added! Shutting down rss scheduler...')
@@ -594,7 +611,8 @@ async def rssMonitor():
                         if data['last_feed'] == url or data['last_title'] == item_title:
                             break
                     except IndexError:
-                        LOGGER.warning(f"Reached Max index no. {feed_count} for this feed: {title}. Maybe you need to use less RSS_DELAY to not miss some torrents")
+                        LOGGER.warning(
+                            f"Reached Max index no. {feed_count} for this feed: {title}. Maybe you need to use less RSS_DELAY to not miss some torrents")
                         break
                     parse = True
                     for flist in data['inf']:
@@ -619,7 +637,8 @@ async def rssMonitor():
                 async with rss_dict_lock:
                     if user not in rss_dict or not rss_dict[user].get(title, False):
                         continue
-                    rss_dict[user][title].update({'last_feed': last_link, 'last_title': last_title})
+                    rss_dict[user][title].update(
+                        {'last_feed': last_link, 'last_title': last_title})
                 await DbManger().rss_update(user)
                 LOGGER.info(f"Feed Name: {title}")
                 LOGGER.info(f"Last item: {last_link}")
@@ -627,16 +646,20 @@ async def rssMonitor():
                 LOGGER.info(ex)
                 break
             except Exception as e:
-                LOGGER.error(f"{e} Feed Name: {title} - Feed Link: {data['link']}")
+                LOGGER.error(
+                    f"{e} Feed Name: {title} - Feed Link: {data['link']}")
                 continue
     if all_paused:
         scheduler.pause()
+
 
 def addJob(delay):
     scheduler.add_job(rssMonitor, trigger=IntervalTrigger(seconds=delay), id='0', name='RSS', misfire_grace_time=15,
                       max_instances=1, next_run_time=datetime.now()+timedelta(seconds=20), replace_existing=True)
 
+
 addJob(config_dict['RSS_DELAY'])
 scheduler.start()
-bot.add_handler(MessageHandler(getRssMenu, filters=command(BotCommands.RssCommand) & CustomFilters.authorized))
+bot.add_handler(MessageHandler(getRssMenu, filters=command(
+    BotCommands.RssCommand) & CustomFilters.authorized))
 bot.add_handler(CallbackQueryHandler(rssListener, filters=regex("^rss")))
