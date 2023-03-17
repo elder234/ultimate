@@ -154,7 +154,7 @@ class YoutubeDLHelper:
                     outtmpl_ = '%(series,playlist_title,channel)s%(season_number& |)s%(season_number&S|)s%(season_number|)02d'
                     self.name = ydl.prepare_filename(entry, outtmpl=outtmpl_)
         else:
-            outtmpl_ = '%(title,fulltitle,alt_title)s%(season_number& |)s%(season_number&S|)s%(season_number|)02d%(episode_number&E|)s%(episode_number|)02d%(height& |)s%(height|)s%(height&p|)s%(fps|)s%(fps&fps|)s%(tbr& |)s%(tbr|)d.%(ext)s'
+            outtmpl_ = '%(title,fulltitle,alt_title)s%(season_number& |)s%(season_number&S|)s%(season_number|)02d%(episode_number&E|)s%(episode_number|)02d%(height& |)s%(height|)s%(height&p|).%(ext)s'
             realName = ydl.prepare_filename(result, outtmpl=outtmpl_)
             if name == "":
                 self.name = realName
