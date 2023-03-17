@@ -320,13 +320,16 @@ class MirrorLeechListener:
                     if config_dict['VIEW_LINK']:
                         share_urls = f'{INDEX_URL}/{url_path}?a=view'
                         buttons.ubutton("🌐 View Link", share_urls)
-            self.__sent_msg = await sendMessage(self.message, msg, buttons.build_menu(2))
+            await sendMessage(self.message, msg, buttons.build_menu(2))
             # Forward to Log
             try:
                 if LOG_CHAT := config_dict['LOG_CHAT']:
                     app = user if IS_PREMIUM_USER else bot
-                    await app.copy_message(
-                        chat_id=LOG_CHAT, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
+                    await app.send_message(chat_id=LOG_CHAT,
+                                           text=msg,
+                                           disable_web_page_preview=True,
+                                           disable_notification=True,
+                                           reply_markup=buttons.build_menu(2))
             except Exception as e:
                 LOGGER.error(f"Failed forward message to log | {e}")
             if self.seed:
