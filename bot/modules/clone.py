@@ -110,13 +110,16 @@ async def cloneNode(client, message):
         if button in ["cancelled", ""]:
             await sendMessage(message, f"{tag} {result}")
         else:
-            sent_msg = await sendMessage(message, result + cc, button)
+            await sendMessage(message, result + cc, button)
             # Forward to Log
             try:
                 if LOG_CHAT := config_dict['LOG_CHAT']:
                     app = user if IS_PREMIUM_USER else bot
-                    await app.copy_message(
-                        chat_id=LOG_CHAT, from_chat_id=sent_msg.chat.id, message_id=sent_msg.id)
+                    await app.send_message(chat_id=LOG_CHAT,
+                                           text=result + cc,
+                                           disable_web_page_preview=True,
+                                           disable_notification=True,
+                                           reply_markup=button)
             except Exception as e:
                 LOGGER.error(f"Failed forward message to log | {e}")
             LOGGER.info(f'Cloning Done: {name}')
