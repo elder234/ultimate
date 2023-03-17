@@ -25,7 +25,7 @@ PAGES = 0
 
 
 class MirrorStatus:
-    STATUS_UPLOADING = "mengunggah..."
+    STATUS_UPLOADING = "Mengunggah..."
     STATUS_DOWNLOADING = "Mengunduh..."
     STATUS_CLONING = "Mengclone..."
     STATUS_QUEUEDL = "Menunggu antrian download..."
