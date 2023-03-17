@@ -147,7 +147,7 @@ class TgUploader:
         self.__sent_msg = msgs_list[-1]
 
     async def upload(self, o_files, m_size):
-        await self.__msg_to_reply()
+        # await self.__msg_to_reply()
         await self.__user_settings()
         for dirpath, subdir, files in sorted(await sync_to_async(walk, self.__path)):
             for file_ in natsorted(files):
@@ -224,19 +224,29 @@ class TgUploader:
         self.__is_corrupted = False
         try:
             is_video, is_audio, is_image = await get_document_type(self.__up_path)
+            app = user if IS_PREMIUM_USER else bot
             if self.__as_doc or force_document or (not is_video and not is_audio and not is_image):
                 key = 'documents'
                 if is_video and thumb is None:
                     thumb = await take_ss(self.__up_path, None)
                     if self.__is_cancelled:
                         return
-                self.__sent_msg = await self.__sent_msg.reply_document(document=self.__up_path,
-                                                                       quote=True,
-                                                                       thumb=thumb,
-                                                                       caption=cap_mono,
-                                                                       force_document=True,
-                                                                       disable_notification=True,
-                                                                       progress=self.__upload_progress)
+                if DUMP_CHAT := config_dict['DUMP_CHAT']:
+                    self.__sent_msg = await app.send_document(chat_id=DUMP_CHAT,
+                                                              document=self.__up_path,
+                                                              thumb=thumb,
+                                                              caption=cap_mono,
+                                                              force_document=True,
+                                                              disable_notification=True,
+                                                              progress=self.__upload_progress)
+                else:
+                    self.__sent_msg = await self.__listener.message.reply_document(document=self.__up_path,
+                                                                                   quote=True,
+                                                                                   thumb=thumb,
+                                                                                   caption=cap_mono,
+                                                                                   force_document=True,
+                                                                                   disable_notification=True,
+                                                                                   progress=self.__upload_progress)
             elif is_video:
                 key = 'videos'
                 duration = (await get_media_info(self.__up_path))[0]
@@ -262,35 +272,67 @@ class TgUploader:
                         new_path = f"{self.__up_path.rsplit('.', 1)[0]}.mp4"
                         await aiorename(self.__up_path, new_path)
                         self.__up_path = new_path
-                self.__sent_msg = await self.__sent_msg.reply_video(video=self.__up_path,
-                                                                    quote=True,
-                                                                    caption=cap_mono,
-                                                                    duration=duration,
-                                                                    width=width,
-                                                                    height=height,
-                                                                    thumb=thumb,
-                                                                    supports_streaming=True,
-                                                                    disable_notification=True,
-                                                                    progress=self.__upload_progress)
+                if DUMP_CHAT := config_dict['DUMP_CHAT']:
+                    self.__sent_msg = await app.send_video(chat_id=DUMP_CHAT,
+                                                           video=self.__up_path,
+                                                           caption=cap_mono,
+                                                           duration=duration,
+                                                           width=width,
+                                                           height=height,
+                                                           thumb=thumb,
+                                                           supports_streaming=True,
+                                                           disable_notification=True,
+                                                           progress=self.__upload_progress)
+                else:
+                    self.__sent_msg = await self.__listener.message.reply_video(video=self.__up_path,
+                                                                                quote=True,
+                                                                                caption=cap_mono,
+                                                                                duration=duration,
+                                                                                width=width,
+                                                                                height=height,
+                                                                                thumb=thumb,
+                                                                                supports_streaming=True,
+                                                                                disable_notification=True,
+                                                                                progress=self.__upload_progress)
+
             elif is_audio:
                 key = 'audios'
                 duration, artist, title = await get_media_info(self.__up_path)
-                self.__sent_msg = await self.__sent_msg.reply_audio(audio=self.__up_path,
-                                                                    quote=True,
-                                                                    caption=cap_mono,
-                                                                    duration=duration,
-                                                                    performer=artist,
-                                                                    title=title,
-                                                                    thumb=thumb,
-                                                                    disable_notification=True,
-                                                                    progress=self.__upload_progress)
+                if DUMP_CHAT := config_dict['DUMP_CHAT']:
+                    self.__sent_msg = await app.send_audio(chat_id=DUMP_CHAT,
+                                                           audio=self.__up_path,
+                                                           caption=cap_mono,
+                                                           duration=duration,
+                                                           performer=artist,
+                                                           title=title,
+                                                           thumb=thumb,
+                                                           disable_notification=True,
+                                                           progress=self.__upload_progress)
+                else:
+                    self.__sent_msg = await self.__listener.message.reply_audio(audio=self.__up_path,
+                                                                                quote=True,
+                                                                                caption=cap_mono,
+                                                                                duration=duration,
+                                                                                performer=artist,
+                                                                                title=title,
+                                                                                thumb=thumb,
+                                                                                disable_notification=True,
+                                                                                progress=self.__upload_progress)
             else:
                 key = 'photos'
-                self.__sent_msg = await self.__sent_msg.reply_photo(photo=self.__up_path,
-                                                                    quote=True,
-                                                                    caption=cap_mono,
-                                                                    disable_notification=True,
-                                                                    progress=self.__upload_progress)
+                if DUMP_CHAT := config_dict['DUMP_CHAT']:
+                    self.__sent_msg = await app.send_photo(chat_id=DUMP_CHAT,
+                                                           photo=self.__up_path,
+                                                           quote=True,
+                                                           caption=cap_mono,
+                                                           disable_notification=True,
+                                                           progress=self.__upload_progress)
+                else:
+                    self.__sent_msg = await self.__listener.message.reply_photo(photo=self.__up_path,
+                                                                                quote=True,
+                                                                                caption=cap_mono,
+                                                                                disable_notification=True,
+                                                                                progress=self.__upload_progress)
 
             if not self.__is_cancelled and self.__media_group and (self.__sent_msg.video or self.__sent_msg.document):
                 key = 'documents' if self.__sent_msg.document else 'videos'
@@ -307,12 +349,11 @@ class TgUploader:
                         self.__last_msg_in_group = True
             if self.__thumb is None and thumb is not None and await aiopath.exists(thumb):
                 await aioremove(thumb)
-            # Forward to Dump Chat
+            # Forward to Message Chat
             try:
                 if DUMP_CHAT := config_dict['DUMP_CHAT']:
-                    app = user if IS_PREMIUM_USER else bot
                     await app.copy_message(
-                        chat_id=DUMP_CHAT, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
+                        chat_id=self.__listener.message.chat.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
             except Exception as e:
                 LOGGER.error(f"Failed forward message to log | {e}")
         except FloodWait as f:
