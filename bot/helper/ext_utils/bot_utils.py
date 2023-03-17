@@ -3,7 +3,7 @@ from re import match as re_match
 from time import time
 from math import ceil
 from html import escape
-from psutil import virtual_memory, cpu_percent, disk_usage
+from psutil import virtual_memory, cpu_percent, disk_usage, net_io_counters
 from requests import head as rhead
 from urllib.request import urlopen
 from asyncio import create_subprocess_exec, create_subprocess_shell, run_coroutine_threadsafe, sleep
@@ -195,9 +195,11 @@ def get_readable_message():
         buttons.ibutton("⏩", "status nex")
         buttons.ibutton("♻️", "status ref")
         button = buttons.build_menu(3)
-    msg += f"<b>CPU:</b> {cpu_percent()}% | <b>FREE:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
-    msg += f"\n<b>RAM:</b> {virtual_memory().percent}% | <b>UPTIME:</b> {get_readable_time(time() - botStartTime)}"
-    msg += f"\n<b>DL:</b> {get_readable_file_size(dl_speed)}/s | <b>UL:</b> {get_readable_file_size(up_speed)}/s"
+    msg += f"\n<b>🅳🅻:</b> {get_readable_file_size(dl_speed)}/s | <b>🆄🅻:</b> {get_readable_file_size(up_speed)}/s"
+    msg += f"\n<b>🆃🅳🅻:</b> {get_readable_file_size(net_io_counters().bytes_recv)} | <b>🆃🆄🅻:</b> {get_readable_file_size(net_io_counters().bytes_sent)}"
+    msg += f"<b>🅲🄿🆄:</b> {cpu_percent()}% | <b>🅳🅸🆂🅺:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
+    msg += f"\n<b>🆁🄰🅼:</b> {virtual_memory().percent}% | <b>🆃🅸🅼🅴:</b> {get_readable_time(time() - botStartTime)}"
+
     return msg, button
 
 
