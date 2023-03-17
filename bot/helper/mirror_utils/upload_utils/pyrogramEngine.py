@@ -147,7 +147,7 @@ class TgUploader:
         self.__sent_msg = msgs_list[-1]
 
     async def upload(self, o_files, m_size):
-        # await self.__msg_to_reply()
+        await self.__msg_to_reply()
         await self.__user_settings()
         for dirpath, subdir, files in sorted(await sync_to_async(walk, self.__path)):
             for file_ in natsorted(files):
@@ -307,6 +307,7 @@ class TgUploader:
                         self.__last_msg_in_group = True
             if self.__thumb is None and thumb is not None and await aiopath.exists(thumb):
                 await aioremove(thumb)
+            # Forward to Dump Chat
             try:
                 if DUMP_CHAT := config_dict['DUMP_CHAT']:
                     app = user if IS_PREMIUM_USER else bot
