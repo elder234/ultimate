@@ -255,24 +255,24 @@ async def main():
                     with open(".restartmsg") as f:
                         chat_id, msg_id = map(int, f)
                     msg = '🤖 Restarted Successfully!'
-                    msg += f"Waktu: {time}\n"
-                    msg += f"Tanggal: {date}\n"
-                    msg += f"Quotes Today:\n"
-                    msg += f"{get_quotes()}\n\n"
+                    msg += f"\nWaktu: {time}"
+                    msg += f"\nTanggal: {date}"
+                    msg += f"\nQuotes Today:"
+                    msg += f"\n{get_quotes()}"
                 else:
                     msg = '🤖 Bot Restarted!'
-                    msg += f"Waktu: {time}\n"
-                    msg += f"Tanggal: {date}\n"
-                    msg += f"Quotes Today:\n"
-                    msg += f"{get_quotes()}\n\n"
+                    msg += f"\nWaktu: {time}"
+                    msg += f"\nTanggal: {date}"
+                    msg += f"\nQuotes Today:"
+                    msg += f"\n{get_quotes()}"
                 for tag, links in data.items():
-                    msg += f"\n\n{tag}: "
+                    msg += f"\n\n{tag} : "
                     for index, link in enumerate(links, start=1):
                         msg += f" <a href='{link}'>Tugas {index}</a> |"
                         if len(msg.encode()) > 4000:
                             if 'Restarted Successfully!' in msg and cid == chat_id:
                                 try:
-                                    await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text=msg)
+                                    await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text=msg, disable_web_page_preview=True)
                                 except:
                                     pass
                                 await aioremove(".restartmsg")
@@ -285,7 +285,7 @@ async def main():
                             msg = ''
                 if 'Restarted Successfully!' in msg and cid == chat_id:
                     try:
-                        await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text=msg)
+                        await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text=msg, disable_web_page_preview=True)
                     except:
                         pass
                     await aioremove(".restartmsg")
@@ -300,7 +300,7 @@ async def main():
         with open(".restartmsg") as f:
             chat_id, msg_id = map(int, f)
         try:
-            await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text="🤖 Restarted Successfully!")
+            await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text="🤖 Restarted Successfully!", disable_web_page_preview=True)
         except:
             pass
         await aioremove(".restartmsg")
