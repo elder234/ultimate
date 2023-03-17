@@ -197,7 +197,7 @@ def get_readable_message():
         button = buttons.build_menu(3)
     msg += f"\n<b>🅳🅻:</b> {get_readable_file_size(dl_speed)}/s | <b>🆄🅻:</b> {get_readable_file_size(up_speed)}/s"
     msg += f"\n<b>🆃🅳🅻:</b> {get_readable_file_size(net_io_counters().bytes_recv)} | <b>🆃🆄🅻:</b> {get_readable_file_size(net_io_counters().bytes_sent)}"
-    msg += f"<b>🅲🄿🆄:</b> {cpu_percent()}% | <b>🅳🅸🆂🅺:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
+    msg += f"\n<b>🅲🄿🆄:</b> {cpu_percent()}% | <b>🅳🅸🆂🅺:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
     msg += f"\n<b>🆁🄰🅼:</b> {virtual_memory().percent}% | <b>🆃🅸🅼🅴:</b> {get_readable_time(time() - botStartTime)}"
 
     return msg, button
