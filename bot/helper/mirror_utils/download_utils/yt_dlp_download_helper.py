@@ -203,7 +203,7 @@ class YoutubeDLHelper:
         else:
             LOGGER.info(f'Start Queued Download with YT_DLP: {self.name}')
         if self.is_playlist:
-            self.opts['outtmpl'] = f"{path}/{self.name}/%(title,fulltitle,alt_title)s%(season_number& |)s%(season_number&S|)s%(season_number|)02d%(episode_number&E|)s%(episode_number|)02d%(height& |)s%(height|)s%(height&p|)s%(fps|)s%(fps&fps|)s%(tbr& |)s%(tbr|)d.%(ext)s"
+            self.opts['outtmpl'] = f"{path}/{self.name}/%(title,fulltitle,alt_title)s%(season_number& |)s%(season_number&S|)s%(season_number|)02d%(episode_number&E|)s%(episode_number|)02d%(height& |)s%(height|)s%(height&p|).%(ext)s"
         elif not args:
             self.opts['outtmpl'] = f"{path}/{self.name}"
         else:
