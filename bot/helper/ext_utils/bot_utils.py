@@ -133,7 +133,7 @@ def get_readable_message():
     for download in list(download_dict.values())[COUNT:STATUS_LIMIT+COUNT]:
         msg += f"<code>{escape(str(download.name()))}</code>"
         if download.status() not in [MirrorStatus.STATUS_SPLITTING, MirrorStatus.STATUS_SEEDING]:
-            msg += f"\n<b>┌┤ {get_progress_bar_string(download.progress())} {download.progress()} ├┐</b>"
+            msg += f"\n<b>┌┤ {get_progress_bar_string(download.progress())} <code>{download.progress()}</code> ├┐</b>"
             if download.message.chat.type.name in ['SUPERGROUP', 'CHANNEL']:
                 msg += f"\n<b>├ Status:</b> <a href='{download.message.link}'>{download.status()}</a>"
             else:
@@ -195,10 +195,10 @@ def get_readable_message():
         buttons.ibutton("⏩", "status nex")
         buttons.ibutton("♻️", "status ref")
         button = buttons.build_menu(3)
-    msg += f"\n<b>🅲🄿🆄:</b> <code>{cpu_percent()}%</code> | <b>🆁🄰🅼:</b> <code>{virtual_memory().percent}%</code>"
-    msg += f"\n<b>🅳🅻:</b> <code>{get_readable_file_size(dl_speed)}/s</code> | <b>🆄🅻:</b> <code>{get_readable_file_size(up_speed)}/s</code>"
-    msg += f"\n<b>🆃🅳🅻:</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>🆃🆄🅻:</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>"
-    msg += f"\n<b>🅳🅸🆂🅺:</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code> | <b>🆃🅸🅼🅴:</b> <code>{get_readable_time(time() - botStartTime)}</code>"
+    msg += f"\n<b>🅲🄿🆄 :</b> <code>{cpu_percent()}%</code> | <b>🆁🄰🅼 :</b> <code>{virtual_memory().percent}%</code>"
+    msg += f"\n<b>🅳🅻🆂 :</b> <code>{get_readable_file_size(dl_speed)}/s</code> | <b>🆄🅻🆂 :</b> <code>{get_readable_file_size(up_speed)}/s</code>"
+    msg += f"\n<b>🆃🅳🅻 :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>🆃🆄🅻 :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>"
+    msg += f"\n<b>🅳🅸🆂🅺 :</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code> | <b>🆃🅸🅼🅴 :</b> <code>{get_readable_time(time() - botStartTime)}</code>"
     return msg, button
 
 
