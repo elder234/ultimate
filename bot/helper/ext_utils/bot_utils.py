@@ -195,10 +195,10 @@ def get_readable_message():
         buttons.ibutton("⏩", "status nex")
         buttons.ibutton("♻️", "status ref")
         button = buttons.build_menu(3)
-    msg += f"\n<b>🅳🅻:</b> {get_readable_file_size(dl_speed)}/s | <b>🆄🅻:</b> {get_readable_file_size(up_speed)}/s"
-    msg += f"\n<b>🆃🅳🅻:</b> {get_readable_file_size(net_io_counters().bytes_recv)} | <b>🆃🆄🅻:</b> {get_readable_file_size(net_io_counters().bytes_sent)}"
-    msg += f"\n<b>🅲🄿🆄:</b> {cpu_percent()}% | <b>🅳🅸🆂🅺:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
-    msg += f"\n<b>🆁🄰🅼:</b> {virtual_memory().percent}% | <b>🆃🅸🅼🅴:</b> {get_readable_time(time() - botStartTime)}"
+    msg += f"\n<b>🅳🅻:</b> <code>{get_readable_file_size(dl_speed)}/s</code> | <b>🆄🅻:</b> <code>{get_readable_file_size(up_speed)}/s</code>"
+    msg += f"\n<b>🆃🅳🅻:</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>🆃🆄🅻:</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>"
+    msg += f"\n<b>🅳🅸🆂🅺:</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code> | <b>🆃🅸🅼🅴:</b> <code>{get_readable_time(time() - botStartTime)}</code>"
+    msg += f"\n<b>🅲🄿🆄:</b> <code>{cpu_percent()}%</code> | <b>🆁🄰🅼:</b> <code>{virtual_memory().percent}%</code>"
 
     return msg, button
 

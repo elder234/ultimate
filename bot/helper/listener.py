@@ -286,7 +286,7 @@ class MirrorLeechListener:
             else:
                 fmsg = ''
                 for index, (link, name) in enumerate(files.items(), start=1):
-                    fmsg += f"({index}). <a href='{link}'>{name}</a>\n"
+                    fmsg += f"<a href='{link}'>({index}). {name}</a>\n"
                     if len(fmsg.encode() + msg.encode()) > 4000:
                         await sendMessage(self.message, msg + fmsg)
                         await sleep(1)
