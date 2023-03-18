@@ -84,14 +84,14 @@ class RcloneDownloadHelper:
         if config_dict['STOP_DUPLICATE'] and not self.__listener.isLeech:
             LOGGER.info('Checking File/Folder if already in Drive')
             if self.__listener.isZip:
-                rname = f"{rname}.zip"
+                self.name = f"{self.name}.zip"
             elif self.__listener.extract:
                 try:
-                    rname = get_base_name(rname)
+                    self.name = get_base_name(self.name)
                 except:
-                    rname = None
-            if rname is not None:
-                smsg, button = await sync_to_async(GoogleDriveHelper().drive_list, rname, True)
+                    self.name = None
+            if self.name is not None:
+                smsg, button = await sync_to_async(GoogleDriveHelper().drive_list, self.name, True)
                 if smsg:
                     msg = "File/Folder ini sudah ada di GDrive!\nHasil pencarian:"
                     await sendMessage(self.__listener.message, msg, button)

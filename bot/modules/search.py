@@ -268,9 +268,9 @@ async def torrentSearchUpdate(client, query):
                     endpoint = 'Trending'
                 await editMessage(message, f"<b>Mencari {endpoint} Torrent...</b>\n<b>Situs Torrent:</b>\n<code>{SITES.get(site)}</code>")
             else:
-                await editMessage(message, f"<b>Mencari torrent dengan kata kunci:</b><code>{key}</code>\n<b>Situs Torrent:</b>\n<code>{SITES.get(site)}</code>")
+                await editMessage(message, f"<b>Mencari torrent dengan kata kunci:\n</b><code>{key}</code>\n<b>Situs Torrent:</b>\n<code>{SITES.get(site)}</code>")
         else:
-            await editMessage(message, f"<b>Mencari torrent dengan kata kunci:</b><code>{key}</code>\n<b>Situs Torrent:</b>\n<code>{site.capitalize()}</code>")
+            await editMessage(message, f"<b>Mencari torrent dengan kata kunci:\n</b><code>{key}</code>\n<b>Situs Torrent:</b>\n<code>{site.capitalize()}</code>")
         await __search(key, site, message, method)
     else:
         await query.answer()
