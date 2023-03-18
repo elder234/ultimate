@@ -133,37 +133,33 @@ def get_readable_message():
     for download in list(download_dict.values())[COUNT:STATUS_LIMIT+COUNT]:
         msg += f"<code>{escape(str(download.name()))}</code>"
         if download.status() not in [MirrorStatus.STATUS_SPLITTING, MirrorStatus.STATUS_SEEDING]:
-            msg += f"\n<b>┌┤ {get_progress_bar_string(download.progress())} <code>{download.progress()}</code> ├┐</b>"
+            msg += f"\n<b>┌┤{get_progress_bar_string(download.progress())} <code>{download.progress()}</code>├┐</b>"
             if download.message.chat.type.name in ['SUPERGROUP', 'CHANNEL']:
-                msg += f"\n<b>├ Status:</b> <a href='{download.message.link}'>{download.status()}</a>"
+                msg += f"\n<b>├ Status :</b> <a href='{download.message.link}'>{download.status()}</a>"
             else:
-                msg += f"\n<b>├ Status:</b> {download.status()}"
-            msg += f"\n<b>├ Proses:</b> {download.processed_bytes()} dari {download.size()}"
-            msg += f"\n<b>├ Kecepatan:</b> {download.speed()} | <b>ETA:</b> {download.eta()}"
+                msg += f"\n<b>├ Status :</b> {download.status()}"
+            msg += f"\n<b>├ Proses :</b> {download.processed_bytes()} dari {download.size()}"
+            msg += f"\n<b>├ Kec :</b> {download.speed()} | <b>ETA :</b> {download.eta()}"
             if hasattr(download, 'seeders_num'):
                 try:
-                    msg += f"\n<b>├ Seeders:</b> {download.seeders_num()} | <b>Leechers:</b> {download.leechers_num()}"
+                    msg += f"\n<b>├ Seeders :</b> {download.seeders_num()} | <b>Leechers :</b> {download.leechers_num()}"
                 except:
                     pass
         elif download.status() == MirrorStatus.STATUS_SEEDING:
-            msg += "┌┤ 🆂🅴🅴🅳🅸🅽🅶 ├┐"
+            msg += "┌┤🆂🅴🅴🅳🅸🅽🅶├┐"
             if download.message.chat.type.name in ['SUPERGROUP', 'CHANNEL']:
-                msg += f"\n<b>├ Status:</b> <a href='{download.message.link}'>{download.status()}</a>"
+                msg += f"\n<b>├ Status :</b> <a href='{download.message.link}'>{download.status()}</a>"
             else:
-                msg += f"\n<b>├ Status:</b> {download.status()}"
-            msg += f"\n<b>├ Ukuran: </b>{download.size()}"
-            msg += f"\n<b>├ Kecepatan: </b>{download.upload_speed()}"
-            msg += f" | <b>Diupload: </b>{download.uploaded_bytes()}"
-            msg += f"\n<b>├ Ratio: </b>{download.ratio()}"
-            msg += f" | <b>Waktu: </b>{download.seeding_time()}"
+                msg += f"\n<b>├ Status :</b> {download.status()}"
+            msg += f"\n<b>├ Ukuran : </b>{download.size()}"
+            msg += f"\n<b>├ Kec : </b>{download.upload_speed()}"
+            msg += f" | <b>Diupload : </b>{download.uploaded_bytes()}"
+            msg += f"\n<b>├ Ratio : </b>{download.ratio()}"
+            msg += f" | <b>Waktu : </b>{download.seeding_time()}"
         else:
-            msg += f"\n<b>├ Ukuran: </b>{download.size()}"
-        if download.message.from_user.username:
-            msg += f"\n<b>├ User:</b> <a href='https://t.me/{download.message.from_user.username}'>{download.message.from_user.first_name}</a>"
-            msg += f" | <b>ID:</b> <code>{download.message.from_user.id}</code>"
-        else:
-            msg += f"\n<b>├ User:</b> {download.message.from_user.first_name}</a>"
-            msg += f" | <b>ID:</b> <code>{download.message.from_user.id}</code>"
+            msg += f"\n<b>├ Ukuran : </b>{download.size()}"
+        msg += f"\n<b>├ User :</b> <a href='tg://user?id={download.message.from_user.id}'>{download.message.from_user.first_name}</a>"
+        msg += f" | <b>ID :</b> <code>{download.message.from_user.id}</code>"
         msg += f"\n<b>└</b> <code>/{BotCommands.CancelMirror[0]} {download.gid()}</code>\n\n"
     if len(msg) == 0:
         return None, None
