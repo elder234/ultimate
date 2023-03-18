@@ -106,22 +106,26 @@ async def cloneNode(client, message):
                     await update_all_messages()
             except IndexError:
                 pass
-        cc = f'\n\n{tag}'
+        cc = f'\n\n<b>Oleh:</b> {tag}'
+        cc2 = f'\n\n{tag}'
         if button in ["cancelled", ""]:
             await sendMessage(message, f"<b>Hai {tag}!</b>\n<b>Tugasmu dihentikan karena:</b>\n{result}")
         else:
-            await sendMessage(message, result + cc, button)
-            # Forward to Log
-            try:
-                if LOG_CHAT := config_dict['LOG_CHAT']:
-                    app = user if IS_PREMIUM_USER else bot
-                    await app.send_message(chat_id=LOG_CHAT,
-                                           text=result + cc,
-                                           disable_web_page_preview=True,
-                                           disable_notification=True,
-                                           reply_markup=button)
-            except Exception as e:
-                LOGGER.error(f"Failed forward message to log | {e}")
+            if "Nama:" in result:
+                await sendMessage(message, result + cc, button)
+                # Forward to Log
+                try:
+                    if LOG_CHAT := config_dict['LOG_CHAT']:
+                        app = user if IS_PREMIUM_USER else bot
+                        await app.send_message(chat_id=LOG_CHAT,
+                                               text=result + cc,
+                                               disable_web_page_preview=True,
+                                               disable_notification=True,
+                                               reply_markup=button)
+                except Exception as e:
+                    LOGGER.error(f"Failed forward message to log | {e}")
+            else:
+                await sendMessage(message, result + cc2, button)
             LOGGER.info(f'Cloning Done: {name}')
     else:
         await sendMessage(message, "Send Gdrive link along with command or by replying to the link by command\n\n<b>Multi links only by replying to first link:</b>\n<code>/cmd</code> 10(number of links)")
