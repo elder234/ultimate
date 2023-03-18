@@ -29,7 +29,7 @@ async def _list_drive(key, message, item_type, isRecursive):
     if button:
         await editMessage(message, msg, button)
     else:
-        await editMessage(message, f"Pencarian dengan kata kunci <i>{key}</i> tidak ditemukan")
+        await editMessage(message, f"Pencarian dengan kata kunci <code>{key}</code> tidak ditemukan")
 
 
 @new_task
@@ -51,7 +51,7 @@ async def select_type(client, query):
     await query.answer()
     item_type = data[2]
     isRecursive = eval(data[3])
-    await editMessage(message, f"Mencari file dengan kata kunci <i>{key}</i>...")
+    await editMessage(message, f"Mencari file dengan kata kunci <code>{key}</code>...")
     await _list_drive(key, message, item_type, isRecursive)
 
 

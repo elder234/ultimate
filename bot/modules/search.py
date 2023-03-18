@@ -76,15 +76,15 @@ async def __search(key, site, message, method):
                 async with c.get(api) as res:
                     search_results = await res.json()
             if 'error' in search_results or search_results['total'] == 0:
-                await editMessage(message, f"Pencarian dengan kata kunci <i>{key}</i> tidak ditemukan\nSitus Torrent:- <i>{SITES.get(site)}</i>")
+                await editMessage(message, f"Pencarian dengan kata kunci <code>{key}</code> tidak ditemukan\nSitus Torrent:- <code>{SITES.get(site)}</code>")
                 return
             msg = f"<b>Found {min(search_results['total'], TELEGRAPH_LIMIT)}</b>"
             if method == 'apitrend':
-                msg += f" <b>Trending Torrent\nSitus Torrent:- <i>{SITES.get(site)}</i></b>"
+                msg += f" <b>Trending Torrent\nSitus Torrent:- <code>{SITES.get(site)}</code></b>"
             elif method == 'apirecent':
-                msg += f" <b>Recent Torrent\nSitus Torrent:- <i>{SITES.get(site)}</i></b>"
+                msg += f" <b>Recent Torrent\nSitus Torrent:- <code>{SITES.get(site)}</code></b>"
             else:
-                msg += f" <b>Hasil pencarian kata kunci <i>{key}</i>\nSitus Torrent:- <i>{SITES.get(site)}</i></b>"
+                msg += f" <b>Hasil pencarian kata kunci <code>{key}</code>\nSitus Torrent:- <code>{SITES.get(site)}</code></b>"
             search_results = search_results['data']
         except Exception as e:
             await editMessage(message, str(e))
@@ -103,10 +103,10 @@ async def __search(key, site, message, method):
         search_results = dict_search_results.results
         total_results = dict_search_results.total
         if total_results == 0:
-            await editMessage(message, f"Pencarian dengan kata kunci <i>{key}</i> tidak ditemukan\nSitus Torrent:- <i>{site.capitalize()}</i>")
+            await editMessage(message, f"Pencarian dengan kata kunci <code>{key}</code> tidak ditemukan\nSitus Torrent:- <code>{site.capitalize()}</code>")
             return
         msg = f"<b>Menemukan {min(total_results, TELEGRAPH_LIMIT)}</b>"
-        msg += f" <b>Hasil(s) untuk kata kunci <i>{key}</i>\nSitus Torrent:- <i>{site.capitalize()}</i></b>"
+        msg += f" <b>hasil pencarian dengan kata kunci:\n<code>{key}</code>\nSitus Torrent:- <code>{site.capitalize()}</code></b>"
     link = await __getResult(search_results, key, message, method)
     buttons = ButtonMaker()
     buttons.ubutton("🔎 VIEW", link)
@@ -266,11 +266,11 @@ async def torrentSearchUpdate(client, query):
                     endpoint = 'Recent'
                 elif method == 'apitrend':
                     endpoint = 'Trending'
-                await editMessage(message, f"<b>Mencari {endpoint} Torrent...\nSitus Torrent:- <i>{SITES.get(site)}</i></b>")
+                await editMessage(message, f"<b>Mencari {endpoint} Torrent...\nSitus Torrent:- <code>{SITES.get(site)}</code></b>")
             else:
-                await editMessage(message, f"<b>Mencari torrent dengan kata kunci <i>{key}</i>\nSitus Torrent:- <i>{SITES.get(site)}</i></b>")
+                await editMessage(message, f"<b>Mencari torrent dengan kata kunci <code>{key}</code>\nSitus Torrent:- <code>{SITES.get(site)}</code></b>")
         else:
-            await editMessage(message, f"<b>Mencari torrent dengan kata kunci <i>{key}</i>\nSitus Torrent:- <i>{site.capitalize()}</i></b>")
+            await editMessage(message, f"<b>Mencari torrent dengan kata kunci <code>{key}</code>\nSitus Torrent:- <code>{site.capitalize()}</code></b>")
         await __search(key, site, message, method)
     else:
         await query.answer()

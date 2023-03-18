@@ -640,7 +640,7 @@ class GoogleDriveHelper:
         if len(path) > 1:
             async_to_sync(telegraph.edit_telegraph, path, telegraph_content)
 
-        msg = f"<b>Found {contents_count} result for <i>{fileName}</i></b>"
+        msg = f"<b>Menemukan {contents_count} hasil pencarian dengan kata kunci:</b>\n<code>{fileName}</code>"
         buttons = ButtonMaker()
         buttons.ubutton("🔎 VIEW", f"https://telegra.ph/{path[0]}")
 
