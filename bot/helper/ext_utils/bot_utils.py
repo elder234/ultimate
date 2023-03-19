@@ -146,17 +146,20 @@ def get_readable_message():
                 except:
                     pass
         elif download.status() == MirrorStatus.STATUS_SEEDING:
-            msg += "┌┤🆂🅴🅴🅳🅸🅽🅶├┐"
             if download.message.chat.type.name in ['SUPERGROUP', 'CHANNEL']:
-                msg += f"\n<b>├ Status :</b> <a href='{download.message.link}'>{download.status()}</a>"
+                msg += f"\n<b>┌ Status :</b> <a href='{download.message.link}'>{download.status()}</a>"
             else:
-                msg += f"\n<b>├ Status :</b> {download.status()}"
+                msg += f"\n<b>┌ Status :</b> {download.status()}"
             msg += f"\n<b>├ Ukuran : </b>{download.size()}"
             msg += f"\n<b>├ Kec : </b>{download.upload_speed()}"
             msg += f" | <b>Diupload : </b>{download.uploaded_bytes()}"
             msg += f"\n<b>├ Ratio : </b>{download.ratio()}"
             msg += f" | <b>Waktu : </b>{download.seeding_time()}"
         else:
+            if download.message.chat.type.name in ['SUPERGROUP', 'CHANNEL']:
+                msg += f"\n<b>┌ Status :</b> <a href='{download.message.link}'>{download.status()}</a>"
+            else:
+                msg += f"\n<b>┌ Status :</b> {download.status()}"
             msg += f"\n<b>├ Ukuran : </b>{download.size()}"
         msg += f"\n<b>├ User :</b> <a href='tg://user?id={download.message.from_user.id}'>{download.message.from_user.first_name}</a>"
         msg += f" | <b>ID :</b> <code>{download.message.from_user.id}</code>"
