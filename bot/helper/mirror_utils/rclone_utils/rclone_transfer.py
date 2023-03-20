@@ -231,5 +231,6 @@ class RcloneTransferHelper:
 
     async def cancel_download(self):
         self.__is_cancelled = True
-        self.__proc.kill()
+        if self.__proc is not None:
+            self.__proc.kill()
         await self.__listener.onDownloadError("Download dibatalkan oleh User!")
