@@ -43,8 +43,8 @@ class QueueStatus:
         return self
 
     async def cancel_download(self):
-        LOGGER.info(f'Cancelling Queue{self.__state}: {self.__name}')
-        if self.__state == 'Dl':
+        LOGGER.info(f'Cancelling Queue{self.__status}: {self.__name}')
+        if self.__status == 'Dl':
             await self.__listener.onDownloadError('Tugas ini dihapus dari antrian!')
         else:
             await self.__listener.onUploadError('Tugas ini dihapus dari antrian!')

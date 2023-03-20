@@ -323,7 +323,6 @@ class TgUploader:
                 if DUMP_CHAT := config_dict['DUMP_CHAT']:
                     self.__sent_msg = await app.send_photo(chat_id=DUMP_CHAT,
                                                            photo=self.__up_path,
-                                                           quote=True,
                                                            caption=cap_mono,
                                                            disable_notification=True,
                                                            progress=self.__upload_progress)
