@@ -674,17 +674,15 @@ def re_verfiy(paused, resumed, client, hash_id):
         sleep(1)
         client = qbClient(host="localhost", port="8090")
         try:
-            client.torrents_file_priority(
-                torrent_hash=hash_id, file_ids=paused, priority=0)
-        except NotFound404Error:
-            raise NotFound404Error
+            client.torrents_file_priority(torrent_hash=hash_id, file_ids=paused, priority=0)
+        except NotFound404Error as e:
+            raise NotFound404Error from e
         except Exception as e:
             LOGGER.error(f"{e} Errored in reverification paused!")
         try:
-            client.torrents_file_priority(
-                torrent_hash=hash_id, file_ids=resumed, priority=1)
-        except NotFound404Error:
-            raise NotFound404Error
+            client.torrents_file_priority(torrent_hash=hash_id, file_ids=resumed, priority=1)
+        except NotFound404Error as e:
+            raise NotFound404Error from e
         except Exception as e:
             LOGGER.error(f"{e} Errored in reverification resumed!")
         k += 1
@@ -692,7 +690,6 @@ def re_verfiy(paused, resumed, client, hash_id):
             return False
     LOGGER.info(f"Verified! Hash: {hash_id}")
     return True
-
 
 @app.route('/app/files/<string:id_>', methods=['GET'])
 def list_torrent_contents(id_):
@@ -744,17 +741,15 @@ def set_priority(id_):
         client = qbClient(host="localhost", port="8090")
 
         try:
-            client.torrents_file_priority(
-                torrent_hash=id_, file_ids=pause, priority=0)
-        except NotFound404Error:
-            raise NotFound404Error
+            client.torrents_file_priority(torrent_hash=id_, file_ids=pause, priority=0)
+        except NotFound404Error as e:
+            raise NotFound404Error from e
         except Exception as e:
             LOGGER.error(f"{e} Errored in paused")
         try:
-            client.torrents_file_priority(
-                torrent_hash=id_, file_ids=resume, priority=1)
-        except NotFound404Error:
-            raise NotFound404Error
+            client.torrents_file_priority(torrent_hash=id_, file_ids=resume, priority=1)
+        except NotFound404Error as e:
+            raise NotFound404Error from e
         except Exception as e:
             LOGGER.error(f"{e} Errored in resumed")
         sleep(1)
