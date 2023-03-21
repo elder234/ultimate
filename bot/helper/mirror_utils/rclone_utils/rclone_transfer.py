@@ -131,6 +131,7 @@ class RcloneTransferHelper:
             await self.__listener.onDownloadError(error)
 
     async def upload(self, path):
+        LOGGER.info("Uploading using RClone")
         async with download_dict_lock:
             download_dict[self.__listener.uid] = RcloneStatus(self, self.__listener.message, 'up')
         await update_all_messages()
