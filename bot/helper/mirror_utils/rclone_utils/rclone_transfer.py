@@ -152,6 +152,7 @@ class RcloneTransferHelper:
         cmd = await self.__getUpdatedCommand(config_path, path, rc_path)
         if remote_type == 'drive' and not config_dict['RCLONE_FLAGS'] and not self.__listener.rcFlags:
             cmd.extend(('--drive-chunk-size', '32M', '--drive-upload-cutoff', '32M'))
+        LOGGER.info(f'RClone Commands: {cmd}')
         self.__proc = await create_subprocess_exec(*cmd, stdout=PIPE, stderr=PIPE)
         self.__progress()
         await self.__proc.wait()
