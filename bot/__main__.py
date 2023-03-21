@@ -266,11 +266,11 @@ async def main():
                     msg += f"\n<b>Quotes Today :</b>"
                     msg += f"\n<code>{get_quotes()}</code>"
                 if data.items():
-                    msg += f"\n\n<b>Tugas yang belum selesai :</b>\n"
+                    msg += f"\n\n<b>Tugas yang belum selesai :</b>"
                 for tag, links in data.items():
-                    msg += f"{tag} :\n"
+                    msg += f"\n{tag} :"
                     for index, link in enumerate(links, start=1):
-                        msg += f" <a href='{link}'>Tugas {index}</a> |"
+                        msg += f"\n <a href='{link}'>Tugas ke {index}</a>"
                         if len(msg.encode()) > 4000:
                             if 'Restarted Successfully!' in msg and cid == chat_id:
                                 try:
