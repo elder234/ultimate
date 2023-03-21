@@ -219,7 +219,7 @@ async def __qb_listener():
                     STALLED_TIME[tor_info.hash] = time()
                     if TORRENT_TIMEOUT and time() - tor_info.added_on >= TORRENT_TIMEOUT:
                         bot_loop.create_task(
-                            __onDownloadError("Dead Torrent!", tor_info))
+                            __onDownloadError("Torrent Mati! (0 Seeders)", tor_info))
                     else:
                         await sync_to_async(client.torrents_reannounce, torrent_hashes=tor_info.hash)
                 elif tor_info.state == "downloading":
