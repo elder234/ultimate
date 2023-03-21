@@ -188,7 +188,7 @@ def get_readable_message():
             elif 'M' in spd:
                 up_speed += float(spd.split('M')[0]) * 1048576
     if tasks > STATUS_LIMIT:
-        msg += f"<b>Halaman:</b> {PAGE_NO}/{PAGES} | <b>Tugas:</b> {tasks}\n"
+        msg += f"<b>Halaman :</b> {PAGE_NO}/{PAGES} | <b>Total Tugas :</b> {tasks}\n"
         buttons = ButtonMaker()
         buttons.ibutton("⏪", "status pre")
         buttons.ibutton("⏩", "status nex")
