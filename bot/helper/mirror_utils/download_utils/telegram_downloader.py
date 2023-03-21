@@ -70,6 +70,7 @@ class TelegramDownloadHelper:
         await self.__listener.onDownloadError(error)
 
     async def __onDownloadComplete(self):
+        await self.__listener.onDownloadComplete()
         async with global_lock:
             GLOBAL_GID.remove(self.__id)
 

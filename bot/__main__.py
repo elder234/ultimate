@@ -265,8 +265,10 @@ async def main():
                     msg += f"\nTanggal: {date}"
                     msg += f"\nQuotes Today:"
                     msg += f"\n{get_quotes()}"
+                if data.items():
+                    msg += f"\n\n<b>Tugas yang belum selesai :</b>"
                 for tag, links in data.items():
-                    msg += f"\n\n{tag} : "
+                    msg += f"{tag} :\n"
                     for index, link in enumerate(links, start=1):
                         msg += f" <a href='{link}'>Tugas {index}</a> |"
                         if len(msg.encode()) > 4000:
