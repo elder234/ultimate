@@ -88,7 +88,7 @@ class MirrorLeechListener:
             gid = download.gid()
         LOGGER.info(f"Download completed: {name}")
         if multi_links:
-            await self.onUploadError("Berhasil didownload! Menunggu tugas lain...")
+            await self.onUploadError('Berhasil diunduh! Menunggu tugas lain...')
             return
         if name == "None" or self.isQbit or not await aiopath.exists(f"{self.dir}/{name}"):
             name = (await listdir(self.dir))[-1]
@@ -107,10 +107,8 @@ class MirrorLeechListener:
                 path = f"{m_path}.zip"
             async with download_dict_lock:
                 download_dict[self.uid] = ZipStatus(name, size, gid, self)
-            LEECH_SPLIT_SIZE = user_dict.get(
-                'split_size', False) or config_dict['LEECH_SPLIT_SIZE']
-            cmd = ["7z", f"-v{LEECH_SPLIT_SIZE}b", "a",
-                   "-mx=0", f"-p{self.pswd}", path, m_path]
+            LEECH_SPLIT_SIZE = user_dict.get('split_size', False) or config_dict['LEECH_SPLIT_SIZE']
+            cmd = ["7z", f"-v{LEECH_SPLIT_SIZE}b", "a", "-mx=0", f"-p{self.pswd}", path, m_path]
             if self.isLeech and int(size) > LEECH_SPLIT_SIZE:
                 if self.pswd is None:
                     del cmd[4]
@@ -132,22 +130,19 @@ class MirrorLeechListener:
                     path = get_base_name(m_path)
                 LOGGER.info(f"Extracting: {name}")
                 async with download_dict_lock:
-                    download_dict[self.uid] = ExtractStatus(
-                        name, size, gid, self)
+                    download_dict[self.uid] = ExtractStatus(name, size, gid, self)
                 if await aiopath.isdir(m_path):
                     if self.seed:
                         self.newDir = f"{self.dir}10000"
                         path = f"{self.newDir}/{name}"
                     else:
                         path = m_path
-                    for dirpath, subdir, files in await sync_to_async(walk, m_path, topdown=False):
+                    for dirpath, _, files in await sync_to_async(walk, m_path, topdown=False):
                         for file_ in files:
                             if is_first_archive_split(file_) or is_archive(file_) and not file_.endswith('.rar'):
                                 f_path = ospath.join(dirpath, file_)
-                                t_path = dirpath.replace(
-                                    self.dir, self.newDir) if self.seed else dirpath
-                                cmd = [
-                                    "7z", "x", f"-p{self.pswd}", f_path, f"-o{t_path}", "-aot", "-xr!@PaxHeader"]
+                                t_path = dirpath.replace(self.dir, self.newDir) if self.seed else dirpath
+                                cmd = ["7z", "x", f"-p{self.pswd}", f_path, f"-o{t_path}", "-aot", "-xr!@PaxHeader"]
                                 if self.pswd is None:
                                     del cmd[2]
                                 self.suproc = await create_subprocess_exec(*cmd)
@@ -155,8 +150,7 @@ class MirrorLeechListener:
                                 if self.suproc.returncode == -9:
                                     return
                                 elif self.suproc.returncode != 0:
-                                    LOGGER.error(
-                                        'Unable to extract archive splits!')
+                                    LOGGER.error('Unable to extract archive splits!')
                         if not self.seed and self.suproc is not None and self.suproc.returncode == 0:
                             for file_ in files:
                                 if is_archive_split(file_) or is_archive(file_):
@@ -169,8 +163,7 @@ class MirrorLeechListener:
                     if self.seed and self.isLeech:
                         self.newDir = f"{self.dir}10000"
                         path = path.replace(self.dir, self.newDir)
-                    cmd = ["7z", "x", f"-p{self.pswd}", m_path,
-                           f"-o{path}", "-aot", "-xr!@PaxHeader"]
+                    cmd = ["7z", "x", f"-p{self.pswd}", m_path, f"-o{path}", "-aot", "-xr!@PaxHeader"]
                     if self.pswd is None:
                         del cmd[2]
                     self.suproc = await create_subprocess_exec(*cmd)
@@ -185,8 +178,7 @@ class MirrorLeechListener:
                             except:
                                 return
                     else:
-                        LOGGER.error(
-                            'Unable to extract archive! Uploading anyway')
+                        LOGGER.error('Unable to extract archive! Uploading anyway')
                         self.newDir = ""
                         path = m_path
             except NotSupportedExtractionArchive:
@@ -202,9 +194,8 @@ class MirrorLeechListener:
             o_files = []
             if not self.isZip:
                 checked = False
-                LEECH_SPLIT_SIZE = user_dict.get(
-                    'split_size', False) or config_dict['LEECH_SPLIT_SIZE']
-                for dirpath, subdir, files in await sync_to_async(walk, up_dir, topdown=False):
+                LEECH_SPLIT_SIZE = user_dict.get('split_size', False) or config_dict['LEECH_SPLIT_SIZE']
+                for dirpath, _, files in await sync_to_async(walk, up_dir, topdown=False):
                     for file_ in files:
                         f_path = ospath.join(dirpath, file_)
                         f_size = await aiopath.getsize(f_path)
@@ -212,8 +203,7 @@ class MirrorLeechListener:
                             if not checked:
                                 checked = True
                                 async with download_dict_lock:
-                                    download_dict[self.uid] = SplitStatus(
-                                        up_name, size, gid, self)
+                                    download_dict[self.uid] = SplitStatus(up_name, size, gid, self)
                                 LOGGER.info(f"Splitting: {up_name}")
                             res = await split_file(f_path, f_size, file_, dirpath, LEECH_SPLIT_SIZE, self)
                             if not res:
@@ -246,8 +236,7 @@ class MirrorLeechListener:
                 queued_up[self.uid] = self
         if added_to_queue:
             async with download_dict_lock:
-                download_dict[self.uid] = QueueStatus(
-                    name, size, gid, self, 'Up')
+                download_dict[self.uid] = QueueStatus(name, size, gid, self, 'Up')
             self.queuedUp = Event()
             await self.queuedUp.wait()
             async with download_dict_lock:
