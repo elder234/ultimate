@@ -254,19 +254,19 @@ async def main():
                 if await aiopath.isfile(".restartmsg"):
                     with open(".restartmsg") as f:
                         chat_id, msg_id = map(int, f)
-                    msg = '🤖 Restarted Successfully!'
-                    msg += f"\nWaktu: {time}"
-                    msg += f"\nTanggal: {date}"
-                    msg += f"\nQuotes Today:"
-                    msg += f"\n{get_quotes()}"
+                    msg = '🤖 <b>Restarted Successfully!</b>'
+                    msg += f"\n<b>Waktu :</b> <code>{time}</code>"
+                    msg += f"\n<b>Tanggal :</b> <code>{date}</code>"
+                    msg += f"\n<b>Quotes Today :</b>"
+                    msg += f"\n<code>{get_quotes()}</code>"
                 else:
-                    msg = '🤖 Bot Restarted!'
-                    msg += f"\nWaktu: {time}"
-                    msg += f"\nTanggal: {date}"
-                    msg += f"\nQuotes Today:"
-                    msg += f"\n{get_quotes()}"
+                    msg = '🤖 <b>Bot Restarted!</b>'
+                    msg += f"\n<b>Waktu :</b> <code>{time}</code>"
+                    msg += f"\n<b>Tanggal :</b> <code>{date}</code>"
+                    msg += f"\n<b>Quotes Today :</b>"
+                    msg += f"\n<code>{get_quotes()}</code>"
                 if data.items():
-                    msg += f"\n\n<b>Tugas yang belum selesai :</b>"
+                    msg += f"\n\n<b>Tugas yang belum selesai :</b>\n"
                 for tag, links in data.items():
                     msg += f"{tag} :\n"
                     for index, link in enumerate(links, start=1):
