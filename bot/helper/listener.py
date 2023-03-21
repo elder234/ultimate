@@ -285,19 +285,19 @@ class MirrorLeechListener:
     async def onUploadComplete(self, link, size, files, folders, typ, name, isRclone=False):
         if self.isSuperGroup and config_dict['INCOMPLETE_TASK_NOTIFIER'] and DATABASE_URL:
             await DbManger().rm_complete_task(self.message.link)
-        msg = f"<b>Nama:</b> <code>{escape(name)}</code>"
-        msg += f"\n\n<b>Ukuran:</b> {get_readable_file_size(size)}"
+        msg = f"<b>Nama :</b> <code>{escape(name)}</code>"
+        msg += f"\n\n<b>Ukuran :</b> {get_readable_file_size(size)}"
         if self.isLeech:
-            msg += f'\n\n<b>Jumlah File:</b> {folders}'
+            msg += f'\n\n<b>Jumlah File :</b> {folders}'
             if typ != 0:
-                msg += f'\n\n<b>File Rusak:</b> {typ}'
-            msg += f'\n\n<b>Oleh:</b> {self.tag}\n\n'
+                msg += f'\n\n<b>File Rusak :</b> {typ}'
+            msg += f'\n\n<b>Oleh :</b> {self.tag}\n\n'
             if not files:
                 await sendMessage(self.message, msg)
             else:
                 fmsg = ''
                 for index, (link, name) in enumerate(files.items(), start=1):
-                    fmsg += f"<a href='{link}'>({index}). {name}</a>\n"
+                    fmsg += f"<a href='{link}'>[{index}]. {name}</a>\n"
                     if len(fmsg.encode() + msg.encode()) > 4000:
                         await sendMessage(self.message, msg + fmsg)
                         await sleep(1)
@@ -313,11 +313,11 @@ class MirrorLeechListener:
                 await start_from_queued()
                 return
         else:
-            msg += f'\n\n<b>Tipe:</b> {typ}'
+            msg += f'\n\n<b>Tipe :</b> {typ}'
             if typ == "Folder":
-                msg += f'\n\n<b>SubFolders:</b> {folders}'
-                msg += f'\n\n<b>Files:</b> {files}'
-            msg += f'\n\n<b>Oleh:</b> {self.tag}'
+                msg += f'\n\n<b>SubFolders :</b> {folders}'
+                msg += f'\n\n<b>Files :</b> {files}'
+            msg += f'\n\n<b>Oleh :</b> {self.tag}'
             buttons = ButtonMaker()
             buttons.ubutton("☁️ Cloud Link", link)
             LOGGER.info(f'Done Uploading {name}')

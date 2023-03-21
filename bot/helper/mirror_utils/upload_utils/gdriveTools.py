@@ -210,7 +210,7 @@ class GoogleDriveHelper:
                     return
                 if link is None:
                     raise Exception(
-                        'Upload dibatalkan secara manual oleh system!')
+                        'Upload dibatalkan secara manual oleh System!')
                 LOGGER.info(f"Uploaded To G-Drive: {item_path}")
             else:
                 mime_type = 'Folder'
@@ -219,7 +219,7 @@ class GoogleDriveHelper:
                 result = self.__upload_dir(item_path, dir_id)
                 if result is None:
                     raise Exception(
-                        'Upload dibatalkan secara manual oleh system!')
+                        'Upload dibatalkan secara manual oleh System!')
                 link = self.__G_DRIVE_DIR_BASE_DOWNLOAD_URL.format(dir_id)
                 if self.__is_cancelled:
                     return
@@ -391,11 +391,11 @@ class GoogleDriveHelper:
                     LOGGER.info("Deleting cloned data from Drive...")
                     self.deletefile(durl)
                     return "Clone dihentikan dan file yang sudah berhasil diclone dihapus!", "cancelled"
-                msg += f'<b>Nama:</b> <code>{meta.get("name")}</code>'
-                msg += f'\n\n<b>Ukuran:</b> {get_readable_file_size(self.transferred_size)}'
-                msg += '\n\n<b>Tipe:</b> Folder'
-                msg += f'\n\n<b>SubFolders:</b> {self.__total_folders}'
-                msg += f'\n\n<b>Files:</b> {self.__total_files}'
+                msg += f'<b>Nama :</b> <code>{meta.get("name")}</code>'
+                msg += f'\n\n<b>Ukuran :</b> {get_readable_file_size(self.transferred_size)}'
+                msg += '\n\n<b>Tipe :</b> Folder'
+                msg += f'\n\n<b>SubFolders :</b> {self.__total_folders}'
+                msg += f'\n\n<b>Files :</b> {self.__total_files}'
                 buttons = ButtonMaker()
                 buttons.ubutton("☁️ Drive Link", durl)
                 if INDEX_URL := config_dict['INDEX_URL']:
@@ -405,14 +405,14 @@ class GoogleDriveHelper:
             else:
                 file = self.__copyFile(
                     meta.get('id'), config_dict['GDRIVE_ID'])
-                msg += f'<b>Nama:</b> <code>{file.get("name")}</code>'
+                msg += f'<b>Nama :</b> <code>{file.get("name")}</code>'
                 durl = self.__G_DRIVE_BASE_DOWNLOAD_URL.format(file.get("id"))
                 buttons = ButtonMaker()
                 buttons.ubutton("☁️ Drive Link", durl)
                 if mime_type is None:
                     mime_type = 'File'
-                msg += f'\n\n<b>Ukuran:</b> {get_readable_file_size(int(meta.get("size", 0)))}'
-                msg += f'\n\n<b>Tipe:</b> {mime_type}'
+                msg += f'\n\n<b>Ukuran :</b> {get_readable_file_size(int(meta.get("size", 0)))}'
+                msg += f'\n\n<b>Tipe :</b> {mime_type}'
                 if INDEX_URL := config_dict['INDEX_URL']:
                     url_path = rquote(f'{file.get("name")}', safe='')
                     url = f'{INDEX_URL}/{url_path}'
@@ -661,19 +661,19 @@ class GoogleDriveHelper:
             mime_type = meta.get('mimeType')
             if mime_type == self.__G_DRIVE_DIR_MIME_TYPE:
                 self.__gDrive_directory(meta)
-                msg += f'<b>Nama:</b> <code>{name}</code>'
-                msg += f'\n\n<b>Ukuran:</b> {get_readable_file_size(self.__total_bytes)}'
-                msg += '\n\n<b>Tipe:</b> Folder'
-                msg += f'\n\n<b>SubFolders:</b> {self.__total_folders}'
+                msg += f'<b>Nama :</b> <code>{name}</code>'
+                msg += f'\n\n<b>Ukuran :</b> {get_readable_file_size(self.__total_bytes)}'
+                msg += '\n\n<b>Tipe :</b> Folder'
+                msg += f'\n\n<b>SubFolders :</b> {self.__total_folders}'
             else:
-                msg += f'<b>Nama: </b><code>{name}</code>'
+                msg += f'<b>Nama :</b> <code>{name}</code>'
                 if mime_type is None:
                     mime_type = 'File'
                 self.__total_files += 1
                 self.__gDrive_file(meta)
-                msg += f'\n\n<b>Ukuran:</b> {get_readable_file_size(self.__total_bytes)}'
-                msg += f'\n\n<b>Tipe:</b> {mime_type}'
-            msg += f'\n\n<b>Files:</b> {self.__total_files}'
+                msg += f'\n\n<b>Ukuran :</b> {get_readable_file_size(self.__total_bytes)}'
+                msg += f'\n\n<b>Tipe :</b> {mime_type}'
+            msg += f'\n\n<b>Files :</b> {self.__total_files}'
         except Exception as err:
             if isinstance(err, RetryError):
                 LOGGER.info(
@@ -867,4 +867,4 @@ class GoogleDriveHelper:
             LOGGER.info(f"Cancelling Clone: {self.name}")
         elif self.__is_uploading:
             LOGGER.info(f"Cancelling Upload: {self.name}")
-            await self.__listener.onUploadError("Upload dihentikan dan file yang sudah berhasil diupload dihapus!")
+            await self.__listener.onUploadError("Upload dibatalkan oleh User!")

@@ -106,7 +106,7 @@ async def cloneNode(client, message):
                     await update_all_messages()
             except IndexError:
                 pass
-        cc = f'\n\n<b>Oleh:</b> {tag}'
+        cc = f'\n\n<b>Oleh :</b> {tag}'
         cc2 = f'\n\n{tag}'
         if button in ["cancelled", ""]:
             await sendMessage(message, f"<b>Hai {tag}!</b>\n<b>Tugasmu dihentikan karena:</b>\n{result}")
