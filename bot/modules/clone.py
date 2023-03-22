@@ -111,7 +111,7 @@ async def cloneNode(client, message):
         if button in ["cancelled", ""]:
             await sendMessage(message, f"<b>Hai {tag}!</b>\n<b>Tugasmu dihentikan karena:</b>\n<code>{result}</code>")
         else:
-            if "Nama:" in result:
+            if "Nama" in result:
                 await sendMessage(message, result + cc, button)
                 # Forward to Log
                 try:
