@@ -428,15 +428,15 @@ class GoogleDriveHelper:
                 err = err.last_attempt.exception()
             err = str(err).replace('>', '').replace('<', '')
             if "User rate limit exceeded" or "userRateLimitExceeded" in err:
-                msg = "Limit harian file tercapai! Coba lagi kapan kapan :D"
+                msg = "<code>Limit harian file tercapai! Coba lagi kapan kapan :D</code>"
             elif "File not found" in err:
                 token_service = self.__alt_authorize()
                 if token_service is not None:
                     self.__service = token_service
                     return self.clone(link)
-                msg = "File tidak ditemukan!"
+                msg = "<code>File tidak ditemukan!</code>"
             else:
-                msg = f"ERROR: {err}"
+                msg = f"<code>{err}</code>"
             return msg, ""
         return msg, buttons.build_menu(2)
 
