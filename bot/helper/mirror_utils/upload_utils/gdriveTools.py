@@ -427,7 +427,7 @@ class GoogleDriveHelper:
                     f"Total Attempts: {err.last_attempt.attempt_number}")
                 err = err.last_attempt.exception()
             err = str(err).replace('>', '').replace('<', '')
-            if ["User rate limit exceeded", "userRateLimitExceeded", 'dailyLimitExceeded',] in err:
+            if ["User rate limit exceeded", "userRateLimitExceeded", 'dailyLimitExceeded'] in err:
                 msg = "<code>Limit harian file tercapai! Coba lagi kapan kapan :D</code>"
             elif "File not found" in err:
                 token_service = self.__alt_authorize()
@@ -471,11 +471,13 @@ class GoogleDriveHelper:
                 reason = eval(err.content).get(
                     'error').get('errors')[0].get('reason')
                 if reason not in ['userRateLimitExceeded', 'dailyLimitExceeded', 'cannotCopyFile']:
+                    self.__is_cancelled = True
                     raise err
                 if reason == 'cannotCopyFile':
                     LOGGER.error(err)
                 elif config_dict['USE_SERVICE_ACCOUNTS']:
                     if self.__sa_count >= SERVICE_ACCOUNTS_NUMBER:
+                        self.__is_cancelled = True
                         LOGGER.info(
                             f"Reached maximum number of service accounts switching, which is {self.__sa_count}")
                         raise err
@@ -485,6 +487,7 @@ class GoogleDriveHelper:
                         self.__switchServiceAccount()
                         return self.__copyFile(file_id, dest_id)
                 else:
+                    self.__is_cancelled = True
                     LOGGER.error(f"Got: {reason}")
                     raise err
 
