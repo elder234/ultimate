@@ -233,7 +233,7 @@ Check here all <a href='https://rclone.org/flags/'>RcloneFlags</a>.
         await RcloneTransferHelper(listener).add_download(link, config_path, f'{path}/', name)
     elif is_gdrive_link(link):
         if not isZip and not extract and not isLeech:
-            gmsg = f"Use /{BotCommands.CloneCommand} to clone Google Drive file/folder\n\n"
+            gmsg = f"Use /{BotCommands.CloneCommand[0]} to clone Google Drive file/folder\n\n"
             gmsg += f"Use /{BotCommands.ZipMirrorCommand[0]} to make zip of Google Drive folder\n\n"
             gmsg += f"Use /{BotCommands.UnzipMirrorCommand[0]} to extracts Google Drive archive folder/file"
             await sendMessage(message, gmsg)
