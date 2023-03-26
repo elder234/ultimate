@@ -19,6 +19,7 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.bot_utils import setInterval, sync_to_async, new_thread
 from bot.helper.ext_utils.db_handler import DbManger
 from bot.helper.ext_utils.queued_starter import start_from_queued
+from bot.helper.mirror_utils.rclone_utils.serve import rclone_serve_booter
 from bot.modules.search import initiate_search_tools
 from bot.modules.rss import addJob
 
@@ -248,15 +249,22 @@ async def load_config():
     MEDIA_GROUP = environ.get('MEDIA_GROUP', '')
     MEDIA_GROUP = MEDIA_GROUP.lower() == 'true'
 
-    SERVER_PORT = environ.get('SERVER_PORT', '')
-    SERVER_PORT = 80 if len(SERVER_PORT) == 0 else int(SERVER_PORT)
+    BASE_URL_PORT = environ.get('BASE_URL_PORT', '')
+    BASE_URL_PORT = 80 if len(BASE_URL_PORT) == 0 else int(BASE_URL_PORT)
+
+    RCLONE_SERVE_URL = environ.get('RCLONE_SERVE_URL', '')
+    if len(RCLONE_SERVE_URL) == 0:
+        RCLONE_SERVE_URL = ''
+
+    RCLONE_SERVE_PORT = environ.get('RCLONE_SERVE_PORT', '')
+    RCLONE_SERVE_PORT = 8080 if len(RCLONE_SERVE_PORT) == 0 else int(RCLONE_SERVE_PORT)
 
     await (await create_subprocess_exec("pkill", "-9", "-f", "gunicorn")).wait()
     BASE_URL = environ.get('BASE_URL', '').rstrip("/")
     if len(BASE_URL) == 0:
         BASE_URL = ''
     else:
-        await create_subprocess_shell(f"gunicorn web.wserver:app --bind 0.0.0.0:{SERVER_PORT}")
+        await create_subprocess_shell(f"gunicorn web.wserver:app --bind 0.0.0.0:{BASE_URL_PORT}")
 
     UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
     if len(UPSTREAM_REPO) == 0:
@@ -291,6 +299,7 @@ async def load_config():
                         'AUTHORIZED_CHATS': AUTHORIZED_CHATS,
                         'AUTO_DELETE_MESSAGE_DURATION': AUTO_DELETE_MESSAGE_DURATION,
                         'BASE_URL': BASE_URL,
+                        'BASE_URL_PORT': BASE_URL_PORT,
                         'BOT_TOKEN': BOT_TOKEN,
                         'CMD_SUFFIX': CMD_SUFFIX,
                         'DATABASE_URL': DATABASE_URL,
@@ -316,12 +325,13 @@ async def load_config():
                         'QUEUE_UPLOAD': QUEUE_UPLOAD,
                         'RCLONE_FLAGS': RCLONE_FLAGS,
                         'RCLONE_PATH': RCLONE_PATH,
+                        'RCLONE_SERVE_URL': RCLONE_SERVE_URL,
+                        'RCLONE_SERVE_PORT': RCLONE_SERVE_PORT,
                         'RSS_CHAT_ID': RSS_CHAT_ID,
                         'RSS_DELAY': RSS_DELAY,
                         'SEARCH_API_LINK': SEARCH_API_LINK,
                         'SEARCH_LIMIT': SEARCH_LIMIT,
                         'SEARCH_PLUGINS': SEARCH_PLUGINS,
-                        'SERVER_PORT': SERVER_PORT,
                         'STATUS_LIMIT': STATUS_LIMIT,
                         'STATUS_UPDATE_INTERVAL': STATUS_UPDATE_INTERVAL,
                         'STOP_DUPLICATE': STOP_DUPLICATE,
@@ -471,10 +481,11 @@ async def edit_variable(client, message, pre_message, key):
         aria2_options['bt-stop-timeout'] = f'{value}'
     elif key == 'LEECH_SPLIT_SIZE':
         value = min(int(value), MAX_SPLIT_SIZE)
-    elif key == 'SERVER_PORT':
+    elif key == 'BASE_URL_PORT':
         value = int(value)
-        await (await create_subprocess_exec("pkill", "-9", "-f", "gunicorn")).wait()
-        await create_subprocess_shell(f"gunicorn web.wserver:app --bind 0.0.0.0:{value}")
+        if config_dict['BASE_URL']:
+            await (await create_subprocess_exec("pkill", "-9", "-f", "gunicorn")).wait()
+            await create_subprocess_shell(f"gunicorn web.wserver:app --bind 0.0.0.0:{value}")
     elif key == 'EXTENSION_FILTER':
         fx = value.split()
         GLOBAL_EXTENSION_FILTER.clear()
@@ -504,7 +515,8 @@ async def edit_variable(client, message, pre_message, key):
         await initiate_search_tools()
     elif key in ['QUEUE_ALL', 'QUEUE_DOWNLOAD', 'QUEUE_UPLOAD']:
         await start_from_queued()
-
+    elif key in ['RCLONE_SERVE_URL', 'RCLONE_SERVE_PORT']:   
+        await rclone_serve_booter()
 
 async def edit_aria(client, message, pre_message, key):
     handler_dict[message.chat.id] = False

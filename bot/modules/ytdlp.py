@@ -130,54 +130,44 @@ async def _ytdl(client, message, isZip=False, isLeech=False, sameDir={}):
         help_msg = """
 <b>Send link along with command line:</b>
 <code>/cmd</code> s link n: newname pswd: xx(zip) opt: x:y|x1:y1
-
 <b>By replying to link:</b>
 <code>/cmd</code> n: newname pswd: xx(zip) opt: x:y|x1:y1
-
 <b>Quality Buttons:</b>
 Incase default quality added but you need to select quality for specific link or links with multi links feature.
 <code>/cmd</code> s link
 This option should be always before n:, pswd: and opt:
-
 <b>Options Example:</b> opt: playliststart:^10|matchtitle:S13|writesubtitles:true|live_from_start:true|postprocessor_args:{"ffmpeg": ["-threads", "4"]}|wait_for_video:(5, 100)
-
 <b>Multi links only by replying to first link:</b>
 <code>/cmd</code> 10(number of links)
 Number should be always before n:, pswd: and opt:
-
 <b>Multi links within same upload directory only by replying to first link:</b>
 <code>/cmd</code> 10(number of links) m:folder_name
 Number and m:folder_name should be always before n:, pswd: and opt:
-
 <b>Options Note:</b> Add `^` before integer, some values must be integer and some string.
 Like playlist_items:10 works with string, so no need to add `^` before the number but playlistend works only with integer so you must add `^` before the number like example above.
 You can add tuple and dict also. Use double quotes inside dict.
-
-<b>Rclone Upload</b>:
-<code>/cmd</code> link up: <code>rcl</code> (To select config, remote and path)
+<b>Upload</b>:
+<code>/cmd</code> link up: <code>rcl</code> (To select rclone config, remote and path)
 You can directly add the upload path. up: remote:dir/subdir
 If DEFAULT_UPLOAD is `rc` then you can pass up: `gd` to upload using gdrive tools to GDRIVE_ID.
 If DEFAULT_UPLOAD is `gd` then you can pass up: `rc` to upload to RCLONE_PATH.
-If you want to add path manually from your config add <code>mrcc:</code> before the path without space
-<code>/cmd</code> link up: <code>mrcc:</code>main:/dump
-
+If you want to add path manually from your config (uploaded from usetting) add <code>mrcc:</code> before the path without space
+<code>/cmd</code> link up: <code>mrcc:</code>main:dump
 <b>Rclone Flags</b>:
 <code>/cmd</code> link up: path|rcl rcf: --buffer-size:8M|--drive-starred-only|key|key:value
 This will override all other flags except --exclude
 Check here all <a href='https://rclone.org/flags/'>RcloneFlags</a>.
-
 <b>NOTES:</b>
 1. When use cmd by reply don't add any option in link msg! Always add them after cmd msg!
 2. Options (<b>s, m: and multi</b>) should be added randomly before link and before any other option.
 3. Options (<b>n:, pswd: and opt:</b>) should be added randomly after the link if link along with the cmd or after cmd if by reply.
 4. You can always add video quality from yt-dlp api options.
-
 Check all yt-dlp api options from this <a href='https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L184'>FILE</a>.
         """
         await sendMessage(message, help_msg)
         return
 
-    if up == 'rcl' and not isLeech:
+    if (up == 'rcl' or config_dict['RCLONE_PATH'] == 'rcl' and config_dict['DEFAULT_UPLOAD'] == 'rc') and not isLeech:
         up = await RcloneList(client, message).get_rclone_path('rcu')
         if not is_rclone_path(up):
             await sendMessage(message, up)
