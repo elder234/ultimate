@@ -679,7 +679,7 @@ async def rssMonitor():
                     if command := data['command']:
                         feed_msg = f"/{command.replace('/', '')} {url}\n<b>Tag: </b>{data['tag']} <code>{user}</code>"
                     else:
-                        feed_msg = f"<b>Nama :</b> <code>{item_title.replace('>', '').replace('<', '')}</code>\n\n"
+                        feed_msg = f"<b>Nama :</b>\n<code>{item_title.replace('>', '').replace('<', '')}</code>\n\n"
                         if nyaa_view:
                             if nyaa_category:
                                 feed_msg += f"<b>Kategori :</b> <code>{nyaa_category}</code>\n\n"  
@@ -692,12 +692,12 @@ async def rssMonitor():
                             if nyaa_seeders:
                                 feed_msg += f"| <b>Seed :</b> <code>{nyaa_seeders}</code>"
                             if nyaa_downloads:
-                                feed_msg += f"| <b>Down :</b> <code>{nyaa_downloads}</code>"
+                                feed_msg += f"| <b>Down :</b> <code>{nyaa_downloads}</code>\n\n"
                             if nyaa_trusted:
                                 feed_msg += f"<b>Trusted :</b> <code>{nyaa_trusted}</code>"
                             if nyaa_remake:
                                 feed_msg += f"| <b>Remake :</b> <code>{nyaa_remake}</code>\n\n"
-                            feed_msg += f"<b>Link :</b>\n<a href='{nyaa_view}'>View</a> | <a href='{url}'>Download</a>\n\n"
+                            feed_msg += f"<b>Link :</b>\n<a href='{url}'>Download</a> | <a href='{nyaa_view}'>View</a>\n\n"
                         else:
                             if category:
                                 feed_msg += f"<b>Kategori :</b> <code>{category}</code>\n\n"
@@ -705,7 +705,7 @@ async def rssMonitor():
                                 feed_msg += f"<b>Deskripsi :</b>\n<code>{description}</code>\n\n"
                             feed_msg += f"<b>Link :</b>\n<code>{url}</code>\n\n"
                         if pub_date:
-                            feed_msg += f"<b>Tanggal Dipublish :</b> <code>{pub_date}</code>\n\n"
+                            feed_msg += f"<b>Tanggal Dipublish :</b>\n<code>{pub_date}</code>\n\n"
                         #feed_msg += f"<b>Tag :</b> {data['tag']} <code>{user}</code>\n\n"
                         feed_msg += f"#{title}"
                     await sendRss(feed_msg)
