@@ -608,6 +608,43 @@ async def rssMonitor():
                             url = rss_d.entries[feed_count]['links'][1]['href']
                         except IndexError:
                             url = rss_d.entries[feed_count]['link']
+                        # Add More Information
+                        try:
+                            pub_date = rss_d.entries[feed_count]['pubDate']
+                        except IndexError:
+                            pub_date = None
+                        try:
+                            seeders = rss_d.entries[feed_count]['seeders']
+                        except IndexError:
+                            seeders = None
+                        try:
+                            leechers = rss_d.entries[feed_count]['leechers']
+                        except IndexError:
+                            leechers = None
+                        try:
+                            downloads = rss_d.entries[feed_count]['downloads']
+                        except IndexError:
+                            downloads = None
+                        try:
+                            info_hash = rss_d.entries[feed_count]['infoHash']
+                        except IndexError:
+                            info_hash = None
+                        try:
+                            category = rss_d.entries[feed_count]['category']
+                        except IndexError:
+                            category = None
+                        try:
+                            size = rss_d.entries[feed_count]['size']
+                        except IndexError:
+                            size = None
+                        try:
+                            trusted = rss_d.entries[feed_count]['trusted']
+                        except IndexError:
+                            trusted = None
+                        try:
+                            remake = rss_d.entries[feed_count]['remake']
+                        except IndexError:
+                            remake = None
                         if data['last_feed'] == url or data['last_title'] == item_title:
                             break
                     except IndexError:
@@ -630,8 +667,27 @@ async def rssMonitor():
                     if command := data['command']:
                         feed_msg = f"/{command.replace('/', '')} {url}\n<b>Tag: </b>{data['tag']} <code>{user}</code>"
                     else:
-                        feed_msg = f"<b>Name: </b><code>{item_title.replace('>', '').replace('<', '')}</code>\n\n"
-                        feed_msg += f"<b>Link: </b><code>{url}</code>\n\n<b>Tag: </b>{data['tag']} <code>{user}</code>"
+                        feed_msg = f"<b>Name :</b> <code>{item_title.replace('>', '').replace('<', '')}</code>\n\n"
+                        if category:
+                            feed_msg += f"<b>Category :</b> <code>{category}</code>\n\n"
+                        if size:
+                            feed_msg += f"<b>Size :</b> <code>{size}</code>\n\n"
+                        if info_hash:
+                            feed_msg += f"<b>Hash :</b> <code>{info_hash}</code>\n\n"
+                        if leechers:
+                            feed_msg += f"<b>Leech :</b> <code>{leechers}</code>"
+                        if seeders:
+                            feed_msg += f"| <b>Seed :</b> <code>{seeders}</code>"
+                        if downloads:
+                            feed_msg += f"| <b>Down :</b> <code>{downloads}</code>"
+                        if trusted:
+                            feed_msg += f"<b>Trusted :</b> <code>{trusted}</code>"
+                        if remake:
+                            feed_msg += f"| <b>Remake :</b> <code>{remake}</code>\n\n"
+                        feed_msg += f"<b>Link :</b>\n<code>{url}</code>\n\n"
+                        if pub_date:
+                            feed_msg += f"<b>Publish Date :</b> <code>{pub_date}</code>\n\n"
+                        feed_msg += f"<b>Tag :</b> {data['tag']} <code>{user}</code>\n\n#{title}"
                     await sendRss(feed_msg)
                     feed_count += 1
                 async with rss_dict_lock:
