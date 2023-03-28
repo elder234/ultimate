@@ -608,7 +608,6 @@ async def rssMonitor():
                             url = rss_d.entries[feed_count]['links'][1]['href']
                         except IndexError:
                             url = rss_d.entries[feed_count]['link']
-                        # Add More Information
                         try:
                             pub_date = rss_d.entries[feed_count]['published']
                         except:
@@ -618,33 +617,46 @@ async def rssMonitor():
                         except:
                             description = None
                         try:
-                            category = rss_d.entries[feed_count]['categories']
+                            category = rss_d.entries[feed_count]['category']
                         except:
                             category = None
-                        # try:
-                        #     seeders = rss_d.entries[feed_count]['seeders']
-                        # except:
-                        #     seeders = None
-                        # try:
-                        #     leechers = rss_d.entries[feed_count]['leechers']
-                        # except:
-                        #     leechers = None
-                        # try:
-                        #     downloads = rss_d.entries[feed_count]['downloads']
-                        # except:
-                        #     downloads = None
-                        # try:
-                        #     size = rss_d.entries[feed_count]['size']
-                        # except:
-                        #     size = None
-                        # try:
-                        #     trusted = rss_d.entries[feed_count]['trusted']
-                        # except:
-                        #     trusted = None
-                        # try:
-                        #     remake = rss_d.entries[feed_count]['remake']
-                        # except:
-                        #     remake = None
+                        # Add More Information (Based on Nyaa)
+                        try:
+                            nyaa_view = rss_d.entries[feed_count]['id']
+                        except:
+                            nyaa_view = None
+                        try:
+                            nyaa_seeders = rss_d.entries[feed_count]['nyaa_seeders']
+                        except:
+                            nyaa_seeders = None
+                        try:
+                            nyaa_leechers = rss_d.entries[feed_count]['nyaa_leechers']
+                        except:
+                            nyaa_leechers = None
+                        try:
+                            nyaa_downloads = rss_d.entries[feed_count]['nyaa_downloads']
+                        except:
+                            nyaa_downloads = None
+                        try:
+                            nyaa_hash = rss_d.entries[feed_count]['nyaa_infohash']
+                        except:
+                            nyaa_hash = None
+                        try:
+                            nyaa_category = rss_d.entries[feed_count]['nyaa_category']
+                        except:
+                            nyaa_category = None
+                        try:
+                            nyaa_size = rss_d.entries[feed_count]['nyaa_size']
+                        except:
+                            nyaa_size = None
+                        try:
+                            nyaa_trusted = rss_d.entries[feed_count]['nyaa_trusted']
+                        except:
+                            nyaa_trusted = None
+                        try:
+                            nyaa_remake = rss_d.entries[feed_count]['nyaa_remake']
+                        except:
+                            nyaa_remake = None
                         if data['last_feed'] == url or data['last_title'] == item_title:
                             break
                     except IndexError:
@@ -668,27 +680,32 @@ async def rssMonitor():
                         feed_msg = f"/{command.replace('/', '')} {url}\n<b>Tag: </b>{data['tag']} <code>{user}</code>"
                     else:
                         feed_msg = f"<b>Nama :</b> <code>{item_title.replace('>', '').replace('<', '')}</code>\n\n"
-                        if category:
-                            feed_msg += f"<b>Kategori :</b> <code>{category}</code>\n\n"
-                        # if size:
-                        #     feed_msg += f"<b>Size :</b> <code>{size}</code>\n\n"
-                        # if info_hash:
-                        #     feed_msg += f"<b>Hash :</b> <code>{info_hash}</code>\n\n"
-                        # if leechers:
-                        #     feed_msg += f"<b>Leech :</b> <code>{leechers}</code>"
-                        # if seeders:
-                        #     feed_msg += f"| <b>Seed :</b> <code>{seeders}</code>"
-                        # if downloads:
-                        #     feed_msg += f"| <b>Down :</b> <code>{downloads}</code>"
-                        # if trusted:
-                        #     feed_msg += f"<b>Trusted :</b> <code>{trusted}</code>"
-                        # if remake:
-                        #     feed_msg += f"| <b>Remake :</b> <code>{remake}</code>\n\n"
-                        if description:
-                            feed_msg += f"<b>Deskripsi :</b>\n<code>{description}</code>\n\n"
-                        feed_msg += f"<b>Link :</b>\n<code>{url}</code>\n\n"
+                        if nyaa_view:
+                            if nyaa_category:
+                                feed_msg += f"<b>Kategori :</b> <code>{nyaa_category}</code>\n\n"  
+                            if nyaa_size:
+                                feed_msg += f"<b>Size :</b> <code>{nyaa_size}</code>\n\n"
+                            if nyaa_hash:
+                                feed_msg += f"<b>Hash :</b> <code>{nyaa_hash}</code>\n\n"
+                            if nyaa_leechers:
+                                feed_msg += f"<b>Leech :</b> <code>{nyaa_leechers}</code>"
+                            if nyaa_seeders:
+                                feed_msg += f"| <b>Seed :</b> <code>{nyaa_seeders}</code>"
+                            if nyaa_downloads:
+                                feed_msg += f"| <b>Down :</b> <code>{nyaa_downloads}</code>"
+                            if nyaa_trusted:
+                                feed_msg += f"<b>Trusted :</b> <code>{nyaa_trusted}</code>"
+                            if nyaa_remake:
+                                feed_msg += f"| <b>Remake :</b> <code>{nyaa_remake}</code>\n\n"
+                            feed_msg += f"<b>Link :</b>\n<a href='{nyaa_view}'>View</a> | <a href='{url}'>Download</a>\n\n"
+                        else:
+                            if category:
+                                feed_msg += f"<b>Kategori :</b> <code>{category}</code>\n\n"
+                            if description:
+                                feed_msg += f"<b>Deskripsi :</b>\n<code>{description}</code>\n\n"
+                            feed_msg += f"<b>Link :</b>\n<code>{url}</code>\n\n"
                         if pub_date:
-                            feed_msg += f"<b>Publish Date :</b> <code>{pub_date}</code>\n\n"
+                            feed_msg += f"<b>Tanggal Dipublish :</b> <code>{pub_date}</code>\n\n"
                         #feed_msg += f"<b>Tag :</b> {data['tag']} <code>{user}</code>\n\n"
                         feed_msg += f"#{title}"
                     await sendRss(feed_msg)
