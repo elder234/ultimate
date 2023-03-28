@@ -690,13 +690,13 @@ async def rssMonitor():
                             if nyaa_leechers:
                                 feed_msg += f"<b>Leech :</b> <code>{nyaa_leechers}</code>"
                             if nyaa_seeders:
-                                feed_msg += f"| <b>Seed :</b> <code>{nyaa_seeders}</code>"
+                                feed_msg += f" | <b>Seed :</b> <code>{nyaa_seeders}</code>"
                             if nyaa_downloads:
-                                feed_msg += f"| <b>Down :</b> <code>{nyaa_downloads}</code>\n\n"
+                                feed_msg += f" | <b>Down :</b> <code>{nyaa_downloads}</code>\n\n"
                             if nyaa_trusted:
                                 feed_msg += f"<b>Trusted :</b> <code>{nyaa_trusted}</code>"
                             if nyaa_remake:
-                                feed_msg += f"| <b>Remake :</b> <code>{nyaa_remake}</code>\n\n"
+                                feed_msg += f" | <b>Remake :</b> <code>{nyaa_remake}</code>\n\n"
                             feed_msg += f"<b>Link :</b>\n<a href='{url}'>Download</a> | <a href='{nyaa_view}'>View</a>\n\n"
                         else:
                             if category:
