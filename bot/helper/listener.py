@@ -26,7 +26,7 @@ from bot.helper.ext_utils.db_handler import DbManger
 
 
 class MirrorLeechListener:
-    def __init__(self, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, tag=None, select=False, seed=False, sameDir=None, rcFlags=None, upload=None):
+    def __init__(self, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, tag=None, select=False, seed=False, sameDir=None, rcFlags=None, upPath=None):
         if sameDir is None:
             sameDir = {}
         self.message = message
@@ -46,7 +46,7 @@ class MirrorLeechListener:
         self.queuedUp = None
         self.sameDir = sameDir
         self.rcFlags = rcFlags
-        self.upload = upload
+        self.upPath = upPath or config_dict['DEFAULT_UPLOAD']
 
     async def clean(self):
         try:
@@ -257,7 +257,7 @@ class MirrorLeechListener:
                 download_dict[self.uid] = tg_upload_status
             await update_all_messages()
             await tg.upload(o_files, m_size)
-        elif self.upload == 'gd' or self.upload is None and config_dict['DEFAULT_UPLOAD'].lower() == 'gd':
+        elif self.upPath == 'gd':
             size = await get_path_size(path)
             LOGGER.info(f"Upload Name: {up_name}")
             drive = GoogleDriveHelper(up_name, up_dir, size, self)
@@ -317,6 +317,8 @@ class MirrorLeechListener:
                     remote, path = rclonePath.split(':', 1)
                     url_path = rutils.quote(f'{path}')
                     share_url = f'{RCLONE_SERVE_URL}/{remote}/{url_path}'
+                    if typ == "Folder":
+                        share_url += '/'
                     buttons.ubutton("🔗 RClone Link", share_url)
                 elif (INDEX_URL := config_dict['INDEX_URL']) and not rclonePath:
                     url_path = rutils.quote(f'{name}')

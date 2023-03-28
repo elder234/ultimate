@@ -22,7 +22,7 @@ from .helper.telegram_helper.bot_commands import BotCommands
 from .helper.telegram_helper.message_utils import sendMessage, editMessage, sendFile
 from .helper.telegram_helper.filters import CustomFilters
 from .helper.telegram_helper.button_build import ButtonMaker
-from .modules import authorize, list, cancel_mirror, mirror_leech, clone, status, ytdlp, rss, shell, eval, delete, count, users_settings, search, bt_select, bot_settings
+from .modules import authorize, gd_clone, gd_count, gd_delete, gd_list, cancel_mirror, mirror_leech, status, torrent_search, torrent_select, ytdlp, rss, shell, eval, users_settings, bot_settings
 
 
 def get_quotes():
@@ -244,7 +244,7 @@ async def bot_help(client, message):
 
 async def main():
     await start_cleanup()
-    await search.initiate_search_tools()
+    await torrent_search.initiate_search_tools()
     now = datetime.now(timezone(f'Asia/Jakarta'))
     date = now.strftime('%d/%m/%y')
     time = now.strftime('%I:%M:%S %p')

@@ -611,39 +611,39 @@ async def rssMonitor():
                         # Add More Information
                         try:
                             pub_date = rss_d.entries[feed_count]['pubDate']
-                        except IndexError:
+                        except:
                             pub_date = None
                         try:
                             seeders = rss_d.entries[feed_count]['seeders']
-                        except IndexError:
+                        except:
                             seeders = None
                         try:
                             leechers = rss_d.entries[feed_count]['leechers']
-                        except IndexError:
+                        except:
                             leechers = None
                         try:
                             downloads = rss_d.entries[feed_count]['downloads']
-                        except IndexError:
+                        except:
                             downloads = None
                         try:
                             info_hash = rss_d.entries[feed_count]['infoHash']
-                        except IndexError:
+                        except:
                             info_hash = None
                         try:
                             category = rss_d.entries[feed_count]['category']
-                        except IndexError:
+                        except:
                             category = None
                         try:
                             size = rss_d.entries[feed_count]['size']
-                        except IndexError:
+                        except:
                             size = None
                         try:
                             trusted = rss_d.entries[feed_count]['trusted']
-                        except IndexError:
+                        except:
                             trusted = None
                         try:
                             remake = rss_d.entries[feed_count]['remake']
-                        except IndexError:
+                        except:
                             remake = None
                         if data['last_feed'] == url or data['last_title'] == item_title:
                             break

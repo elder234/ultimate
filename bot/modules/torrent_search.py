@@ -107,14 +107,13 @@ async def __search(key, site, message, method):
             return
         msg = f"<b>Menemukan {min(total_results, TELEGRAPH_LIMIT)}</b>"
         msg += f" <b>hasil pencarian dengan kata kunci:</b>\n<code>{key}</code>\n<b>Situs Torrent:</b>\n<code>{site.capitalize()}</code>"
+        await sync_to_async(client.search_delete, search_id=search_id)
+        await sync_to_async(client.auth_log_out)
     link = await __getResult(search_results, key, message, method)
     buttons = ButtonMaker()
     buttons.ubutton("🔎 VIEW", link)
     button = buttons.build_menu(1)
     await editMessage(message, msg, button)
-    if not method.startswith('api'):
-        await sync_to_async(client.search_delete, search_id=search_id)
-    await sync_to_async(client.auth_log_out)
 
 
 async def __getResult(search_results, key, message, method):

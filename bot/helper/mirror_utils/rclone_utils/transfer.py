@@ -65,7 +65,7 @@ class RcloneTransferHelper:
             if self.__is_cancelled:
                 return
             if code not in [0, -9]:
-                await self.__listener.onDownloadError(f'while getting rclone size. Path: {rc_path}. Stderr: {err[:4090]}')
+                await self.__listener.onDownloadError(f'while getting rclone stat. Path: {rc_path}. Stderr: {err[:4090]}')
                 return
             result = loads(res)
             if result['IsDir']:
@@ -84,7 +84,7 @@ class RcloneTransferHelper:
             return
         rdict = loads(res)
         self.size = rdict['bytes']
-        if config_dict['STOP_DUPLICATE'] and not self.__listener.isLeech:
+        if config_dict['STOP_DUPLICATE'] and not self.__listener.isLeech and self.__listener.upPath == 'gd':
             LOGGER.info('Checking File/Folder if already in Drive')
             if self.__listener.isZip:
                 rname = f"{name}.zip"
@@ -150,7 +150,7 @@ class RcloneTransferHelper:
         async with download_dict_lock:
             download_dict[self.__listener.uid] = RcloneStatus(self, self.__listener.message, 'up')
         await update_all_messages()
-        rc_path = (self.__listener.upload or config_dict['RCLONE_PATH']).strip('/')
+        rc_path = self.__listener.upPath.strip('/')
         if rc_path == 'rc':
             rc_path = config_dict['RCLONE_PATH']
         if rc_path.startswith('mrcc:'):
@@ -184,8 +184,9 @@ class RcloneTransferHelper:
                 files = 1
             if remote_type == 'drive':
                 if mime_type == 'Folder':
-                    epath = rc_path.split(':', 1)[1].strip('/')
-                    epath = epath.rsplit('/', 1)[0]
+                    remote, epath = rc_path.split(':', 1)
+                    epath = epath.strip('/').rsplit('/', 1)
+                    epath = f'{remote}:{epath[0]}' if len(epath) > 1 else f'{remote}:'
                     destination = rc_path
                 elif rc_path.split(':', 1)[1]:
                     epath = f"{rc_path}/{self.name}"
@@ -241,7 +242,7 @@ class RcloneTransferHelper:
 
     async def __getUpdatedCommand(self, config_path, fpath, tpath):
         ext = '*.{' + ','.join(GLOBAL_EXTENSION_FILTER) + '}'
-        cmd = ['rclone', 'copy', '-M', '--config', config_path, '-P', fpath, tpath, '--exclude', ext, '--ignore-case']
+        cmd = ['rclone', 'copy', '--config', config_path, '-P', fpath, tpath, '--exclude', ext, '--ignore-case']
         if rcf := self.__listener.rcFlags or config_dict['RCLONE_FLAGS']:
             rcflags = rcf.split('|')
             for flag in rcflags:
