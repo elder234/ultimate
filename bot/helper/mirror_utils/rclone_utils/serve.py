@@ -7,6 +7,7 @@ from bot import config_dict, bot_loop
 
 RcloneServe = []
 
+
 async def rclone_serve_booter():
     if not config_dict['RCLONE_SERVE_URL'] or not await aiopath.exists('rclone.conf'):
         if RcloneServe:
@@ -21,7 +22,8 @@ async def rclone_serve_booter():
         contents = await f.read()
         config.read_string(contents)
     if not config.has_section('combine'):
-        upstreams = ' '.join(f'{remote}={remote}:' for remote in config.sections())
+        upstreams = ' '.join(
+            f'{remote}={remote}:' for remote in config.sections())
         config.add_section('combine')
         config.set('combine', 'type', 'combine')
         config.set('combine', 'upstreams', upstreams)
@@ -34,7 +36,7 @@ async def rclone_serve_booter():
         except:
             pass
     rcs = await create_subprocess_exec("rclone", "serve", "http", "--config", "rclone.conf", "--no-modtime",
-                                    "combine:", "--addr", f":{config_dict['RCLONE_SERVE_PORT']}", "--vfs-cache-mode", "full", "--vfs-cache-max-age", "30s")
+                                       "combine:", "--addr", f":{config_dict['RCLONE_SERVE_PORT']}", "--vfs-cache-mode", "full", "--vfs-cache-max-age", "1m0s", "--buffer-size", "64M")
     RcloneServe.append(rcs)
 
 bot_loop.run_until_complete(rclone_serve_booter())
