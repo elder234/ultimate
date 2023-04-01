@@ -161,7 +161,7 @@ def get_readable_message():
             else:
                 msg += f"\n<b>┌ Status :</b> {download.status()}"
             msg += f"\n<b>├ Ukuran : </b>{download.size()}"
-        msg += f"\n<b>├ User :</b> <a href='tg://user?id={download.message.from_user.id}'>{download.message.from_user.first_name}</a>"
+        msg += f"\n<b>├ User :</b> <code><a href='tg://user?id={download.message.from_user.id}'>{download.message.from_user.first_name}</a></code>"
         msg += f" | <b>ID :</b> <code>{download.message.from_user.id}</code>"
         msg += f"\n<b>└</b> <code>/{BotCommands.CancelMirror[0]} {download.gid()}</code>\n\n"
     if len(msg) == 0:
@@ -268,6 +268,7 @@ def is_mega_link(url):
 
 def is_rclone_path(path):
     return bool(re_match(r'^(mrcc:)?(?!magnet:)(?![- ])[a-zA-Z0-9_\. -]+(?<! ):(?!.*\/\/).*$|^rcl$', path))
+
 
 def get_mega_link_type(url):
     if "folder" in url:
