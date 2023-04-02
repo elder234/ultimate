@@ -94,13 +94,11 @@ async def rssSub(client, message, pre_event):
             up = re_split(' c: | inf: | exf: ', arg[1])[
                 0].strip() if len(arg) > 1 else None
             if inf is not None:
-                inf = inf[1].split(' exf: ')[0].split(' c: ')[0].strip()
                 filters_list = inf.split('|')
                 for x in filters_list:
                     y = x.split(' or ')
                     inf_lists.append(y)
             if exf is not None:
-                exf = exf[1].split(' inf: ')[0].split(' c: ')[0].strip()
                 filters_list = exf.split('|')
                 for x in filters_list:
                     y = x.split(' or ')
@@ -304,33 +302,33 @@ async def rssEdit(client, message, pre_event):
         exf_lists = []
         arg = item.split(' c: ', 1)
         cmd = re_split(' inf: | exf: | up: ', arg[1])[
-            0].strip() if len(arg) > 1 else ''
+            0].strip() if len(arg) > 1 else None
         arg = item.split(' inf: ', 1)
         inf = re_split(' c: | exf: | up: ', arg[1])[
-            0].strip() if len(arg) > 1 else ''
+            0].strip() if len(arg) > 1 else None
         arg = item.split(' exf: ', 1)
         exf = re_split(' c: | inf: | up: ', arg[1])[
-            0].strip() if len(arg) > 1 else ''
+            0].strip() if len(arg) > 1 else None
         arg = item.split(' up: ', 1)
         up = re_split(' c: | inf: | exf: ', arg[1])[
-            0].strip() if len(arg) > 1 else ''
+            0].strip() if len(arg) > 1 else None
         async with rss_dict_lock:
-            if up:
+            if up is not None:
                 if up.lower() == 'none':
                     up = None
                 rss_dict[user_id][title]['up_path'] = up
-            if cmd:
+            if cmd is not None:
                 if cmd.lower() == 'none':
                     cmd = None
                 rss_dict[user_id][title]['command'] = cmd
-            if inf:
+            if inf is not None:
                 if inf.lower() != 'none':
                     filters_list = inf.split('|')
                     for x in filters_list:
                         y = x.split(' or ')
                         inf_lists.append(y)
                 rss_dict[user_id][title]['inf'] = inf_lists
-            if exf:
+            if exf is not None:
                 if exf.lower() != 'none':
                     filters_list = exf.split('|')
                     for x in filters_list:
@@ -682,7 +680,7 @@ async def rssMonitor():
                     if command := data['command']:
                         up = f"up: {up_path}" if (
                             up_path := data['up_path']) else ''
-                        feed_msg = f"/{command.replace('/', '')} {url} {up}\n<b>Tag :</b> {data['tag']} | <b>ID :</b> <code>{user}</code>"
+                        feed_msg = f"/{command.replace('/', '')} {url} {up}"
                     else:
                         feed_msg = f"<b>Nama :</b>\n<code>{item_title.replace('>', '').replace('<', '')}</code>\n\n"
                         if nyaa_view:

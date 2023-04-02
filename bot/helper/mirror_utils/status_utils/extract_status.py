@@ -58,7 +58,7 @@ class ExtractStatus:
             return async_to_sync(get_path_size, self.__listener.newDir)
         else:
             return async_to_sync(get_path_size, self.__listener.dir) - self.__size
-        
+
     def download(self):
         return self
 
@@ -66,4 +66,6 @@ class ExtractStatus:
         LOGGER.info(f'Cancelling Extract: {self.__name}')
         if self.__listener.suproc is not None:
             self.__listener.suproc.kill()
+        else:
+            self.__listener.suproc = 'cancelled'
         await self.__listener.onUploadError('Extract dibatalkan oleh User!')

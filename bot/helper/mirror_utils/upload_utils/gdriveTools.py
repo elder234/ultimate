@@ -57,7 +57,7 @@ class GoogleDriveHelper:
         self.processed_bytes = 0
         self.transferred_size = 0
         self.__service_account_index = 0
-        self.__service = None
+        self.__service = self.__authorize()
 
     def speed(self):
         """
@@ -171,7 +171,6 @@ class GoogleDriveHelper:
             self.__total_time += self.__update_interval
 
     def deletefile(self, link: str):
-        self.__service = self.__authorize()
         try:
             file_id = self.__getIdFromUrl(link)
         except (KeyError, IndexError):
@@ -197,7 +196,6 @@ class GoogleDriveHelper:
             return msg
 
     def upload(self, file_name):
-        self.__service = self.__authorize()
         self.__is_uploading = True
         item_path = f"{self.__path}/{file_name}"
         LOGGER.info(f"Uploading: {item_path}")
@@ -205,7 +203,8 @@ class GoogleDriveHelper:
         try:
             if ospath.isfile(item_path):
                 mime_type = get_mime_type(item_path)
-                link = self.__upload_file(item_path, file_name, mime_type, config_dict['GDRIVE_ID'], is_dir=False)
+                link = self.__upload_file(
+                    item_path, file_name, mime_type, config_dict['GDRIVE_ID'], is_dir=False)
                 if self.__is_cancelled:
                     return
                 if link is None:
@@ -243,7 +242,7 @@ class GoogleDriveHelper:
             elif self.__is_errored:
                 return
         async_to_sync(self.__listener.onUploadComplete, link, self.__size, self.__total_files,
-                         self.__total_folders, mime_type, file_name)
+                      self.__total_folders, mime_type, file_name)
 
     def __upload_dir(self, input_directory, dest_id):
         list_dirs = listdir(input_directory)
@@ -292,7 +291,6 @@ class GoogleDriveHelper:
 
     @retry(wait=wait_exponential(multiplier=2, min=3, max=6), stop=stop_after_attempt(3),
            retry=(retry_if_exception_type(Exception)))
-    
     def __upload_file(self, file_path, file_name, mime_type, dest_id, is_dir=True):
         # File body description
         file_metadata = {
@@ -363,13 +361,12 @@ class GoogleDriveHelper:
             self.__set_permission(response['id'])
         # Define file instance and get url for download
         if not is_dir:
-            drive_file = self.__service.files().get(fileId=response['id'], supportsAllDrives=True).execute()
+            drive_file = self.__service.files().get(
+                fileId=response['id'], supportsAllDrives=True).execute()
             return self.__G_DRIVE_BASE_DOWNLOAD_URL.format(drive_file.get('id'))
         return
 
     def clone(self, link):
-        if self.__service is None:
-            self.__service = self.__authorize()
         self.__is_cloning = True
         self.__start_time = time()
         self.__total_files = 0
@@ -463,7 +460,6 @@ class GoogleDriveHelper:
 
     @retry(wait=wait_exponential(multiplier=2, min=3, max=6), stop=stop_after_attempt(3),
            retry=retry_if_exception_type(Exception))
-    
     def __copyFile(self, file_id, dest_id):
         body = {'parents': [dest_id]}
         try:
@@ -565,8 +561,6 @@ class GoogleDriveHelper:
             return {'files': []}
 
     def drive_list(self, fileName, stopDup=False, noMulti=False, isRecursive=True, itemType=""):
-        if self.__service is None:
-            self.__service = self.__authorize()
         msg = ""
         fileName = self.__escapes(str(fileName))
         contents_count = 0
@@ -650,7 +644,6 @@ class GoogleDriveHelper:
         return msg, buttons.build_menu(1)
 
     def count(self, link):
-        self.__service = self.__authorize()
         try:
             file_id = self.__getIdFromUrl(link)
         except (KeyError, IndexError):
@@ -717,7 +710,6 @@ class GoogleDriveHelper:
                 self.__gDrive_file(filee)
 
     def helper(self, link):
-        self.__service = self.__authorize()
         try:
             file_id = self.__getIdFromUrl(link)
         except (KeyError, IndexError):
@@ -753,8 +745,6 @@ class GoogleDriveHelper:
         return "", size, name, files
 
     def download(self, link):
-        if self.__service is None:
-            self.__service = self.__authorize()
         self.__is_downloading = True
         file_id = self.__getIdFromUrl(link)
         self.__updater = setInterval(self.__update_interval, self.__progress)

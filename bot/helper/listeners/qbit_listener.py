@@ -2,7 +2,7 @@
 from asyncio import Lock, sleep
 from time import time
 
-from bot import download_dict, download_dict_lock, get_client, LOGGER, QbInterval, config_dict, QbTorrents, qb_listener_lock
+from bot import download_dict, download_dict_lock, get_client, QbInterval, config_dict, QbTorrents, qb_listener_lock, LOGGER
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.mirror_utils.status_utils.qbit_status import QbittorrentStatus
 from bot.helper.telegram_helper.message_utils import update_all_messages
@@ -18,6 +18,7 @@ async def __remove_torrent(client, hash_, tag):
     await sync_to_async(client.torrents_delete_tags, tags=tag)
     await sync_to_async(client.auth_log_out)
 
+
 @new_task
 async def __onDownloadError(err, tor, button=None):
     ext_hash = tor.hash
@@ -31,6 +32,7 @@ async def __onDownloadError(err, tor, button=None):
         await listener.onDownloadError(err, button)
     await __remove_torrent(client, ext_hash, tor.tags)
 
+
 @new_task
 async def __onSeedFinish(tor):
     ext_hash = tor.hash
@@ -41,6 +43,7 @@ async def __onSeedFinish(tor):
         listener = download.listener()
         await listener.onUploadError(f"Seeding dihentikan!\nRatio: {round(tor.ratio, 3)} | Waktu: {get_readable_time(tor.seeding_time)}")
     await __remove_torrent(client, ext_hash, tor.tags)
+
 
 @new_task
 async def __stop_duplicate(tor):
@@ -59,10 +62,11 @@ async def __stop_duplicate(tor):
             except:
                 qbname = None
         if qbname is not None:
-                qbmsg, button = await sync_to_async(GoogleDriveHelper().drive_list, qbname, True)
-                if qbmsg:
-                    qbmsg = "File/Folder ini sudah ada di GDrive!\nHasil pencarian:"
-                    __onDownloadError(qbmsg, tor, button)
+            qbmsg, button = await sync_to_async(GoogleDriveHelper().drive_list, qbname, True)
+            if qbmsg:
+                qbmsg = "File/Folder ini sudah ada di GDrive!\nHasil pencarian:"
+                __onDownloadError(qbmsg, tor, button)
+
 
 @new_task
 async def __onDownloadComplete(tor):
@@ -101,6 +105,7 @@ async def __onDownloadComplete(tor):
     else:
         await __remove_torrent(client, ext_hash, tag)
 
+
 async def __qb_listener():
     client = await sync_to_async(get_client)
     async with qb_listener_lock:
@@ -119,7 +124,8 @@ async def __qb_listener():
                     TORRENT_TIMEOUT = config_dict['TORRENT_TIMEOUT']
                     QbTorrents[tag]['stalled_time'] = time()
                     if TORRENT_TIMEOUT and time() - tor_info.added_on >= TORRENT_TIMEOUT:
-                        __onDownloadError("Torrent Mati! (0 Seeders)", tor_info)
+                        __onDownloadError(
+                            "Torrent Mati! (0 Seeders)", tor_info)
                     else:
                         await sync_to_async(client.torrents_reannounce, torrent_hashes=tor_info.hash)
                 elif state == "downloading":
@@ -137,13 +143,15 @@ async def __qb_listener():
                         await sync_to_async(client.torrents_recheck, torrent_hashes=tor_info.hash)
                         QbTorrents[tag]['rechecked'] = True
                     elif TORRENT_TIMEOUT and time() - QbTorrents[tag]['stalled_time'] >= TORRENT_TIMEOUT:
-                        __onDownloadError("Torrent Mati! (0 Seeders)", tor_info)
+                        __onDownloadError(
+                            "Torrent Mati! (0 Seeders)", tor_info)
                     else:
                         await sync_to_async(client.torrents_reannounce, torrent_hashes=tor_info.hash)
                 elif state == "missingFiles":
                     await sync_to_async(client.torrents_recheck, torrent_hashes=tor_info.hash)
                 elif state == "error":
-                    __onDownloadError("No enough space for this torrent on device", client, tor_info)
+                    __onDownloadError(
+                        "Penyimpanan bot tidak cukup!", tor_info)
                 elif tor_info.completion_on != 0 and not QbTorrents[tag]['uploaded'] and \
                         state not in ['checkingUP', 'checkingDL', 'checkingResumeData']:
                     QbTorrents[tag]['uploaded'] = True
@@ -156,9 +164,11 @@ async def __qb_listener():
         finally:
             await sync_to_async(client.auth_log_out)
 
+
 async def onDownloadStart(tag):
     async with qb_listener_lock:
-        QbTorrents[tag] = {'stalled_time': time(), 'stop_dup_check': False, 'rechecked': False, 'uploaded': False, 'seeding': False}
+        QbTorrents[tag] = {'stalled_time': time(
+        ), 'stop_dup_check': False, 'rechecked': False, 'uploaded': False, 'seeding': False}
         if not QbInterval:
             periodic = setInterval(5, __qb_listener)
             QbInterval.append(periodic)

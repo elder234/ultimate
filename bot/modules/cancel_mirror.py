@@ -17,14 +17,13 @@ async def cancel_mirror(client, message):
     if len(msg) > 1:
         gid = msg[1]
         dl = await getDownloadByGid(gid)
-        if not dl:
+        if dl is None:
             await sendMessage(message, f"Tugas dengan GDrive ID <code>{gid}</code> tidak ditemukan!")
             return
     elif reply_to_id := message.reply_to_message_id:
-        omsg_id = reply_to_id
         async with download_dict_lock:
-            dl = download_dict.get(omsg_id, None)
-        if not dl:
+            dl = download_dict.get(reply_to_id, None)
+        if dl is None:
             await sendMessage(message, "Bukan tugas aktif!")
             return
     elif len(msg) == 1:
@@ -43,13 +42,14 @@ async def cancel_mirror(client, message):
 
 @new_task
 async def cancel_all(status):
-    gid = ''
-    while dl := await getAllDownload(status):
-        if dl.gid() != gid:
-            gid = dl.gid()
-            obj = dl.download()
-            await obj.cancel_download()
-            await sleep(1)
+    matches = await getAllDownload(status)
+    if not matches:
+        return False
+    for dl in matches:
+        obj = dl.download()
+        await obj.cancel_download()
+        await sleep(1)
+    return True
 
 
 @new_task
@@ -80,12 +80,15 @@ async def cancell_all_buttons(client, message):
 async def cancel_all_update(client, query):
     data = query.data.split()
     message = query.message
+    reply_to = message.reply_to_message
     await query.answer()
     if data[1] == 'close':
-        await message.reply_to_message.delete()
+        await reply_to.delete()
         await message.delete()
     else:
-        await cancel_all(data[1])
+        res = await cancel_all(data[1])
+        if not res:
+            await sendMessage(reply_to, f"Tugas {data[1]} tidak ditemukan!")
 
 
 bot.add_handler(MessageHandler(cancel_mirror, filters=command(

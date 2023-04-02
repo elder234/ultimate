@@ -16,14 +16,13 @@ async def select(client, message):
     if len(msg) > 1:
         gid = msg[1]
         dl = await getDownloadByGid(gid)
-        if not dl:
+        if dl is None:
             await sendMessage(message, f"Tugas dengan GDrive ID <code>{gid}</code> tidak ditemukan!")
             return
     elif reply_to_id := message.reply_to_message_id:
-        omsg_id = reply_to_id
         async with download_dict_lock:
-            dl = download_dict.get(omsg_id, None)
-        if not dl:
+            dl = download_dict.get(reply_to_id, None)
+        if dl is None:
             await sendMessage(message, "Bukan tugas aktif!")
             return
     elif len(msg) == 1:
@@ -72,7 +71,7 @@ async def get_confirm(client, query):
     data = query.data.split()
     message = query.message
     dl = await getDownloadByGid(data[2])
-    if not dl:
+    if dl is None:
         await query.answer("Tugas dibatalkan oleh User!", show_alert=True)
         await message.delete()
         return

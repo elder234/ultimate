@@ -174,7 +174,7 @@ USER_SESSION_STRING = environ.get('USER_SESSION_STRING', '')
 if len(USER_SESSION_STRING) != 0:
     log_info("Creating client from USER_SESSION_STRING")
     user = tgClient('user', TELEGRAM_API, TELEGRAM_HASH, session_string=USER_SESSION_STRING,
-                    parse_mode=enums.ParseMode.HTML, no_updates=True).start()
+                    parse_mode=enums.ParseMode.HTML, no_updates=True, max_concurrent_transmissions=1000).start()
     IS_PREMIUM_USER = user.me.is_premium
 
 MEGA_API_KEY = environ.get('MEGA_API_KEY', '')
@@ -313,7 +313,17 @@ if len(RCLONE_SERVE_URL) == 0:
     RCLONE_SERVE_URL = ''
 
 RCLONE_SERVE_PORT = environ.get('RCLONE_SERVE_PORT', '')
-RCLONE_SERVE_PORT = 8080 if len(RCLONE_SERVE_PORT) == 0 else int(RCLONE_SERVE_PORT)
+RCLONE_SERVE_PORT = 8080 if len(
+    RCLONE_SERVE_PORT) == 0 else int(RCLONE_SERVE_PORT)
+
+RCLONE_SERVE_USER = environ.get('RCLONE_SERVE_USER', '')
+if len(RCLONE_SERVE_USER) == 0:
+    RCLONE_SERVE_USER = ''
+
+RCLONE_SERVE_PASS = environ.get('RCLONE_SERVE_PASS', '')
+if len(RCLONE_SERVE_PASS) == 0:
+    RCLONE_SERVE_PASS = ''
+
 
 config_dict = {'AS_DOCUMENT': AS_DOCUMENT,
                'AUTHORIZED_CHATS': AUTHORIZED_CHATS,
@@ -345,7 +355,9 @@ config_dict = {'AS_DOCUMENT': AS_DOCUMENT,
                'QUEUE_UPLOAD': QUEUE_UPLOAD,
                'RCLONE_FLAGS': RCLONE_FLAGS,
                'RCLONE_PATH': RCLONE_PATH,
-                'RCLONE_SERVE_URL': RCLONE_SERVE_URL,
+               'RCLONE_SERVE_URL': RCLONE_SERVE_URL,
+               'RCLONE_SERVE_USER': RCLONE_SERVE_USER,
+               'RCLONE_SERVE_PASS': RCLONE_SERVE_PASS,
                'RCLONE_SERVE_PORT': RCLONE_SERVE_PORT,
                'RSS_CHAT_ID': RSS_CHAT_ID,
                'RSS_DELAY': RSS_DELAY,
@@ -388,9 +400,11 @@ if ospath.exists('list_drives.txt'):
 log_info("Running Web Server...")
 try:
     PORT = environ.get('PORT')
-    Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{PORT}", shell=True)
+    Popen(
+        f"gunicorn web.wserver:app --bind 0.0.0.0:{PORT} --worker-class gevent", shell=True)
 except:
-    Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{BASE_URL_PORT}", shell=True)
+    Popen(
+        f"gunicorn web.wserver:app --bind 0.0.0.0:{BASE_URL_PORT} --worker-class gevent", shell=True)
 
 log_info("Running QBittorrent...")
 srun(["firefox", "-d", f"--profile={getcwd()}"])
@@ -451,7 +465,8 @@ if not aria2_options:
     aria2_options = aria2.client.get_global_option()
     del aria2_options['dir']
 else:
-    a2c_glo = {op: aria2_options[op] for op in aria2c_global if op in aria2_options}
+    a2c_glo = {op: aria2_options[op]
+               for op in aria2c_global if op in aria2_options}
     aria2.set_global_options(a2c_glo)
 
 qb_client = get_client()
@@ -470,7 +485,7 @@ else:
 
 log_info("Creating client from BOT_TOKEN")
 bot = tgClient('bot', TELEGRAM_API, TELEGRAM_HASH,
-               bot_token=BOT_TOKEN, parse_mode=enums.ParseMode.HTML).start()
+               bot_token=BOT_TOKEN, parse_mode=enums.ParseMode.HTML, max_concurrent_transmissions=1000).start()
 bot_loop = bot.loop
 bot_name = bot.me.username
 scheduler = AsyncIOScheduler(timezone=str(
