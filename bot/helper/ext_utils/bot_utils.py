@@ -140,7 +140,8 @@ def get_readable_message():
             else:
                 msg += f"\n<b>┌ Status :</b> {download.status()}"
             msg += f"\n<b>├ Ukuran : </b>{download.size()}"
-        msg += f"\n<b>├ User :</b> <code><a href='tg://user?id={download.message.from_user.id}'>{download.message.from_user.first_name}</a></code>"
+        # <a href='tg://user?id={download.message.from_user.id}'>{download.message.from_user.first_name}</a>
+        msg += f"\n<b>├ User :</b> <code>{download.message.from_user.first_name}</code>"
         msg += f" | <b>ID :</b> <code>{download.message.from_user.id}</code>"
         msg += f"\n<b>└</b> <code>/{BotCommands.CancelMirror[0]} {download.gid()}</code>\n\n"
     if len(msg) == 0:
