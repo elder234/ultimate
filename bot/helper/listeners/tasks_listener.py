@@ -402,7 +402,7 @@ class MirrorLeechListener:
             count = len(download_dict)
             if self.uid in self.sameDir:
                 self.sameDir.remove(self.uid)
-        msg = f"<b>Hai {self.tag}!</b>\n<b>Tugasmu dihentikan karena:</b>\n<code>{escape(error)}</code>"
+        msg = f"<b>Hai {self.tag}!</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{escape(error)}</code>"
         await sendMessage(self.message, msg, button)
         if count == 0:
             await self.clean()
@@ -436,7 +436,7 @@ class MirrorLeechListener:
             count = len(download_dict)
             if self.uid in self.sameDir:
                 self.sameDir.remove(self.uid)
-        msg = f"<b>Hai {self.tag}!</b>\n<b>Tugasmu dihentikan karena:</b>\n<code>{escape(error)}</code>"
+        msg = f"<b>Hai {self.tag}!</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{escape(error)}</code>"
         await sendMessage(self.message, msg)
         if count == 0:
             await self.clean()

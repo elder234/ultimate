@@ -426,7 +426,7 @@ class GoogleDriveHelper:
                 err = err.last_attempt.exception()
             err = str(err).replace('>', '').replace('<', '')
             if "User rate limit exceeded" or "userRateLimitExceeded" in err:
-                msg = "Limit harian file tercapai! Coba lagi kapan kapan :D"
+                msg = "Limit harian file tercapai!\nCoba lagi kapan kapan :D"
             elif "File not found" in err:
                 token_service = self.__alt_authorize()
                 if token_service is not None:
@@ -763,7 +763,7 @@ class GoogleDriveHelper:
                 err = err.last_attempt.exception()
             err = str(err).replace('>', '').replace('<', '')
             if "downloadQuotaExceeded" in err:
-                err = "Limit harian file tercapai! Coba lagi kapan kapan :D"
+                err = "Limit harian file tercapai!\nCoba lagi kapan kapan :D"
             elif "File not found" in err:
                 token_service = self.__alt_authorize()
                 if token_service is not None:
