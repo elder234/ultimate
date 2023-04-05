@@ -110,7 +110,7 @@ async def __qb_listener():
                         QbTorrents[tag]['stalled_time'] = time()
                         if TORRENT_TIMEOUT and time() - tor_info.added_on >= TORRENT_TIMEOUT:
                             __onDownloadError(
-                                client, "Dead Torrent!", tor_info)
+                                client, "Torrent Mati! (0 Seeders)", tor_info)
                         else:
                             await sync_to_async(client.torrents_reannounce, torrent_hashes=tor_info.hash)
                     elif state == "downloading":
