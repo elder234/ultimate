@@ -57,7 +57,7 @@ async def cancell_all_buttons(client, message):
     async with download_dict_lock:
         count = len(download_dict)
     if count == 0:
-        await sendMessage(message, "Tidak ada tugas aktif!")
+        await sendMessage(message, "Tidak ada Tugas Aktif!")
         return
     buttons = button_build.ButtonMaker()
     buttons.ibutton("Downloading", f"canall {MirrorStatus.STATUS_DOWNLOADING}")
@@ -72,7 +72,7 @@ async def cancell_all_buttons(client, message):
     buttons.ibutton("All", "canall all")
     buttons.ibutton("Close", "canall close")
     button = buttons.build_menu(2)
-    can_msg = await sendMessage(message, 'Pilih jenis tugas yang ingin dibatalkan:', button)
+    can_msg = await sendMessage(message, '<b>Pilih jenis tugas yang ingin dibatalkan :</b>', button)
     await auto_delete_message(message, can_msg)
 
 
