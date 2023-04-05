@@ -68,14 +68,14 @@ async def get_user_settings(from_user):
     rccmsg = "Exists" if await aiopath.exists(rclone_path) else "Not Exists"
 
     buttons.ibutton("Close", f"userset {user_id} close")
-    text = f"<u>Settings for {name}</u>\n"\
-           f"Leech Type is <b>{ltype}</b>\n"\
-           f"Custom Thumbnail <b>{thumbmsg}</b>\n"\
-           f"Rclone Config <b>{rccmsg}</b>\n"\
-           f"Leech Split Size is <b>{split_size}</b>\n"\
-           f"Equal Splits is <b>{equal_splits}</b>\n"\
-           f"Media Group is <b>{media_group}</b>\n"\
-           f"YT-DLP Quality is <b><code>{escape(ytq)}</code></b>"
+    text = f"<u>Pengaturan untuk user {name}</u>\n"\
+           f"<b>Leech Type :</b> <code>{ltype}</code>\n"\
+           f"<b>Custom Thumbnail :</b> <code>{thumbmsg}</code>\n"\
+           f"<b>RClone Config :</b> <code>{rccmsg}</code>\n"\
+           f"<b>Leech Split Size :</b> <code>{split_size}</code>\n"\
+           f"<b>Equal Splits :</b> <code>{equal_splits}</code>\n"\
+           f"<b>Media Group is </b> <code>{media_group}</code>\n"\
+           f"<b>YT-DLP Quality :</b> <code>{escape(ytq)}</code>"
     return text, buttons.build_menu(1)
 
 

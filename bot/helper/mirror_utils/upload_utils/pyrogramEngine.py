@@ -207,7 +207,7 @@ class TgUploader:
         if self.__listener.seed and not self.__listener.newDir:
             await clean_unwanted(self.__path)
         if self.__total_files == 0:
-            await self.__listener.onUploadError("Tidak ada file untuk diunggah!")
+            await self.__listener.onUploadError("Tidak ada file untuk diunggah ke telegram!")
             return
         if self.__total_files <= self.__corrupted:
             await self.__listener.onUploadError('File rusak atau mungkin berisi file yang diblokir di bot ini!')

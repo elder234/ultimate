@@ -81,7 +81,7 @@ async def cloneNode(client, message):
                 return
         __run_multi()
         if files <= 20:
-            msg = await sendMessage(message, f"<b>Mengclone:</b>\n<code>{link}</code>")
+            msg = await sendMessage(message, f"<b>Mengclone :</b>\n<code>{link}</code>")
             result, button = await sync_to_async(gd.clone, link)
             await deleteMessage(msg)
         else:

@@ -29,12 +29,16 @@ async def countNode(client, message):
             else:
                 tag = reply_to.from_user.mention
     if is_gdrive_link(link):
-        msg = await sendMessage(message, f"<b>Menghitung:</b>\n<code>{link}</code>")
+        msg = await sendMessage(message, f"<b>Menghitung :</b>\n<code>{link}</code>")
         gd = GoogleDriveHelper()
         result = await sync_to_async(gd.count, link)
         await deleteMessage(msg)
-        cc = f'\n\n<b>Oleh:</b> {tag}'
-        await sendMessage(message, result + cc)
+        cc = f'\n\n<b>Oleh :</b> {tag}'
+        cc2 = f'\n\n{tag}'
+        if "Nama" in result:
+            await sendMessage(message, result + cc)
+        else:
+            await sendMessage(message, result + cc2)
     else:
         msg = 'Send Gdrive link along with command or by replying to the link by command'
         await sendMessage(message, msg)

@@ -40,9 +40,9 @@ async def unauthorize(client, message):
         update_user_ldata(id_, 'is_auth', False)
         if DATABASE_URL:
             await DbManger().update_user_data(id_)
-        msg = '😉 Berhasil tidak diautorisasi!'
+        msg = '😉 Berhasil diunautorisasi!'
     else:
-        msg = '🙃 Sudah tidak diautorisasi!'
+        msg = '🙃 Sudah diunautorisasi!'
     await sendMessage(message, msg)
 
 

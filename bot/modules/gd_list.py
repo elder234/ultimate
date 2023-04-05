@@ -44,10 +44,10 @@ async def select_type(client, query):
         await query.answer()
         isRecursive = not bool(eval(data[3]))
         buttons = await list_buttons(user_id, isRecursive)
-        return await editMessage(message, 'Pilih tipe yang mau dicari:', buttons)
+        return await editMessage(message, '<b>Pilih tipe yang mau dicari :</b>', buttons)
     elif data[2] == 'cancel':
         await query.answer()
-        return await editMessage(message, "Pencarian dibatalkan!")
+        return await editMessage(message, "<b>Pencarian dibatalkan!</b>")
     await query.answer()
     item_type = data[2]
     isRecursive = eval(data[3])
@@ -57,10 +57,10 @@ async def select_type(client, query):
 
 async def drive_list(client, message):
     if len(message.text.split()) == 1:
-        return await sendMessage(message, 'Send a search key along with command')
+        return await sendMessage(message, '<b>Kirim perintah disertai dengan kata kunci!</b>')
     user_id = message.from_user.id
     buttons = await list_buttons(user_id)
-    await sendMessage(message, 'Pilih tipe yang mau dicari:', buttons)
+    await sendMessage(message, '<b>Pilih tipe yang mau dicari :</b>', buttons)
 
 bot.add_handler(MessageHandler(drive_list, filters=command(
     BotCommands.ListCommand) & CustomFilters.authorized))

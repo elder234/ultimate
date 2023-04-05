@@ -76,15 +76,15 @@ async def __search(key, site, message, method):
                 async with c.get(api) as res:
                     search_results = await res.json()
             if 'error' in search_results or search_results['total'] == 0:
-                await editMessage(message, f"<b>Pencarian dengan kata kunci</b> <code>{key}</code> <b>tidak ditemukan</b>\n<b>Situs Torrent:</b>\n<code>{SITES.get(site)}</code>")
+                await editMessage(message, f"<b>Pencarian dengan kata kunci</b> <code>{key}</code> <b>tidak ditemukan</b>\n<b>Situs Torrent :</b>\n<code>{SITES.get(site)}</code>")
                 return
             msg = f"<b>Menemukan {min(search_results['total'], TELEGRAPH_LIMIT)}</b>"
             if method == 'apitrend':
-                msg += f" <b>Trending Torrent</b>\n<b>Situs Torrent:</b>\n<code>{SITES.get(site)}</code>"
+                msg += f" <b>Trending Torrent</b>\n<b>Situs Torrent :</b>\n<code>{SITES.get(site)}</code>"
             elif method == 'apirecent':
-                msg += f" <b>Recent Torrent\n<b>Situs Torrent:</b>\n<code>{SITES.get(site)}</code>"
+                msg += f" <b>Recent Torrent\n<b>Situs Torrent :</b>\n<code>{SITES.get(site)}</code>"
             else:
-                msg += f" <b>hasil pencarian kata kunci:</b>/\n<code>{key}</code>\n<b>Situs Torrent:</b>\n<code>{SITES.get(site)}</code>"
+                msg += f" <b>hasil pencarian kata kunci :</b>/\n<code>{key}</code>\n<b>Situs Torrent :</b>\n<code>{SITES.get(site)}</code>"
             search_results = search_results['data']
         except Exception as e:
             await editMessage(message, str(e))
@@ -103,10 +103,10 @@ async def __search(key, site, message, method):
         search_results = dict_search_results.results
         total_results = dict_search_results.total
         if total_results == 0:
-            await editMessage(message, f"<b>Pencarian dengan kata kunci</b> <code>{key}</code> <b>tidak ditemukan</b>\n<b>Situs Torrent:</b>\n<code>{site.capitalize()}</code>")
+            await editMessage(message, f"<b>Pencarian dengan kata kunci</b> <code>{key}</code> <b>tidak ditemukan</b>\n<b>Situs Torrent :</b>\n<code>{site.capitalize()}</code>")
             return
         msg = f"<b>Menemukan {min(total_results, TELEGRAPH_LIMIT)}</b>"
-        msg += f" <b>hasil pencarian dengan kata kunci:</b>\n<code>{key}</code>\n<b>Situs Torrent:</b>\n<code>{site.capitalize()}</code>"
+        msg += f" <b>hasil pencarian dengan kata kunci :</b>\n<code>{key}</code>\n<b>Situs Torrent :</b>\n<code>{site.capitalize()}</code>"
         await sync_to_async(client.search_delete, search_id=search_id)
         await sync_to_async(client.auth_log_out)
     link = await __getResult(search_results, key, message, method)
@@ -142,9 +142,9 @@ async def __getResult(search_results, key, message, method):
                             msg += f"<a href='http://t.me/share/url?url={subres['magnet']}'>Telegram</a><br>"
                     msg += '<br>'
                 else:
-                    msg += f"<b>Size: </b>{result['size']}<br>"
+                    msg += f"<b>Size :</b> {result['size']}<br>"
                     try:
-                        msg += f"<b>Seeders: </b>{result['seeders']} | <b>Leechers: </b>{result['leechers']}<br>"
+                        msg += f"<b>Seeders :</b> {result['seeders']} | <b>Leechers :</b> {result['leechers']}<br>"
                     except:
                         pass
                     if 'torrent' in result.keys():
@@ -158,8 +158,8 @@ async def __getResult(search_results, key, message, method):
                 continue
         else:
             msg += f"<a href='{result.descrLink}'>{escape(result.fileName)}</a><br>"
-            msg += f"<b>Size: </b>{get_readable_file_size(result.fileSize)}<br>"
-            msg += f"<b>Seeders: </b>{result.nbSeeders} | <b>Leechers: </b>{result.nbLeechers}<br>"
+            msg += f"<b>Size : </b> {get_readable_file_size(result.fileSize)}<br>"
+            msg += f"<b>Seeders : </b> {result.nbSeeders} | <b>Leechers : </b> {result.nbLeechers}<br>"
             link = result.fileUrl
             if link.startswith('magnet:'):
                 msg += f"<b>Share Magnet to</b> <a href='http://t.me/share/url?url={quote(link)}'>Telegram</a><br><br>"
@@ -176,11 +176,11 @@ async def __getResult(search_results, key, message, method):
     if msg != "":
         telegraph_content.append(msg)
 
-    await editMessage(message, f"<b>Membuat</b> {len(telegraph_content)} <b>Halaman telegraph</b>")
+    await editMessage(message, f"<b>Membuat</b> <code>{len(telegraph_content)}</code> <b>Halaman telegraph</b>")
     path = [(await telegraph.create_page(title='KQRM Mirror Search',
                                          content=content))["path"] for content in telegraph_content]
     if len(path) > 1:
-        await editMessage(message, f"<b>Mengedit</b> {len(telegraph_content)} <b>Halaman telegraph</b>")
+        await editMessage(message, f"<b>Mengedit</b> <code>{len(telegraph_content)}</code> <b>Halaman telegraph</b>")
         await telegraph.edit_telegraph(path, telegraph_content)
     return f"https://telegra.ph/{path[0]}"
 
@@ -215,27 +215,27 @@ async def torrentSearch(client, message):
     key = message.text.split()
     SEARCH_PLUGINS = config_dict['SEARCH_PLUGINS']
     if SITES is None and not SEARCH_PLUGINS:
-        await sendMessage(message, "Api atau Plugin tidak tersedia!")
+        await sendMessage(message, "<b>Api atau Plugin tidak tersedia!</b>")
     elif len(key) == 1 and SITES is None:
-        await sendMessage(message, "Kirim perintah disertai dengan kata kunci")
+        await sendMessage(message, "<b>Kirim perintah disertai dengan kata kunci!</b>")
     elif len(key) == 1:
         buttons.ibutton('Trending', f"torser {user_id} apitrend")
         buttons.ibutton('Recent', f"torser {user_id} apirecent")
         buttons.ibutton("Cancel", f"torser {user_id} cancel")
         button = buttons.build_menu(2)
-        await sendMessage(message, "Kirim perintah disertai dengan kata kunci", button)
+        await sendMessage(message, "<b>Kirim perintah disertai dengan kata kunci!</b>", button)
     elif SITES is not None and SEARCH_PLUGINS:
         buttons.ibutton('Api', f"torser {user_id} apisearch")
         buttons.ibutton('Plugins', f"torser {user_id} plugin")
         buttons.ibutton("Cancel", f"torser {user_id} cancel")
         button = buttons.build_menu(2)
-        await sendMessage(message, 'Pilih alat untuk mencari:', button)
+        await sendMessage(message, '<b>Pilih alat untuk mencari :</b>', button)
     elif SITES is not None:
         button = __api_buttons(user_id, "apisearch")
-        await sendMessage(message, 'Pilih situs untuk dicari | API:', button)
+        await sendMessage(message, '<b>Pilih situs untuk dicari | API :</b>', button)
     else:
         button = await __plugin_buttons(user_id)
-        await sendMessage(message, 'Pilih situs untuk dicari | Plugins:', button)
+        await sendMessage(message, '<b>Pilih situs untuk dicari | Plugins :</b>', button)
 
 
 @new_task

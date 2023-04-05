@@ -191,7 +191,7 @@ async def _ytdl(client, message, isZip=False, isLeech=False, sameDir={}):
             buttons.ibutton("Best Audios", f"qu {msg_id} {best_audio} t")
             buttons.ibutton("Cancel", f"qu {msg_id} cancel")
             YTBUTTONS = buttons.build_menu(3)
-            bmsg = await sendMessage(message, 'Pilih kualitas Video Playlist:', YTBUTTONS)
+            bmsg = await sendMessage(message, '<b>Pilih kualitas Video Playlist :</b>', YTBUTTONS)
         else:
             formats = result.get('formats')
             is_m4a = False
@@ -246,7 +246,7 @@ async def _ytdl(client, message, isZip=False, isLeech=False, sameDir={}):
             buttons.ibutton("Best Audio", f"qu {msg_id} {best_audio}")
             buttons.ibutton("Cancel", f"qu {msg_id} cancel")
             YTBUTTONS = buttons.build_menu(2)
-            bmsg = await sendMessage(message, 'Pilih kualitas Video:', YTBUTTONS)
+            bmsg = await sendMessage(message, '<b>Pilih kualitas Video :</b>', YTBUTTONS)
 
         listener_dict[msg_id] = [listener, user_id, link,
                                  name, YTBUTTONS, opt, formats_dict, path]
@@ -263,7 +263,7 @@ async def _qual_subbuttons(task_id, b_name, msg):
     buttons.ibutton("Back", f"qu {task_id} back")
     buttons.ibutton("Cancel", f"qu {task_id} cancel")
     SUBBUTTONS = buttons.build_menu(2)
-    await editMessage(msg, f"Pilih kualitas Audio Bitrate untuk <b>{b_name}</b>:", SUBBUTTONS)
+    await editMessage(msg, f"<b>Pilih kualitas Audio Bitrate untuk</b> <code>{b_name}</code> <b>:</b>", SUBBUTTONS)
 
 
 async def _mp3_subbuttons(task_id, msg, playlist=False):
@@ -280,7 +280,7 @@ async def _mp3_subbuttons(task_id, msg, playlist=False):
     buttons.ibutton("Back", f"qu {task_id} back")
     buttons.ibutton("Cancel", f"qu {task_id} cancel")
     SUBBUTTONS = buttons.build_menu(2)
-    await editMessage(msg, f"Pilih kualitas Audio{i} Bitrate:", SUBBUTTONS)
+    await editMessage(msg, f"<b>Pilih kualitas Audio{i} Bitrate :</b>", SUBBUTTONS)
 
 
 @new_task
@@ -296,7 +296,7 @@ async def select_format(client, query):
         return
     uid = task_info[1]
     if user_id != uid and not await CustomFilters.sudo(client, query):
-        await query.answer(text="This task is not for you!", show_alert=True)
+        await query.answer(text="Bukan tugas darimu!", show_alert=True)
         return
     elif data[2] == "dict":
         await query.answer()
@@ -305,7 +305,7 @@ async def select_format(client, query):
         return
     elif data[2] == "back":
         await query.answer()
-        await editMessage(message, 'Pilih kualitas Video:', task_info[4])
+        await editMessage(message, '<b>Pilih kualitas Video :</b>', task_info[4])
         return
     elif data[2] == "mp3":
         await query.answer()
