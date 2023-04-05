@@ -14,12 +14,13 @@ from bot.helper.ext_utils.fs_utils import get_base_name, get_path_size, clean_do
     is_first_archive_split, is_archive, is_archive_split
 from bot.helper.ext_utils.leech_utils import split_file
 from bot.helper.ext_utils.exceptions import NotSupportedExtractionArchive
-from bot.helper.ext_utils.queued_starter import start_from_queued
+from bot.helper.ext_utils.task_manager import start_from_queued
 from bot.helper.mirror_utils.status_utils.extract_status import ExtractStatus
 from bot.helper.mirror_utils.status_utils.zip_status import ZipStatus
 from bot.helper.mirror_utils.status_utils.split_status import SplitStatus
-from bot.helper.mirror_utils.status_utils.upload_status import UploadStatus
-from bot.helper.mirror_utils.status_utils.tg_upload_status import TgUploadStatus
+from bot.helper.mirror_utils.status_utils.gdrive_status import GdriveStatus
+from bot.helper.mirror_utils.status_utils.telegram_status import TelegramStatus
+from bot.helper.mirror_utils.status_utils.rclone_status import RcloneStatus
 from bot.helper.mirror_utils.status_utils.queue_status import QueueStatus
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.mirror_utils.upload_utils.pyrogramEngine import TgUploader
@@ -271,25 +272,31 @@ class MirrorLeechListener:
             for s in m_size:
                 size = size - s
             LOGGER.info(f"Leech Name: {up_name}")
-            tg = TgUploader(up_name, up_dir, size, self)
-            tg_upload_status = TgUploadStatus(tg, size, gid, self.message)
+            tg = TgUploader(up_name, up_dir, self)
+            tg_upload_status = TelegramStatus(
+                tg, size, self.message, gid, 'up')
             async with download_dict_lock:
                 download_dict[self.uid] = tg_upload_status
             await update_all_messages()
-            await tg.upload(o_files, m_size)
+            await tg.upload(o_files, m_size, size)
         elif self.upPath == 'gd':
             size = await get_path_size(path)
             LOGGER.info(f"Upload Name: {up_name}")
-            drive = GoogleDriveHelper(up_name, up_dir, size, self)
-            upload_status = UploadStatus(drive, size, gid, self.message)
+            drive = GoogleDriveHelper(up_name, up_dir, self)
+            upload_status = GdriveStatus(drive, size, self.message, gid, 'up')
             async with download_dict_lock:
                 download_dict[self.uid] = upload_status
             await update_all_messages()
-            await sync_to_async(drive.upload, up_name)
+            await sync_to_async(drive.upload, up_name, size)
         else:
             size = await get_path_size(path)
             LOGGER.info(f"Upload Name: {up_name}")
-            await RcloneTransferHelper(self, up_name, size, gid).upload(path)
+            RCTransfer = RcloneTransferHelper(self, up_name)
+            async with download_dict_lock:
+                download_dict[self.uid] = RcloneStatus(
+                    RCTransfer, self.message, size, gid, 'up')
+            await update_all_messages()
+            await RCTransfer.upload(path, size)
 
     async def onUploadComplete(self, link, size, files, folders, typ, name, rclonePath=''):
         if self.isSuperGroup and config_dict['INCOMPLETE_TASK_NOTIFIER'] and DATABASE_URL:

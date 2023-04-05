@@ -23,12 +23,10 @@ from bot.helper.ext_utils.bot_utils import async_to_sync, get_readable_file_size
 LOGGER = getLogger(__name__)
 getLogger('googleapiclient.discovery').setLevel(ERROR)
 
-SERVICE_ACCOUNTS_NUMBER = 100
-
 
 class GoogleDriveHelper:
 
-    def __init__(self, name=None, path=None, size=0, listener=None):
+    def __init__(self, name=None, path=None, listener=None):
         self.__G_DRIVE_TOKEN_FILE = "token.pickle"
         self.__OAUTH_SCOPE = ['https://www.googleapis.com/auth/drive']
         self.__G_DRIVE_DIR_MIME_TYPE = "application/vnd.google-apps.folder"
@@ -39,7 +37,6 @@ class GoogleDriveHelper:
         self.__total_bytes = 0
         self.__total_files = 0
         self.__total_folders = 0
-        self.__sa_count = 0
         self.__start_time = 0
         self.__total_time = 0
         self.__alt_auth = False
@@ -51,19 +48,16 @@ class GoogleDriveHelper:
         self.__status = None
         self.__updater = None
         self.__update_interval = 3
-        self.__size = size
+        self.__sa_index = 0
+        self.__sa_count = 1
+        self.__sa_number = 100
+        self.__service = self.__authorize()
         self._file_processed_bytes = 0
         self.name = name
         self.processed_bytes = 0
         self.transferred_size = 0
-        self.__service_account_index = 0
-        self.__service = self.__authorize()
 
     def speed(self):
-        """
-        It calculates the average upload speed and returns it in bytes/seconds unit
-        :return: Upload speed in bytes/second
-        """
         try:
             return self.processed_bytes / self.__total_time
         except:
@@ -80,14 +74,13 @@ class GoogleDriveHelper:
         credentials = None
         if config_dict['USE_SERVICE_ACCOUNTS']:
             json_files = listdir("accounts")
-            globals()['SERVICE_ACCOUNTS_NUMBER'] = len(json_files)
+            self.__sa_number = len(json_files)
             if self.__sa_count == 0:
-                self.__service_account_index = randrange(
-                    SERVICE_ACCOUNTS_NUMBER)
+                self.__sa_index = randrange(self.__sa_number)
             LOGGER.info(
-                f"Authorizing with {json_files[self.__service_account_index]} service account")
+                f"Authorizing with {json_files[self.__sa_index]} service account")
             credentials = service_account.Credentials.from_service_account_file(
-                f'accounts/{json_files[self.__service_account_index]}',
+                f'accounts/{json_files[self.__sa_index]}',
                 scopes=self.__OAUTH_SCOPE)
         elif ospath.exists(self.__G_DRIVE_TOKEN_FILE):
             LOGGER.info("Authorize with token.pickle")
@@ -109,12 +102,12 @@ class GoogleDriveHelper:
         return None
 
     def __switchServiceAccount(self):
-        if self.__service_account_index == SERVICE_ACCOUNTS_NUMBER - 1:
-            self.__service_account_index = 0
+        if self.__sa_index == self.__sa_number - 1:
+            self.__sa_index = 0
         else:
-            self.__service_account_index += 1
+            self.__sa_index += 1
         self.__sa_count += 1
-        LOGGER.info(f"Switching to {self.__service_account_index} index")
+        LOGGER.info(f"Switching to {self.__sa_index} index")
         self.__service = self.__authorize()
 
     @staticmethod
@@ -195,7 +188,7 @@ class GoogleDriveHelper:
         finally:
             return msg
 
-    def upload(self, file_name):
+    def upload(self, file_name, size):
         self.__is_uploading = True
         item_path = f"{self.__path}/{file_name}"
         LOGGER.info(f"Uploading: {item_path}")
@@ -209,7 +202,7 @@ class GoogleDriveHelper:
                     return
                 if link is None:
                     raise Exception(
-                        'Upload dibatalkan secara manual oleh System!')
+                        'Unggahan dibatalkan secara manual oleh System!')
                 LOGGER.info(f"Uploaded To G-Drive: {item_path}")
             else:
                 mime_type = 'Folder'
@@ -218,7 +211,7 @@ class GoogleDriveHelper:
                 result = self.__upload_dir(item_path, dir_id)
                 if result is None:
                     raise Exception(
-                        'Upload dibatalkan secara manual oleh System!')
+                        'Unggahan dibatalkan secara manual oleh System!')
                 link = self.__G_DRIVE_DIR_BASE_DOWNLOAD_URL.format(dir_id)
                 if self.__is_cancelled:
                     return
@@ -241,7 +234,7 @@ class GoogleDriveHelper:
                 return
             elif self.__is_errored:
                 return
-        async_to_sync(self.__listener.onUploadComplete, link, self.__size, self.__total_files,
+        async_to_sync(self.__listener.onUploadComplete, link, size, self.__total_files,
                       self.__total_folders, mime_type, file_name)
 
     def __upload_dir(self, input_directory, dest_id):
@@ -335,7 +328,7 @@ class GoogleDriveHelper:
                     ]:
                         raise err
                     if config_dict['USE_SERVICE_ACCOUNTS']:
-                        if self.__sa_count >= SERVICE_ACCOUNTS_NUMBER:
+                        if self.__sa_count >= self.__sa_number:
                             LOGGER.info(
                                 f"Reached maximum number of service accounts switching, which is {self.__sa_count}")
                             raise err
@@ -473,7 +466,7 @@ class GoogleDriveHelper:
                 if reason == 'cannotCopyFile':
                     LOGGER.error(err)
                 elif config_dict['USE_SERVICE_ACCOUNTS']:
-                    if self.__sa_count >= SERVICE_ACCOUNTS_NUMBER:
+                    if self.__sa_count >= self.__sa_number:
                         LOGGER.info(
                             f"Reached maximum number of service accounts switching, which is {self.__sa_count}")
                         raise err
@@ -836,7 +829,7 @@ class GoogleDriveHelper:
                     ]:
                         raise err
                     if config_dict['USE_SERVICE_ACCOUNTS']:
-                        if self.__sa_count >= SERVICE_ACCOUNTS_NUMBER:
+                        if self.__sa_count >= self.__sa_number:
                             LOGGER.info(
                                 f"Reached maximum number of service accounts switching, which is {self.__sa_count}")
                             raise err
@@ -855,9 +848,9 @@ class GoogleDriveHelper:
         self.__is_cancelled = True
         if self.__is_downloading:
             LOGGER.info(f"Cancelling Download: {self.name}")
-            await self.__listener.onDownloadError("Download dibatalkan oleh User!")
+            await self.__listener.onDownloadError("Unduhan dibatalkan oleh User!")
         elif self.__is_cloning:
             LOGGER.info(f"Cancelling Clone: {self.name}")
         elif self.__is_uploading:
             LOGGER.info(f"Cancelling Upload: {self.name}")
-            await self.__listener.onUploadError("Upload dibatalkan oleh User!")
+            await self.__listener.onUploadError("Unggahan dibatalkan oleh User!")

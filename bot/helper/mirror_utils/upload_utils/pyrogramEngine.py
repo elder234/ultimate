@@ -20,12 +20,13 @@ from bot.helper.ext_utils.leech_utils import get_media_info, get_document_type, 
 LOGGER = getLogger(__name__)
 getLogger("pyrogram").setLevel(ERROR)
 
+
 class TgUploader:
 
-    def __init__(self, name=None, path=None, size=0, listener=None):
+    def __init__(self, name=None, path=None, listener=None):
         self.name = name
-        self.uploaded_bytes = 0
         self._last_uploaded = 0
+        self.__processed_bytes = 0
         self.__listener = listener
         self.__path = path
         self.__start_time = time()
@@ -35,7 +36,6 @@ class TgUploader:
         self.__msgs_dict = {}
         self.__corrupted = 0
         self.__is_corrupted = False
-        self.__size = size
         self.__media_dict = {'videos': {}, 'documents': {}}
         self.__last_msg_in_group = False
         self.__up_path = ''
@@ -48,7 +48,7 @@ class TgUploader:
                 bot.stop_transmission()
         chunk_size = current - self._last_uploaded
         self._last_uploaded = current
-        self.uploaded_bytes += chunk_size
+        self.__processed_bytes += chunk_size
 
     async def __user_settings(self):
         user_id = self.__listener.message.from_user.id
@@ -146,7 +146,7 @@ class TgUploader:
                 self.__msgs_dict[m.link] = m.caption
         self.__sent_msg = msgs_list[-1]
 
-    async def upload(self, o_files, m_size):
+    async def upload(self, o_files, m_size, size):
         # await self.__msg_to_reply()
         await self.__user_settings()
         for dirpath, _, files in sorted(await sync_to_async(walk, self.__path)):
@@ -213,7 +213,7 @@ class TgUploader:
             await self.__listener.onUploadError('File rusak atau mungkin berisi file yang diblokir di bot ini!')
             return
         LOGGER.info(f"Leech Completed: {self.name}")
-        await self.__listener.onUploadComplete(None, self.__size, self.__msgs_dict, self.__total_files, self.__corrupted, self.name)
+        await self.__listener.onUploadComplete(None, size, self.__msgs_dict, self.__total_files, self.__corrupted, self.name)
 
     @retry(wait=wait_exponential(multiplier=2, min=4, max=8), stop=stop_after_attempt(3),
            retry=retry_if_exception_type(Exception))
@@ -371,11 +371,15 @@ class TgUploader:
     @property
     def speed(self):
         try:
-            return self.uploaded_bytes / (time() - self.__start_time)
+            return self.__processed_bytes / (time() - self.__start_time)
         except:
             return 0
+
+    @property
+    def processed_bytes(self):
+        return self.__processed_bytes
 
     async def cancel_download(self):
         self.__is_cancelled = True
         LOGGER.info(f"Cancelling Upload: {self.name}")
-        await self.__listener.onUploadError('Upload dibatalkan oleh User!')
+        await self.__listener.onUploadError('Unggahan dibatalkan oleh User!')

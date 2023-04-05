@@ -6,6 +6,7 @@ from bot.helper.ext_utils.bot_utils import bt_selection_buttons, sync_to_async
 from bot.helper.mirror_utils.status_utils.aria2_status import Aria2Status
 from bot.helper.telegram_helper.message_utils import sendStatusMessage, sendMessage
 
+
 async def add_aria2c_download(link, path, listener, filename, auth, ratio, seed_time):
     args = {'dir': path, 'max-upload-limit': '1K'}
     a2c_opt = {**aria2_options}
@@ -39,5 +40,5 @@ async def add_aria2c_download(link, path, listener, filename, auth, ratio, seed_
     elif download.is_torrent and not download.is_metadata:
         await sync_to_async(aria2.client.force_pause, gid)
         SBUTTONS = bt_selection_buttons(gid)
-        msg = "Download dihentikan... Pilih file lalu tekan tombol selesai untuk melanjutkan!"
+        msg = "Unduhan dihentikan... Pilih file lalu tekan tombol selesai untuk melanjutkan!"
         await sendMessage(listener.message, msg, SBUTTONS)

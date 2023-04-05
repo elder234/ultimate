@@ -169,10 +169,10 @@ async def restart(client, message):
     restart_message = await sendMessage(message, "Restarting...")
     if scheduler.running:
         scheduler.shutdown(wait=False)
-    for interval in [Interval, QbInterval]:
-        if interval:
-            interval[0].cancel()
-            interval.clear()
+    if QbInterval:
+        QbInterval[0].kill()
+    if Interval:
+        Interval[0].cancel()
     await sync_to_async(clean_all)
     proc1 = await create_subprocess_exec('pkill', '-9', '-f', 'gunicorn|aria2c|qbittorrent-nox|ffmpeg|rclone')
     proc2 = await create_subprocess_exec('python3', 'update.py')
@@ -250,7 +250,7 @@ async def restart_notification():
     else:
         chat_id, msg_id = 0, 0
 
-    async def send_incompelete_task_message(chat_id, msg_id, cid, msg):
+    async def send_incompelete_task_message(cid, msg):
         try:
             if msg.startswith('Restarted Successfully!'):
                 await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text=msg)
@@ -279,10 +279,10 @@ async def restart_notification():
                     for index, link in enumerate(links, start=1):
                         msg += f"\n <a href='{link}'>Tugas ke {index}</a>"
                         if len(msg.encode()) > 4000:
-                            await send_incompelete_task_message(chat_id, msg_id, cid, msg)
+                            await send_incompelete_task_message(cid, msg)
                             msg = ''
                 if msg:
-                    await send_incompelete_task_message(chat_id, msg_id, cid, msg)
+                    await send_incompelete_task_message(cid, msg)
 
     if await aiopath.isfile(".restartmsg"):
         try:

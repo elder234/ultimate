@@ -105,7 +105,7 @@ class QbittorrentStatus:
         if self.status() != MirrorStatus.STATUS_SEEDING:
             LOGGER.info(f"Cancelling Download: {self.__info.name}")
             await sleep(0.3)
-            await self.__listener.onDownloadError('Download dibatalkan oleh User!')
+            await self.__listener.onDownloadError('Unduhan dibatalkan oleh User!')
             await sync_to_async(self.__client.torrents_delete, torrent_hashes=self.__info.hash, delete_files=True)
             await sync_to_async(self.__client.torrents_delete_tags, tags=self.__info.tags)
             await sync_to_async(self.__client.auth_log_out)

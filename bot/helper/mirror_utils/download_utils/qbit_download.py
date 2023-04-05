@@ -81,7 +81,7 @@ async def add_qb_torrent(link, path, listener, ratio, seed_time):
                         return
             await sync_to_async(client.torrents_pause, torrent_hashes=ext_hash)
             SBUTTONS = bt_selection_buttons(ext_hash)
-            msg = "Download dihentikan... Pilih file lalu tekan tombol selesai untuk melanjutkan!"
+            msg = "Unduhan dihentikan... Pilih file lalu tekan tombol selesai untuk melanjutkan!"
             await sendMessage(listener.message, msg, SBUTTONS)
         else:
             await sendStatusMessage(listener.message)

@@ -72,7 +72,7 @@ async def cancell_all_buttons(client, message):
     buttons.ibutton("All", "canall all")
     buttons.ibutton("Close", "canall close")
     button = buttons.build_menu(2)
-    can_msg = await sendMessage(message, 'Pilih tugas yang ingin dibatalkan:', button)
+    can_msg = await sendMessage(message, 'Pilih jenis tugas yang ingin dibatalkan:', button)
     await auto_delete_message(message, can_msg)
 
 

@@ -102,10 +102,10 @@ class Aria2Status:
             await sync_to_async(aria2.remove, [self.__download], force=True, files=True)
         elif downloads := self.__download.followed_by:
             LOGGER.info(f"Cancelling Download: {self.name()}")
-            await self.__listener.onDownloadError('Download dibatalkan oleh User!')
+            await self.__listener.onDownloadError('Unduhan dibatalkan oleh User!')
             downloads.append(self.__download)
             await sync_to_async(aria2.remove, downloads, force=True, files=True)
         else:
             LOGGER.info(f"Cancelling Download: {self.name()}")
-            await self.__listener.onDownloadError('Download dibatalkan oleh User!')
+            await self.__listener.onDownloadError('Unduhan dibatalkan oleh User!')
             await sync_to_async(aria2.remove, [self.__download], force=True, files=True)

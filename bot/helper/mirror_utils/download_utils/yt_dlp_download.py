@@ -7,12 +7,12 @@ from yt_dlp import YoutubeDL, DownloadError
 from re import search as re_search
 from asyncio import Event
 
-from bot import download_dict_lock, download_dict, config_dict, non_queued_dl, non_queued_up, queued_dl, queue_dict_lock
-from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
+from bot import download_dict_lock, download_dict, non_queued_dl, queue_dict_lock
 from bot.helper.telegram_helper.message_utils import sendStatusMessage
 from ..status_utils.yt_dlp_download_status import YtDlpDownloadStatus
 from bot.helper.mirror_utils.status_utils.queue_status import QueueStatus
 from bot.helper.ext_utils.bot_utils import sync_to_async, async_to_sync
+from bot.helper.ext_utils.task_manager import is_queued, stop_duplicate_check
 
 LOGGER = getLogger(__name__)
 
@@ -174,21 +174,24 @@ class YoutubeDLHelper:
                     return
             if self.is_playlist and (not ospath.exists(path) or len(listdir(path)) == 0):
                 self.__onDownloadError(
-                    "Tidak ada video yang bisa diunduh diplaylist ini!")
+                    "Tidak ada video yang dapat diunduh diplaylist ini!")
                 return
             if self.__is_cancelled:
                 raise ValueError
             async_to_sync(self.__listener.onDownloadComplete)
         except ValueError:
-            self.__onDownloadError("Download dibatalkan oleh User!")
+            self.__onDownloadError("Unduhan dibatalkan oleh User!")
 
     async def add_download(self, link, path, name, qual, playlist, args):
         if playlist:
             self.opts['ignoreerrors'] = True
             self.is_playlist = True
+
         self.__gid = ''.join(SystemRandom().choices(
             ascii_letters + digits, k=10))
+
         await self.__onDownloadStart()
+
         if qual.startswith('ba/b-'):
             mp3_info = qual.split('-')
             qual = mp3_info[0]
@@ -196,9 +199,11 @@ class YoutubeDLHelper:
             self.opts['postprocessors'] = [
                 {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': rate}]
         self.opts['format'] = qual
+
         await sync_to_async(self.extractMetaData, link, name, args)
         if self.__is_cancelled:
             return
+
         if self.is_playlist:
             self.opts['outtmpl'] = f"{path}/{self.name}/%(title,fulltitle,alt_title)s%(season_number& |)s%(season_number&S|)s%(season_number|)02d%(episode_number&E|)s%(episode_number|)02d%(height& |)s%(height|)s%(height&p|)s%(fps|)s%(fps&fps|)s%(tbr& |)s%(tbr|)d.%(ext)s"
         elif not args:
@@ -207,53 +212,40 @@ class YoutubeDLHelper:
             folder_name = self.name.rsplit('.', 1)[0]
             self.opts['outtmpl'] = f"{path}/{folder_name}/{self.name}"
             self.name = folder_name
-        if config_dict['STOP_DUPLICATE'] and self.name != 'NA' and not self.__listener.isLeech:
-            LOGGER.info('Checking File/Folder if already in Drive...')
-            sname = self.name
-            if self.__listener.isZip:
-                sname = f"{self.name}.zip"
-            if sname:
-                smsg, button = await sync_to_async(GoogleDriveHelper().drive_list, sname, True)
-                if smsg:
-                    smsg = "File/Folder ini sudah ada di GDrive!\nHasil pencarian:"
-                    await self.__listener.onDownloadError(smsg, button)
+
+        msg, button = await stop_duplicate_check(name, self.__listener)
+        if msg:
+            await self.__listener.onDownloadError(msg, button)
+            return
+
+        added_to_queue, event = await is_queued(self.__listener.uid)
+        if added_to_queue:
+            LOGGER.info(f"Added to Queue/Download: {self.name}")
+            async with download_dict_lock:
+                download_dict[self.__listener.uid] = QueueStatus(
+                    self.name, self.__size, self.__gid, self.__listener, 'dl')
+            await event.wait()
+            async with download_dict_lock:
+                if self.__listener.uid not in download_dict:
                     return
-        all_limit = config_dict['QUEUE_ALL']
-        dl_limit = config_dict['QUEUE_DOWNLOAD']
-        from_queue = False
-        if all_limit or dl_limit:
-            added_to_queue = False
-            async with queue_dict_lock:
-                dl = len(non_queued_dl)
-                up = len(non_queued_up)
-                if (all_limit and dl + up >= all_limit and (not dl_limit or dl >= dl_limit)) or (dl_limit and dl >= dl_limit):
-                    added_to_queue = True
-                    event = Event()
-                    queued_dl[self.__listener.uid] = event
-            if added_to_queue:
-                LOGGER.info(f"Added to Queue/Download: {self.name}")
-                async with download_dict_lock:
-                    download_dict[self.__listener.uid] = QueueStatus(
-                        self.name, self.__size, self.__gid, self.__listener, 'Dl')
-                await event.wait()
-                async with download_dict_lock:
-                    if self.__listener.uid not in download_dict:
-                        return
-                from_queue = True
-        if not from_queue:
-            LOGGER.info(f'Download with YT_DLP: {self.name}')
-        else:
+            from_queue = True
             LOGGER.info(f'Start Queued Download with YT_DLP: {self.name}')
-            await self.__onDownloadStart(from_queue)
+        else:
+            from_queue = False
+            LOGGER.info(f'Download with YT_DLP: {self.name}')
+
+        await self.__onDownloadStart(from_queue)
+
         async with queue_dict_lock:
             non_queued_dl.add(self.__listener.uid)
+
         await sync_to_async(self.__download, link, path)
 
     async def cancel_download(self):
         self.__is_cancelled = True
         LOGGER.info(f"Cancelling Download: {self.name}")
         if not self.__downloading:
-            await self.__listener.onDownloadError("Download dibatalkan oleh User!")
+            await self.__listener.onDownloadError("Unduhan dibatalkan oleh User!")
 
     def __set_args(self, args):
         args = args.split('|')
@@ -264,7 +256,7 @@ class YoutubeDLHelper:
                 continue
             varg = xy[1].strip()
             if varg.startswith('^'):
-                varg = int(varg.split('^')[1])
+                varg = float(varg.split('^')[1])
             elif varg.lower() == 'true':
                 varg = True
             elif varg.lower() == 'false':

@@ -10,7 +10,7 @@ from asyncio.subprocess import PIPE
 from functools import partial, wraps
 from concurrent.futures import ThreadPoolExecutor
 
-from bot import download_dict, download_dict_lock, botStartTime, DOWNLOAD_DIR, user_data, config_dict, bot_loop
+from bot import download_dict, download_dict_lock, botStartTime, user_data, config_dict, bot_loop
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.button_build import ButtonMaker
 
@@ -178,7 +178,7 @@ def get_readable_message():
     msg += f"\n<b>🅲🄿🆄 :</b> <code>{cpu_percent()}%</code> | <b>🆁🄰🅼 :</b> <code>{virtual_memory().percent}%</code>"
     msg += f"\n<b>🅳🅻🆂 :</b> <code>{get_readable_file_size(dl_speed)}/s</code> | <b>🆄🅻🆂 :</b> <code>{get_readable_file_size(up_speed)}/s</code>"
     msg += f"\n<b>🆃🅳🅻 :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>🆃🆄🅻 :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>"
-    msg += f"\n<b>🅳🅸🆂🅺 :</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code> | <b>🆃🅸🅼🅴 :</b> <code>{get_readable_time(time() - botStartTime)}</code>"
+    msg += f"\n<b>🅳🅸🆂🅺 :</b> <code>{get_readable_file_size(disk_usage(config_dict['DOWNLOAD_DIR']).free)}</code> | <b>🆃🅸🅼🅴 :</b> <code>{get_readable_time(time() - botStartTime)}</code>"
     return msg, button
 
 
