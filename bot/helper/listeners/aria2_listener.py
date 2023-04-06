@@ -57,7 +57,7 @@ async def __onDownloadStarted(api, gid):
             if name is not None:
                 smsg, button = await sync_to_async(GoogleDriveHelper().drive_list, name, True)
                 if smsg:
-                    smsg = "File/Folder ini sudah ada di GDrive!\nHasil pencarian:"
+                    smsg = "<b>File/Folder ini sudah ada di GDrive!</b>\n<b>Hasil pencarian :</b>"
                     await listener.onDownloadError(smsg, button)
                     await sync_to_async(api.remove, [download], force=True, files=True)
 

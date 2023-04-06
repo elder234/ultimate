@@ -75,7 +75,7 @@ async def cloneNode(client, message):
             LOGGER.info('Checking File/Folder if already in Drive...')
             smsg, button = await sync_to_async(gd.drive_list, name, True, True)
             if smsg:
-                msg = "File/Folder ini sudah ada di GDrive!\nHasil pencarian:"
+                msg = "<b>File/Folder ini sudah ada di GDrive!</b>\n<b>Hasil pencarian :</b>"
                 await sendMessage(message, msg, button)
                 __run_multi()
                 return
@@ -109,7 +109,7 @@ async def cloneNode(client, message):
         cc = f'\n\n<b>Oleh :</b> {tag}'
         cc2 = f'\n\n{tag}'
         if button in ["cancelled", ""]:
-            await sendMessage(message, f"<b>Hai {tag}!</b>\n<b>Tugasmu dihentikan karena:</b>\n<code>{result}</code>")
+            await sendMessage(message, f"<b>Hai {tag}!</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{result}</code>")
         else:
             if "Nama" in result:
                 await sendMessage(message, result + cc, button)
