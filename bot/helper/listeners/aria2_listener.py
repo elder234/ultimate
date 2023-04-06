@@ -57,7 +57,7 @@ async def __onDownloadStarted(api, gid):
             if name is not None:
                 smsg, button = await sync_to_async(GoogleDriveHelper().drive_list, name, True)
                 if smsg:
-                    smsg = "<b>File/Folder ini sudah ada di GDrive!</b>\n<b>Hasil pencarian :</b>"
+                    smsg = "File/Folder ini sudah ada di GDrive!\nHasil pencarian :"
                     await listener.onDownloadError(smsg, button)
                     await sync_to_async(api.remove, [download], force=True, files=True)
 
@@ -84,7 +84,7 @@ async def __onDownloadComplete(api, gid):
                 LOGGER.info(
                     f"Cancelling Seed: {download.name} onDownloadComplete")
                 listener = dl.listener()
-                await listener.onUploadError(f"<b>Seeding dihentikan!</b>\n<b>Ratio :</b> <code>{dl.ratio()}</code> | <b>Waktu :</b> <code>{dl.seeding_time()}</code>")
+                await listener.onUploadError(f"Seeding dihentikan!\nRatio : {dl.ratio()} | Waktu : {dl.seeding_time()}")
                 await sync_to_async(api.remove, [download], force=True, files=True)
     else:
         LOGGER.info(f"onDownloadComplete: {download.name} - Gid: {gid}")
@@ -129,7 +129,7 @@ async def __onBtDownloadComplete(api, gid):
             if download.is_complete:
                 if dl := await getDownloadByGid(gid):
                     LOGGER.info(f"Cancelling Seed: {download.name}")
-                    await listener.onUploadError(f"<b>Seeding dihentikan!</b>\n<b>Ratio :</b> <code>{dl.ratio()}</code> | <b>Waktu :</b> <code>{dl.seeding_time()}</code>")
+                    await listener.onUploadError(f"Seeding dihentikan!\nRatio : {dl.ratio()} | Waktu : {dl.seeding_time()}")
                     await sync_to_async(api.remove, [download], force=True, files=True)
             else:
                 async with download_dict_lock:

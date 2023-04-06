@@ -98,7 +98,7 @@ class Aria2Status:
         await sync_to_async(self.__update)
         if self.__download.seeder and self.seeding:
             LOGGER.info(f"Cancelling Seed: {self.name()}")
-            await self.__listener.onUploadError(f"<b>Seeding dihentikan!</b>\n<b>Ratio :</b> <code>{self.ratio()}</code> | <b>Waktu :</b> <code>{self.seeding_time()}</code>")
+            await self.__listener.onUploadError(f"Seeding dihentikan!\nRatio : {self.ratio()} | Waktu : {self.seeding_time()}")
             await sync_to_async(aria2.remove, [self.__download], force=True, files=True)
         elif downloads := self.__download.followed_by:
             LOGGER.info(f"Cancelling Download: {self.name()}")

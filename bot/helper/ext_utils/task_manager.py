@@ -25,7 +25,7 @@ async def stop_duplicate_check(name, listener):
     if name is not None:
         smsg, button = await sync_to_async(GoogleDriveHelper().drive_list, name, stopDup=True)
         if smsg:
-            msg = "<b>File/Folder ini sudah ada di GDrive!</b>\n<b>Hasil pencarian :</b>"
+            msg = "File/Folder ini sudah ada di GDrive!\nHasil pencarian :"
             return msg, button
     return False, None
 
