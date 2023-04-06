@@ -309,16 +309,20 @@ class GoogleDriveHelper:
         media_body = MediaFileUpload(file_path,
                                      mimetype=mime_type,
                                      resumable=True,
-                                     chunksize=50 * 1024 * 1024)
+                                     chunksize=100 * 1024 * 1024)
 
         # Insert a file
         drive_file = self.__service.files().create(
             body=file_metadata, media_body=media_body, supportsAllDrives=True)
         response = None
+        retries = 0
         while response is None and not self.__is_cancelled:
             try:
                 self.__status, response = drive_file.next_chunk()
             except HttpError as err:
+                if err.resp.status in [500, 502, 503, 504] and retries < 10:
+                    retries += 1
+                    continue
                 if err.resp.get('content-type', '').startswith('application/json'):
                     reason = eval(err.content).get(
                         'error').get('errors')[0].get('reason')
@@ -811,8 +815,9 @@ class GoogleDriveHelper:
             return
         fh = FileIO(f"{path}/{filename}", 'wb')
         downloader = MediaIoBaseDownload(
-            fh, request, chunksize=50 * 1024 * 1024)
+            fh, request, chunksize=100 * 1024 * 1024)
         done = False
+        retries = 0
         while not done:
             if self.__is_cancelled:
                 fh.close()
@@ -820,6 +825,9 @@ class GoogleDriveHelper:
             try:
                 self.__status, done = downloader.next_chunk()
             except HttpError as err:
+                if err.resp.status in [500, 502, 503, 504] and retries < 10:
+                    retries += 1
+                    continue
                 if err.resp.get('content-type', '').startswith('application/json'):
                     reason = eval(err.content).get(
                         'error').get('errors')[0].get('reason')

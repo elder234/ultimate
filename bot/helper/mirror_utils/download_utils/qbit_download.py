@@ -72,13 +72,13 @@ async def add_qb_torrent(link, path, listener, ratio, seed_time):
                         return
                     try:
                         tor_info = tor_info[0]
-                        ext_hash = tor_info.hash
                         if tor_info.state not in ["metaDL", "checkingResumeData", "pausedDL"]:
                             await deleteMessage(meta)
                             break
                     except:
                         await deleteMessage(meta)
                         return
+            ext_hash = tor_info.hash
             await sync_to_async(client.torrents_pause, torrent_hashes=ext_hash)
             SBUTTONS = bt_selection_buttons(ext_hash)
             msg = "Unduhan dihentikan... Pilih file lalu tekan tombol selesai untuk melanjutkan!"
