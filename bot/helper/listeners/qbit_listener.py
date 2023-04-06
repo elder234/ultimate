@@ -37,8 +37,8 @@ async def __onDownloadError(err, tor, button=None):
 
 @new_task
 async def __onSeedFinish(tor):
-    ext_hash = tor.hash
     LOGGER.info(f"Cancelling Seed: {tor.name}")
+    ext_hash = tor.hash
     download = await getDownloadByGid(ext_hash[:12])
     if not hasattr(download, 'client'):
         return
@@ -117,7 +117,7 @@ async def __qb_listener():
                         QbTorrents[tag]['stalled_time'] = time()
                         if TORRENT_TIMEOUT and time() - tor_info.added_on >= TORRENT_TIMEOUT:
                             __onDownloadError(
-                                client, "Torrent Mati! (0 Seeders)", tor_info)
+                                "Torrent Mati! (0 Seeders)", tor_info)
                         else:
                             await sync_to_async(client.torrents_reannounce, torrent_hashes=tor_info.hash)
                     elif state == "downloading":
