@@ -119,28 +119,28 @@ async def stats(client, message):
     stats = f'<b>System</b>\n' \
             f'<code>{neofetch}</code>' \
             f'<b>CPU</b>\n' \
-            f'<b>Cores:</b> <code>{p_core}</code>\n' \
-            f'<b>Logical:</b> <code>{t_core}</code>\n' \
-            f'<b>Frequency:</b> <code>{freqcurrent}</code>\n' \
+            f'<b>Cores :</b> <code>{p_core}</code>\n' \
+            f'<b>Logical :</b> <code>{t_core}</code>\n' \
+            f'<b>Frequency :</b> <code>{freqcurrent}</code>\n' \
             f'<code>[{progress_bar(cpuUsage)}] {cpuUsage}%</code>\n\n' \
             f'<b>RAM</b>\n' \
-            f'<b>Terpakai:</b> <code>{mem_u}</code>\n' \
-            f'<b>Tersedia:</b> <code>{mem_a}</code>\n' \
-            f'<b>Total:</b> <code>{mem_t}</code>\n' \
+            f'<b>Terpakai :</b> <code>{mem_u}</code>\n' \
+            f'<b>Tersedia :</b> <code>{mem_a}</code>\n' \
+            f'<b>Total :</b> <code>{mem_t}</code>\n' \
             f'<code>[{progress_bar(mem_p)}] {mem_p}%</code>\n\n' \
             f'<b>Storage</b>\n' \
-            f'<b>Terpakai:</b> <code>{used}</code>\n' \
-            f'<b>Tersedia:</b> <code>{free}</code>\n' \
-            f'<b>Total:</b> <code>{total}</code>\n' \
+            f'<b>Terpakai :</b> <code>{used}</code>\n' \
+            f'<b>Tersedia :</b> <code>{free}</code>\n' \
+            f'<b>Total :</b> <code>{total}</code>\n' \
             f'<code>[{progress_bar(disk)}] {disk}%</code>\n\n' \
             f'<b>Network</b>\n'\
-            f'<b>Download:</b> <code>{recv}</code>\n' \
-            f'<b>Upload:</b> <code>{sent}</code>\n\n' \
+            f'<b>Download :</b> <code>{recv}</code>\n' \
+            f'<b>Upload :</b> <code>{sent}</code>\n\n' \
             f'<b>Other</b>\n'\
-            f'<b>Uptime:</b> <code>{currentTime}</code>\n' \
-            f'<b>OS Uptime:</b> <code>{osUptime}</code>\n' \
-            f'<b>Updated:</b> <code>{last_commit}</code>\n\n'
-    stats += f'<b>Quotes Today:</b>\n' \
+            f'<b>Uptime :</b> <code>{currentTime}</code>\n' \
+            f'<b>OS Uptime :</b> <code>{osUptime}</code>\n' \
+            f'<b>Updated :</b> <code>{last_commit}</code>\n\n'
+    stats += f'<b>Quotes Today :</b>\n' \
              f'<code>{get_quotes()}</code>\n'
     await sendMessage(message, stats)
 
@@ -156,9 +156,11 @@ async def start(client, message):
 Mirror Tautan Lambat menjadi Tautan Cepat!
 
 Note:
-Selalu backup File setelah Mirror untuk menghindari Team Drive kebanned!
+Selalu backup File setelah Mirror untuk menghindari Team Drive terhapus!
 
 Ketik /{BotCommands.HelpCommand} untuk mendapatkan list perintah yang tersedia
+
+Enjoy :D
 '''
         await sendMessage(message, start_string, reply_markup)
     else:
