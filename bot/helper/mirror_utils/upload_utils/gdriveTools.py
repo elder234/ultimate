@@ -391,7 +391,7 @@ class GoogleDriveHelper:
                     meta.get('id'), config_dict['GDRIVE_ID'])
                 msg += f'<b>Nama :</b> <code>{file.get("name")}</code>'
                 durl = self.__G_DRIVE_BASE_DOWNLOAD_URL.format(file.get("id"))
-                self.transferred_size += int(file.get('size', 0))
+                self.transferred_size += int(meta.get('size', 0))
                 if mime_type is None:
                     mime_type = 'File'
             return durl, self.transferred_size, mime_type, self.__total_files, self.__total_folders
