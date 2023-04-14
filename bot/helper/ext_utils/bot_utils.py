@@ -126,30 +126,30 @@ def get_readable_message():
             if download.message.chat.type.name in ['SUPERGROUP', 'CHANNEL']:
                 msg += f"\n<b>├ Status :</b> <a href='{download.message.link}'>{download.status()}</a>"
             else:
-                msg += f"\n<b>├ Status :</b> {download.status()}"
-            msg += f"\n<b>├ Proses :</b> {download.processed_bytes()} dari {download.size()}"
-            msg += f"\n<b>├ Kec :</b> {download.speed()} | <b>ETA :</b> {download.eta()}"
+                msg += f"\n<b>├ Status :</b> <code>{download.status()}</code>"
+            msg += f"\n<b>├ Proses :</b> <code>{download.processed_bytes()}</code> dari <code>{download.size()}</code>"
+            msg += f"\n<b>├ Kec :</b> <code>{download.speed()}</code> | <b>ETA :</b> <code>{download.eta()}</code>"
             if hasattr(download, 'seeders_num'):
                 try:
-                    msg += f"\n<b>├ Seeders :</b> {download.seeders_num()} | <b>Leechers :</b> {download.leechers_num()}"
+                    msg += f"\n<b>├ Seeders :</b> <code>{download.seeders_num()}</code> | <b>Leechers :</b> <code>{download.leechers_num()}</code>"
                 except:
                     pass
         elif download.status() == MirrorStatus.STATUS_SEEDING:
             if download.message.chat.type.name in ['SUPERGROUP', 'CHANNEL']:
                 msg += f"\n<b>┌ Status :</b> <a href='{download.message.link}'>{download.status()}</a>"
             else:
-                msg += f"\n<b>┌ Status :</b> {download.status()}"
-            msg += f"\n<b>├ Ukuran : </b>{download.size()}"
-            msg += f"\n<b>├ Kec : </b>{download.upload_speed()}"
-            msg += f" | <b>Diupload : </b>{download.uploaded_bytes()}"
-            msg += f"\n<b>├ Ratio : </b>{download.ratio()}"
-            msg += f" | <b>Waktu : </b>{download.seeding_time()}"
+                msg += f"\n<b>┌ Status :</b> <code>{download.status()}</code>"
+            msg += f"\n<b>├ Ukuran :</b> <code>{download.size()}</code>"
+            msg += f"\n<b>├ Kec :</b> <code>{download.upload_speed()}</code>"
+            msg += f" | <b>Diupload :</b> <code>{download.uploaded_bytes()}</code>"
+            msg += f"\n<b>├ Ratio :</b> <code>{download.ratio()}</code>"
+            msg += f" | <b>Waktu :</b> <code>{download.seeding_time()}</code>"
         else:
             if download.message.chat.type.name in ['SUPERGROUP', 'CHANNEL']:
                 msg += f"\n<b>┌ Status :</b> <a href='{download.message.link}'>{download.status()}</a>"
             else:
-                msg += f"\n<b>┌ Status :</b> {download.status()}"
-            msg += f"\n<b>├ Ukuran : </b>{download.size()}"
+                msg += f"\n<b>┌ Status :</b> <code>{download.status()}</code>"
+            msg += f"\n<b>├ Ukuran :</b> <code>{download.size()}</code>"
         # <a href='tg://user?id={download.message.from_user.id}'>{download.message.from_user.first_name}</a>
         msg += f"\n<b>├ User :</b> <code>{download.message.from_user.first_name}</code>"
         msg += f" | <b>ID :</b> <code>{download.message.from_user.id}</code>"

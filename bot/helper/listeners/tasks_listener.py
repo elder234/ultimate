@@ -302,12 +302,12 @@ class MirrorLeechListener:
         if self.isSuperGroup and config_dict['INCOMPLETE_TASK_NOTIFIER'] and DATABASE_URL:
             await DbManger().rm_complete_task(self.message.link)
         msg = f"<b>Nama :</b> <code>{escape(name)}</code>"
-        msg += f"\n\n<b>Ukuran :</b> {get_readable_file_size(size)}"
+        msg += f"\n\n<b>Ukuran :</b> <code>{get_readable_file_size(size)}</code>"
         LOGGER.info(f'Task Done: {name}')
         if self.isLeech:
-            msg += f'\n\n<b>Jumlah File :</b> {folders}'
+            msg += f'\n\n<b>Jumlah File :</b> <code>{folders}</code>'
             if mime_type != 0:
-                msg += f'\n\n<b>File Rusak :</b> {mime_type}'
+                msg += f'\n\n<b>File Rusak :</b> <code>{mime_type}</code>'
             msg += f'\n\n<b>Oleh :</b> {self.tag}\n\n'
             if not files:
                 await sendMessage(self.message, msg)
@@ -330,10 +330,10 @@ class MirrorLeechListener:
                 await start_from_queued()
                 return
         else:
-            msg += f'\n\n<b>Tipe :</b> {mime_type}'
+            msg += f'\n\n<b>Tipe :</b> <code>{mime_type}</code>'
             if mime_type == "Folder":
-                msg += f'\n\n<b>SubFolders :</b> {folders}'
-                msg += f'\n\n<b>Files :</b> {files}'
+                msg += f'\n\n<b>SubFolders :</b> <code>{folders}</code>'
+                msg += f'\n\n<b>Files :</b> <code>{files}</code>'
             if link or rclonePath and config_dict['RCLONE_SERVE_URL']:
                 buttons = ButtonMaker()
                 if link:
@@ -409,7 +409,7 @@ class MirrorLeechListener:
             count = len(download_dict)
             if self.uid in self.sameDir:
                 self.sameDir.remove(self.uid)
-        msg = f"<b>Hai {self.tag}!</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{escape(error)}</code>"
+        msg = f"<b>Hai {self.tag} !</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{escape(error)}</code>"
         await sendMessage(self.message, msg, button)
         if count == 0:
             await self.clean()
@@ -443,7 +443,7 @@ class MirrorLeechListener:
             count = len(download_dict)
             if self.uid in self.sameDir:
                 self.sameDir.remove(self.uid)
-        msg = f"<b>Hai {self.tag}!</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{escape(error)}</code>"
+        msg = f"<b>Hai {self.tag} !</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{escape(error)}</code>"
         await sendMessage(self.message, msg)
         if count == 0:
             await self.clean()
