@@ -166,6 +166,7 @@ async def clone(client, message):
     text = message.text
     args = text.split(maxsplit=1)
     link = ''
+    tag = ''
     multi = 0
     if len(args) > 1:
         link = args[1].strip()
