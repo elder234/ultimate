@@ -166,7 +166,7 @@ async def _mirror_leech(client, message, isZip=False, extract=False, isQbit=Fals
     __run_multi()
 
     if not isLeech:
-        if config_dict['DEFAULT_UPLOAD'] == 'rc' and up is None or up == 'rc':
+        if config_dict['DEFAULT_UPLOAD'] == 'rc' and up is None:
             up = config_dict['RCLONE_PATH']
         if up is None and config_dict['DEFAULT_UPLOAD'] == 'gd':
             up = 'gd'
@@ -176,7 +176,7 @@ async def _mirror_leech(client, message, isZip=False, extract=False, isQbit=Fals
         elif not up:
             await sendMessage(message, 'Tujuan path RClone tidak ditemukan!')
             return
-        elif up != 'rcl':
+        elif up != 'rcl' and config_dict['DEFAULT_UPLOAD'] == 'rc':
             if up.startswith('mrcc:'):
                 config_path = f'rclone/{message.from_user.id}.conf'
             else:
