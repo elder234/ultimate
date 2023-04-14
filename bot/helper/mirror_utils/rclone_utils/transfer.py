@@ -157,7 +157,7 @@ class RcloneTransferHelper:
             epath = f"{remote}:{rc_path}{self.name}"
             destination = epath
 
-        cmd = ['rclone', 'lsjson', '--fast-list', '--no-mimetype',
+        cmd = ['edge', 'lsjson', '--fast-list', '--no-mimetype',
                '--no-modtime', '--config', config_path, epath]
         res, err, code = await cmd_exec(cmd)
 
@@ -256,7 +256,7 @@ class RcloneTransferHelper:
             else:
                 destination = f"{oremote}:{self.name}"
 
-            cmd = ['rclone', 'link', '--config', oconfig_path, destination]
+            cmd = ['edge', 'link', '--config', oconfig_path, destination]
             res, err, code = await cmd_exec(cmd)
             if code == 0:
                 link = res
@@ -305,7 +305,7 @@ class RcloneTransferHelper:
                     destination += f'/{self.name}' if destination.split(':', 1)[
                         1] else self.name
 
-                cmd = ['rclone', 'link', '--config', config_path, destination]
+                cmd = ['edge', 'link', '--config', config_path, destination]
                 res, err, code = await cmd_exec(cmd)
 
                 if self.__is_cancelled:
@@ -322,7 +322,7 @@ class RcloneTransferHelper:
     @staticmethod
     async def __getUpdatedCommand(config_path, source, destination, rcflags):
         ext = '*.{' + ','.join(GLOBAL_EXTENSION_FILTER) + '}'
-        cmd = ['rclone', 'copy', '--fast-list', '--config', config_path, '-P', source, destination,
+        cmd = ['edge', 'copy', '--fast-list', '--config', config_path, '-P', source, destination,
                '--exclude', ext, '--ignore-case', '--low-level-retries', '1']
         if rcflags:
             rcflags = rcflags.split('|')
