@@ -166,7 +166,6 @@ async def clone(client, message):
     text = message.text
     args = text.split(maxsplit=1)
     link = ''
-    tag = ''
     multi = 0
     if len(args) > 1:
         link = args[1].strip()
@@ -175,7 +174,7 @@ async def clone(client, message):
             link = ''
         elif not link.startswith(('up:', 'rcf:')):
             link = re_split(r' up: | rcf: ', link)[0].strip()
-        elif username := message.from_user.username:
+        if username := message.from_user.username:
             tag = f"@{username}"
         else:
             tag = message.from_user.mention
