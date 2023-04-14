@@ -13,11 +13,9 @@ from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type, RetryError
 
-from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot import config_dict, DRIVES_NAMES, DRIVES_IDS, INDEX_URLS, GLOBAL_EXTENSION_FILTER
 from bot.helper.ext_utils.bot_utils import setInterval
 from bot.helper.ext_utils.fs_utils import get_mime_type
-from bot.helper.ext_utils.telegraph_helper import telegraph
 from bot.helper.ext_utils.bot_utils import async_to_sync, get_readable_file_size
 
 LOGGER = getLogger(__name__)
@@ -386,36 +384,16 @@ class GoogleDriveHelper:
                 if self.__is_cancelled:
                     LOGGER.info("Deleting cloned data from Drive...")
                     self.deletefile(durl)
-                    return "Clone dihentikan dan file yang sudah berhasil diclone dihapus!", "cancelled"
-                msg += f'<b>Nama :</b> <code>{meta.get("name")}</code>'
-                msg += f'\n\n<b>Ukuran :</b> {get_readable_file_size(self.transferred_size)}'
-                msg += '\n\n<b>Tipe :</b> Folder'
-                msg += f'\n\n<b>SubFolders :</b> {self.__total_folders}'
-                msg += f'\n\n<b>Files :</b> {self.__total_files}'
-                buttons = ButtonMaker()
-                buttons.ubutton("☁️ Drive Link", durl)
-                if INDEX_URL := config_dict['INDEX_URL']:
-                    url_path = rquote(f'{meta.get("name")}', safe='')
-                    url = f'{INDEX_URL}/{url_path}/'
-                    buttons.ubutton("⚡ Index Link", url)
+                    return None, None, None, None, None
+                mime_type = 'Folder'
             else:
                 file = self.__copyFile(
                     meta.get('id'), config_dict['GDRIVE_ID'])
                 msg += f'<b>Nama :</b> <code>{file.get("name")}</code>'
                 durl = self.__G_DRIVE_BASE_DOWNLOAD_URL.format(file.get("id"))
-                buttons = ButtonMaker()
-                buttons.ubutton("☁️ Drive Link", durl)
                 if mime_type is None:
                     mime_type = 'File'
-                msg += f'\n\n<b>Ukuran :</b> {get_readable_file_size(int(meta.get("size", 0)))}'
-                msg += f'\n\n<b>Tipe :</b> {mime_type}'
-                if INDEX_URL := config_dict['INDEX_URL']:
-                    url_path = rquote(f'{file.get("name")}', safe='')
-                    url = f'{INDEX_URL}/{url_path}'
-                    buttons.ubutton("⚡ Index Link", url)
-                    if config_dict['VIEW_LINK']:
-                        urlv = f'{INDEX_URL}/{url_path}?a=view'
-                        buttons.ubutton("🌐 View Link", urlv)
+            return durl, self.transferred_size, mime_type, self.__total_files, self.__total_folders
         except Exception as err:
             if isinstance(err, RetryError):
                 LOGGER.info(
@@ -432,8 +410,8 @@ class GoogleDriveHelper:
                 msg = "File tidak ditemukan!"
             else:
                 msg = f"{err}"
-            return msg, ""
-        return msg, buttons.build_menu(2)
+            async_to_sync(self.__listener.onUploadError, msg)
+            return None, None, None, None, None
 
     def __cloneFolder(self, name, local_path, folder_id, dest_id):
         LOGGER.info(f"Syncing: {local_path}")
@@ -526,7 +504,7 @@ class GoogleDriveHelper:
                 query += "trashed = false"
                 if dir_id == "root":
                     return self.__service.files().list(q=f"{query} and 'me' in owners",
-                                                       pageSize=200, spaces='drive',
+                                                       pageSize=150, spaces='drive',
                                                        fields='files(id, name, mimeType, size, parents)',
                                                        orderBy='folder, name asc').execute()
                 else:
@@ -549,7 +527,7 @@ class GoogleDriveHelper:
                         query += "mimeType = 'application/vnd.google-apps.folder' and "
                 query += "trashed = false"
                 return self.__service.files().list(supportsAllDrives=True, includeItemsFromAllDrives=True,
-                                                   q=query, spaces='drive', pageSize=200,
+                                                   q=query, spaces='drive', pageSize=150,
                                                    fields='files(id, name, mimeType, size)',
                                                    orderBy='folder, name asc').execute()
         except Exception as err:
@@ -560,7 +538,7 @@ class GoogleDriveHelper:
     def drive_list(self, fileName, stopDup=False, noMulti=False, isRecursive=True, itemType=""):
         msg = ""
         fileName = self.__escapes(str(fileName))
-        contents_count = 0
+        contents_no = 0
         telegraph_content = []
         Title = False
         if len(DRIVES_IDS) > 1:
@@ -616,7 +594,7 @@ class GoogleDriveHelper:
                             urlv = f'{index_url}/{url_path}?a=view'
                             msg += f' <b>| <a href="{urlv}">View Link</a></b>'
                 msg += '<br><br>'
-                contents_count += 1
+                contents_no += 1
                 if len(msg.encode('utf-8')) > 39000:
                     telegraph_content.append(msg)
                     msg = ""
@@ -626,47 +604,17 @@ class GoogleDriveHelper:
         if msg != '':
             telegraph_content.append(msg)
 
-        if not telegraph_content:
-            return "", None
-
-        path = [async_to_sync(telegraph.create_page, title='KQRM Mirror Search',
-                content=content)["path"] for content in telegraph_content]
-        if len(path) > 1:
-            async_to_sync(telegraph.edit_telegraph, path, telegraph_content)
-
-        msg = f"<b>Menemukan {contents_count} hasil pencarian dengan kata kunci:</b>\n<code>{fileName}</code>"
-        buttons = ButtonMaker()
-        buttons.ubutton("🔎 VIEW", f"https://telegra.ph/{path[0]}")
-
-        return msg, buttons.build_menu(1)
+        return telegraph_content, contents_no
 
     def count(self, link):
         try:
             file_id = self.__getIdFromUrl(link)
         except (KeyError, IndexError):
-            return "ID GDrive tidak ditemukan!"
+            return "ID Google Drive tidak ditemukan!", None, None, None, None
         msg = ""
         LOGGER.info(f"File ID: {file_id}")
         try:
-            meta = self.__getFileMetadata(file_id)
-            name = meta['name']
-            LOGGER.info(f"Counting: {name}")
-            mime_type = meta.get('mimeType')
-            if mime_type == self.__G_DRIVE_DIR_MIME_TYPE:
-                self.__gDrive_directory(meta)
-                msg += f'<b>Nama :</b> <code>{name}</code>'
-                msg += f'\n\n<b>Ukuran :</b> {get_readable_file_size(self.__total_bytes)}'
-                msg += '\n\n<b>Tipe :</b> Folder'
-                msg += f'\n\n<b>SubFolders :</b> {self.__total_folders}'
-            else:
-                msg += f'<b>Nama :</b> <code>{name}</code>'
-                if mime_type is None:
-                    mime_type = 'File'
-                self.__total_files += 1
-                self.__gDrive_file(meta)
-                msg += f'\n\n<b>Ukuran :</b> {get_readable_file_size(self.__total_bytes)}'
-                msg += f'\n\n<b>Tipe :</b> {mime_type}'
-            msg += f'\n\n<b>Files :</b> {self.__total_files}'
+            return self.__proceed_count(file_id)
         except Exception as err:
             if isinstance(err, RetryError):
                 LOGGER.info(
@@ -681,7 +629,22 @@ class GoogleDriveHelper:
                 msg = "File tidak ditemukan!"
             else:
                 msg = f"ERROR: {err}"
-        return msg
+        return msg, None, None, None, None
+
+    def __proceed_count(self, file_id):
+        meta = self.__getFileMetadata(file_id)
+        name = meta['name']
+        LOGGER.info(f"Counting: {name}")
+        mime_type = meta.get('mimeType')
+        if mime_type == self.__G_DRIVE_DIR_MIME_TYPE:
+            self.__gDrive_directory(meta)
+            mime_type = 'Folder'
+        else:
+            if mime_type is None:
+                mime_type = 'File'
+            self.__total_files += 1
+            self.__gDrive_file(meta)
+        return name, mime_type, self.__total_bytes, self.__total_files, self.__total_folders
 
     def __gDrive_file(self, filee):
         size = int(filee.get('size', 0))
@@ -705,41 +668,6 @@ class GoogleDriveHelper:
             else:
                 self.__total_files += 1
                 self.__gDrive_file(filee)
-
-    def helper(self, link):
-        try:
-            file_id = self.__getIdFromUrl(link)
-        except (KeyError, IndexError):
-            msg = "ID GDrive tidak ditemukan!"
-            return msg, "", "", ""
-        LOGGER.info(f"File ID: {file_id}")
-        try:
-            meta = self.__getFileMetadata(file_id)
-            name = meta['name']
-            LOGGER.info(f"Checking size, this might take a minute: {name}")
-            if meta.get('mimeType') == self.__G_DRIVE_DIR_MIME_TYPE:
-                self.__gDrive_directory(meta)
-            else:
-                self.__total_files += 1
-                self.__gDrive_file(meta)
-            size = self.__total_bytes
-            files = self.__total_files
-        except Exception as err:
-            if isinstance(err, RetryError):
-                LOGGER.info(
-                    f"Total Attempts: {err.last_attempt.attempt_number}")
-                err = err.last_attempt.exception()
-            err = str(err).replace('>', '').replace('<', '')
-            if "File not found" in err:
-                token_service = self.__alt_authorize()
-                if token_service is not None:
-                    self.__service = token_service
-                    return self.helper(link)
-                msg = "File tidak ditemukan!"
-            else:
-                msg = f"ERROR: {err}"
-            return msg, "", "", ""
-        return "", size, name, files
 
     def download(self, link):
         self.__is_downloading = True
@@ -859,6 +787,7 @@ class GoogleDriveHelper:
             await self.__listener.onDownloadError("Unduhan dibatalkan oleh User!")
         elif self.__is_cloning:
             LOGGER.info(f"Cancelling Clone: {self.name}")
+            await self.__listener.onUploadError('Clone dibatalkan oleh User!')
         elif self.__is_uploading:
             LOGGER.info(f"Cancelling Upload: {self.name}")
             await self.__listener.onUploadError("Unggahan dibatalkan oleh User!")

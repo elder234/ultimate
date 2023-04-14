@@ -62,7 +62,7 @@ async def add_rclone_download(rc_path, config_path, path, name, listener):
     RCTransfer = RcloneTransferHelper(listener, name)
     async with download_dict_lock:
         download_dict[listener.uid] = RcloneStatus(
-            RCTransfer, listener.message, size, gid, 'dl')
+            RCTransfer, listener.message, gid, 'dl')
     async with queue_dict_lock:
         non_queued_dl.add(listener.uid)
 

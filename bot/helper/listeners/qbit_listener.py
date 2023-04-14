@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from asyncio import Lock, sleep
+from asyncio import sleep
 from time import time
 
 from bot import download_dict, download_dict_lock, get_client, QbInterval, config_dict, QbTorrents, qb_listener_lock, LOGGER, bot_loop
@@ -17,7 +17,6 @@ async def __remove_torrent(client, hash_, tag):
         if tag in QbTorrents:
             del QbTorrents[tag]
     await sync_to_async(client.torrents_delete_tags, tags=tag)
-    await sync_to_async(client.auth_log_out)
 
 
 @new_task
@@ -76,6 +75,7 @@ async def __onDownloadComplete(tor):
     if listener.select:
         await clean_unwanted(listener.dir)
     await listener.onDownloadComplete()
+    client = await sync_to_async(get_client)
     if listener.seed:
         async with download_dict_lock:
             if listener.uid in download_dict:
