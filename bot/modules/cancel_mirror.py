@@ -18,13 +18,13 @@ async def cancel_mirror(client, message):
         gid = msg[1]
         dl = await getDownloadByGid(gid)
         if dl is None:
-            await sendMessage(message, f"Tugas dengan GDrive ID <code>{gid}</code> tidak ditemukan!")
+            await sendMessage(message, f"<b>Tugas dengan ID Google Drive</b> <code>{gid}</code> <b>tidak ditemukan!</b>")
             return
     elif reply_to_id := message.reply_to_message_id:
         async with download_dict_lock:
             dl = download_dict.get(reply_to_id, None)
         if dl is None:
-            await sendMessage(message, "Bukan tugas aktif!")
+            await sendMessage(message, "<b>Bukan Tugas Aktif!</b>")
             return
     elif len(msg) == 1:
         msg = "Reply to an active Command message which was used to start the download" \
@@ -34,7 +34,7 @@ async def cancel_mirror(client, message):
 
     if OWNER_ID != user_id and dl.message.from_user.id != user_id and \
        (user_id not in user_data or not user_data[user_id].get('is_sudo')):
-        await sendMessage(message, "Bukan tugas darimu!")
+        await sendMessage(message, "<b>Bukan Tugas darimu!</b>")
         return
     obj = dl.download()
     await obj.cancel_download()
@@ -57,7 +57,7 @@ async def cancell_all_buttons(client, message):
     async with download_dict_lock:
         count = len(download_dict)
     if count == 0:
-        await sendMessage(message, "Tidak ada Tugas Aktif!")
+        await sendMessage(message, "<b>Tidak ada Tugas Aktif!</b>")
         return
     buttons = button_build.ButtonMaker()
     buttons.ibutton("Downloading", f"canall {MirrorStatus.STATUS_DOWNLOADING}")
@@ -88,7 +88,7 @@ async def cancel_all_update(client, query):
     else:
         res = await cancel_all(data[1])
         if not res:
-            await sendMessage(reply_to, f"Tugas {data[1]} tidak ditemukan!")
+            await sendMessage(reply_to, f"<b>Tugas</b> <code>{data[1]}</code> <b>tidak ditemukan!</b>")
 
 
 bot.add_handler(MessageHandler(cancel_mirror, filters=command(

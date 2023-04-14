@@ -18,9 +18,9 @@ async def mirror_status(client, message):
     if count == 0:
         currentTime = get_readable_time(time() - botStartTime)
         free = get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)
-        msg = 'Tidak ada Tugas Aktif!\n___________________________'
-        msg += f"\n<b>CPU:</b> {cpu_percent()}% | <b>FREE:</b> {free}" \
-            f"\n<b>RAM:</b> {virtual_memory().percent}% | <b>UPTIME:</b> {currentTime}"
+        msg = '<code>Tidak ada Tugas Aktif!</code>\n___________________________'
+        msg += f"\n<b>CPU :</b> <code>{cpu_percent()}%</code> | <b>FREE :</b> <code>{free}</code>" \
+            f"\n<b>RAM :</b> <code>{virtual_memory().percent}%</code> | <b>UPTIME :</b> <code>{currentTime}</code>"
         reply_message = await sendMessage(message, msg)
         await auto_delete_message(message, reply_message)
     else:
