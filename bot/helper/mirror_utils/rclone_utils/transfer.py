@@ -321,7 +321,7 @@ class RcloneTransferHelper:
     @staticmethod
     async def __getUpdatedCommand(config_path, source, destination, rcflags, method):
         ext = '*.{' + ','.join(GLOBAL_EXTENSION_FILTER) + '}'
-        cmd = ['edge', 'method', '--fast-list', '--config', config_path, '-P', source, destination,
+        cmd = ['edge', method, '--fast-list', '--config', config_path, '-P', source, destination,
                '--exclude', ext, '--ignore-case', '--low-level-retries', '1', '-M']
         if rcflags:
             rcflags = rcflags.split('|')
