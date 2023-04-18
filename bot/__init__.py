@@ -231,11 +231,11 @@ if len(YT_DLP_QUALITY) == 0:
 SEARCH_LIMIT = environ.get('SEARCH_LIMIT', '')
 SEARCH_LIMIT = 0 if len(SEARCH_LIMIT) == 0 else int(SEARCH_LIMIT)
 
-DUMP_CHAT = environ.get('DUMP_CHAT', '')
-DUMP_CHAT = '' if len(DUMP_CHAT) == 0 else int(DUMP_CHAT)
+DUMP_CHAT_ID = environ.get('DUMP_CHAT_ID', '')
+DUMP_CHAT_ID = '' if len(DUMP_CHAT_ID) == 0 else int(DUMP_CHAT_ID)
 
-LOG_CHAT = environ.get('LOG_CHAT', '')
-LOG_CHAT = '' if len(LOG_CHAT) == 0 else int(LOG_CHAT)
+LOG_CHAT_ID = environ.get('LOG_CHAT_ID', '')
+LOG_CHAT_ID = '' if len(LOG_CHAT_ID) == 0 else int(LOG_CHAT_ID)
 
 STATUS_LIMIT = environ.get('STATUS_LIMIT', '')
 STATUS_LIMIT = 10 if len(STATUS_LIMIT) == 0 else int(STATUS_LIMIT)
@@ -330,8 +330,8 @@ config_dict = {'AS_DOCUMENT': AS_DOCUMENT,
                'DATABASE_URL': DATABASE_URL,
                'DEFAULT_UPLOAD': DEFAULT_UPLOAD,
                'DOWNLOAD_DIR': DOWNLOAD_DIR,
-               'DUMP_CHAT': DUMP_CHAT,
-               'LOG_CHAT': LOG_CHAT,
+               'DUMP_CHAT_ID': DUMP_CHAT_ID,
+               'LOG_CHAT_ID': LOG_CHAT_ID,
                'EQUAL_SPLITS': EQUAL_SPLITS,
                'EXTENSION_FILTER': EXTENSION_FILTER,
                'GDRIVE_ID': GDRIVE_ID,
