@@ -292,8 +292,13 @@ BASE_URL_PORT = 80 if len(BASE_URL_PORT) == 0 else int(BASE_URL_PORT)
 
 BASE_URL = environ.get('BASE_URL', '').rstrip("/")
 if len(BASE_URL) == 0:
-    log_warning('BASE_URL not provided!')
-    BASE_URL = ''
+    HEROKU_APP_NAME = environ.get('HEROKU_APP_NAME', '')
+    if len(HEROKU_APP_NAME) == 0:
+        log_info('Using HEROKU_APP_NAME as BASE_URL!')
+        BASE_URL = 'https://{HEROKU_APP_NAME}.herokuapp.com'
+    else:
+        log_warning('BASE_URL not provided!')
+        BASE_URL = ''
 
 UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
 if len(UPSTREAM_REPO) == 0:
