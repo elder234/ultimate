@@ -192,12 +192,18 @@ class YoutubeDLHelper:
             {'add_chapters': True, 'add_infojson': 'if_exists', 'add_metadata': True, 'key': 'FFmpegMetadata'}]
 
         if qual.startswith('ba/b-'):
-            mp3_info = qual.split('-')
-            qual = mp3_info[0]
-            rate = mp3_info[1]
+            audio_info = qual.split('-')
+            qual = audio_info[0]
+            audio_format = audio_info[1]
+            rate = audio_info[2]
             self.opts['postprocessors'].append(
-                {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': rate})
-            self.__ext = '.mp3'
+                {'key': 'FFmpegExtractAudio', 'preferredcodec': audio_format, 'preferredquality': rate})
+            if audio_format == 'vorbis':
+                self.__ext = '.ogg'
+            elif audio_format == 'alac':
+                self.__ext = '.m4a'
+            else:
+                self.__ext = f'.{audio_format}'
 
         self.opts['format'] = qual
 

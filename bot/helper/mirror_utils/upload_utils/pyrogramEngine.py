@@ -228,8 +228,9 @@ class TgUploader:
             is_video, is_audio, is_image = await get_document_type(self.__up_path)
             if not is_image and thumb is None:
                 file_name = ospath.splitext(file)[0]
-                if await aiopath.isfile(f"{self.__path}/yt-dlp-thumb/{file_name}.jpg"):
-                    thumb = f"{self.__path}/yt-dlp-thumb/{file_name}.jpg"
+                thumb_path = f"{self.__path}/yt-dlp-thumb/{file_name}.jpg"
+                if await aiopath.isfile(thumb_path):
+                    thumb = thumb_path
             app = user if IS_PREMIUM_USER else bot
             if self.__as_doc or force_document or (not is_video and not is_audio and not is_image):
                 key = 'documents'
