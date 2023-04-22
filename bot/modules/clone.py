@@ -38,7 +38,7 @@ async def rcloneNode(client, message, link, dst_path, rcf, tag):
         config_path = 'rclone.conf'
 
     if not await aiopath.exists(config_path):
-        await sendMessage(message, f"Config RClone {config_path} tidak ditemukan!")
+        await sendMessage(message, f"Config Rclone {config_path} tidak ditemukan!")
         return
 
     if dst_path == 'rcl' or config_dict['RCLONE_PATH'] == 'rcl':
@@ -50,10 +50,10 @@ async def rcloneNode(client, message, link, dst_path, rcf, tag):
     dst_path = (dst_path or config_dict['RCLONE_PATH']).strip('/')
     if dst_path.startswith('mrcc:'):
         if config_path != f'rclone/{message.from_user.id}.conf':
-            await sendMessage(message, 'Kamu harus menggunakan Config RClone yang sama!')
+            await sendMessage(message, 'Kamu harus menggunakan Config Rclone yang sama!')
             return
     elif config_path != 'rclone.conf':
-        await sendMessage(message, 'Kamu harus menggunakan Config RClone yang sama!')
+        await sendMessage(message, 'Kamu harus menggunakan Config Rclone yang sama!')
         return
 
     remote, src_path = link.split(':', 1)
@@ -64,7 +64,7 @@ async def rcloneNode(client, message, link, dst_path, rcf, tag):
     res = await cmd_exec(cmd)
     if res[2] != 0:
         if res[2] != -9:
-            msg = f'<b>Gagal mendapatkan link path RClone</b>\n<b>Path :</b> <code>{remote}:{src_path}</code>\n\n<b>Stderr :</b>\n<code>{res[1][:4000]}</code>'
+            msg = f'<b>Gagal mendapatkan link path Rclone</b>\n<b>Path :</b> <code>{remote}:{src_path}</code>\n\n<b>Stderr :</b>\n<code>{res[1][:4000]}</code>'
             await sendMessage(message, msg)
         return
     rstat = loads(res[0])
@@ -214,10 +214,10 @@ async def clone(client, message):
 
     if is_rclone_path(link):
         if not await aiopath.exists('rclone.conf') and not await aiopath.exists(f'rclone/{message.from_user.id}.conf'):
-            await sendMessage(message, 'Config RClone tidak ditemukan!')
+            await sendMessage(message, 'Config Rclone tidak ditemukan!')
             return
         if not config_dict['RCLONE_PATH'] and not dst_path:
-            await sendMessage(message, 'Tujuan path RClone tidak ditemukan!')
+            await sendMessage(message, 'Tujuan path Rclone tidak ditemukan!')
             return
         await rcloneNode(client, message, link, dst_path, rcf, tag)
     else:

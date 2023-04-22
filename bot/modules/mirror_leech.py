@@ -174,7 +174,7 @@ async def _mirror_leech(client, message, isZip=False, extract=False, isQbit=Fals
             await sendMessage(message, 'GDRIVE_ID tidak ditemukan!')
             return
         elif not up:
-            await sendMessage(message, 'Tujuan path RClone tidak ditemukan!')
+            await sendMessage(message, 'Tujuan path Rclone tidak ditemukan!')
             return
         elif up not in ['rcl', 'gd']:
             if up.startswith('mrcc:'):
@@ -182,7 +182,7 @@ async def _mirror_leech(client, message, isZip=False, extract=False, isQbit=Fals
             else:
                 config_path = 'rclone.conf'
             if not await aiopath.exists(config_path):
-                await sendMessage(message, f"Config RClone <code>{config_path}</code> tidak ditemukan!")
+                await sendMessage(message, f"Config Rclone <code>{config_path}</code> tidak ditemukan!")
                 return
 
     if link == 'rcl':
@@ -209,7 +209,7 @@ async def _mirror_leech(client, message, isZip=False, extract=False, isQbit=Fals
         else:
             config_path = 'rclone.conf'
         if not await aiopath.exists(config_path):
-            await sendMessage(message, f"Config RClone <code>{config_path}</code> tidak ditemukan!")
+            await sendMessage(message, f"Config Rclone <code>{config_path}</code> tidak ditemukan!")
             return
         await add_rclone_download(link, config_path, f'{path}/', name, listener)
     elif is_gdrive_link(link):

@@ -44,6 +44,8 @@ async def path_updates(client, query, obj):
         else:
             await obj.back_from_path()
     elif data[1] == 're':
+        # some remotes has space
+        data = query.data.split(maxsplit=2)
         obj.remote = data[2]
         await obj.get_path()
     elif data[1] == 'pa':
@@ -262,7 +264,7 @@ class RcloneList:
             self.__rc_owner = await aiopath.exists('rclone.conf')
             if not self.__rc_owner and not self.__rc_user:
                 self.event.set()
-                return 'Config RClone tidak ditemukan!'
+                return 'Config Rclone tidak ditemukan!'
             await self.list_config()
         else:
             self.config_path = config_path

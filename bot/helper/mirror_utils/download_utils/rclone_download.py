@@ -24,7 +24,7 @@ async def add_rclone_download(rc_path, config_path, path, name, listener):
     res1, res2 = await gather(cmd_exec(cmd1), cmd_exec(cmd2))
     if res1[2] != res2[2] != 0:
         if res1[2] != -9:
-            msg = f"<b>ERROR: Gagal mendapatkan ukuran file RClone!</b>\n<b>Path :</b> <code>{remote}:{rc_path}</code>\n<b>Stderr :</b>\n<code>{res1[1][:4000]}</code>"
+            msg = f"<b>ERROR: Gagal mendapatkan ukuran file Rclone!</b>\n<b>Path :</b> <code>{remote}:{rc_path}</code>\n<b>Stderr :</b>\n<code>{res1[1][:4000]}</code>"
             await sendMessage(listener.message, msg)
         return
     rstat = loads(res1[0])
