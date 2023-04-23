@@ -174,7 +174,7 @@ USER_SESSION_STRING = environ.get('USER_SESSION_STRING', '')
 if len(USER_SESSION_STRING) != 0:
     log_info("Creating client from USER_SESSION_STRING")
     # If Using Other Account
-    TELEGRAM_API_PREMIUM = environ.get('TELEGRAM_API_PREMIUM', '')
+    TELEGRAM_API_PREMIUM = int(environ.get('TELEGRAM_API_PREMIUM', ''))
     TELEGRAM_HASH_PREMIUM = environ.get('TELEGRAM_HASH_PREMIUM', '')
     if len(TELEGRAM_API_PREMIUM) != 0:
         log_info("Using another Telegram Api & Telegram Hash for User Session...")
