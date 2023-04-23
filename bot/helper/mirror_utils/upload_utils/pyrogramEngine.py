@@ -367,7 +367,7 @@ class TgUploader:
             if not self.__is_cancelled:
                 try:
                     if DUMP_CHAT_ID := config_dict['DUMP_CHAT_ID']:
-                        await app.copy_message(
+                        await bot.copy_message(
                             chat_id=self.__listener.message.chat.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
                 except Exception as e:
                     LOGGER.error(f"Failed forward message to log | {e}")
