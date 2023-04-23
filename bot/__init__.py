@@ -176,9 +176,9 @@ if len(USER_SESSION_STRING) != 0:
     # If Using Other Account
     TELEGRAM_API_PREMIUM = environ.get('TELEGRAM_API_PREMIUM', '')
     TELEGRAM_HASH_PREMIUM = environ.get('TELEGRAM_HASH_PREMIUM', '')
-    TELEGRAM_API_PREMIUM = int(TELEGRAM_API_PREMIUM)
     if len(TELEGRAM_API_PREMIUM) != 0:
         log_info("Using another Telegram Api & Telegram Hash for User Session...")
+        TELEGRAM_API_PREMIUM = int(TELEGRAM_API_PREMIUM)
         user = tgClient('user', TELEGRAM_API_PREMIUM, TELEGRAM_HASH_PREMIUM, session_string=USER_SESSION_STRING,
                         parse_mode=enums.ParseMode.HTML, no_updates=True, max_concurrent_transmissions=1000).start()
     else:
