@@ -364,12 +364,13 @@ class TgUploader:
             if self.__thumb is None and thumb is not None and await aiopath.exists(thumb):
                 await aioremove(thumb)
             # Forward to Message Chat
-            try:
-                if DUMP_CHAT_ID := config_dict['DUMP_CHAT_ID']:
-                    await app.copy_message(
-                        chat_id=self.__listener.message.chat.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
-            except Exception as e:
-                LOGGER.error(f"Failed forward message to log | {e}")
+            if not self.__is_cancelled:
+                try:
+                    if DUMP_CHAT_ID := config_dict['DUMP_CHAT_ID']:
+                        await app.copy_message(
+                            chat_id=self.__listener.message.chat.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
+                except Exception as e:
+                    LOGGER.error(f"Failed forward message to log | {e}")
         except FloodWait as f:
             LOGGER.warning(str(f))
             await sleep(f.value)
