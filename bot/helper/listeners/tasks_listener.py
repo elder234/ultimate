@@ -367,8 +367,7 @@ class MirrorLeechListener:
             # Forward to Log
             try:
                 if LOG_CHAT_ID := config_dict['LOG_CHAT_ID']:
-                    app = user if IS_PREMIUM_USER else bot
-                    await app.send_message(chat_id=LOG_CHAT_ID,
+                    await bot.send_message(chat_id=LOG_CHAT_ID,
                                            text=msg,
                                            disable_web_page_preview=True,
                                            disable_notification=True,
