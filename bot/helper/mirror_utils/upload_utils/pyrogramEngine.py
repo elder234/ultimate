@@ -42,11 +42,15 @@ class TgUploader:
         self.__lprefix = ''
         self.__as_doc = False
         self.__media_group = False
+        self.__up_size = 0
 
     async def __upload_progress(self, current, total):
         if self.__is_cancelled:
             if IS_PREMIUM_USER:
-                user.stop_transmission()
+                if self.__up_size > 2097152000:
+                    user.stop_transmission()
+                else:
+                    bot.stop_transmission()
             else:
                 bot.stop_transmission()
         chunk_size = current - self.__last_uploaded
@@ -163,6 +167,7 @@ class TgUploader:
                     continue
                 try:
                     f_size = await aiopath.getsize(self.__up_path)
+                    self.__up_size = f_size
                     if self.__listener.seed and file_ in o_files and f_size in m_size:
                         continue
                     self.__total_files += 1
@@ -235,7 +240,14 @@ class TgUploader:
                 thumb_path = f"{self.__path}/yt-dlp-thumb/{file_name}.jpg"
                 if await aiopath.isfile(thumb_path):
                     thumb = thumb_path
-            app = user if IS_PREMIUM_USER else bot
+            # Use User when up size more than 2GB
+            if IS_PREMIUM_USER:
+                if self.__up_size > 2097152000:
+                    app = user
+                else:
+                    app = bot
+            else:
+                app = bot
             if self.__as_doc or force_document or (not is_video and not is_audio and not is_image):
                 key = 'documents'
                 if is_video and thumb is None:
