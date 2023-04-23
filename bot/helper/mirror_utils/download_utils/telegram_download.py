@@ -52,7 +52,11 @@ class TelegramDownloadHelper:
     async def __onDownloadProgress(self, current, total):
         if self.__is_cancelled:
             if IS_PREMIUM_USER:
-                user.stop_transmission()
+                # Stop with bot
+                try:
+                    user.stop_transmission()
+                except:
+                    bot.stop_transmission()
             else:
                 bot.stop_transmission()
         self.__processed_bytes = current
@@ -90,7 +94,11 @@ class TelegramDownloadHelper:
             if not self.__listener.isSuperGroup:
                 await sendMessage(message, "Gunakan SuperGroup untuk mengunduh dengan USER_SESSION!")
                 return
-            message = await user.get_messages(chat_id=message.chat.id, message_ids=message.id)
+            # Download with bot if user not in chat_id
+            try:
+                message = await user.get_messages(chat_id=message.chat.id, message_ids=message.id)
+            except:
+                message = await bot.get_messages(chat_id=message.chat.id, message_ids=message.id)
 
         media = message.document or message.photo or message.video or message.audio or \
             message.voice or message.video_note or message.sticker or message.animation or None
