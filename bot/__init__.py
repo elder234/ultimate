@@ -214,7 +214,7 @@ if len(SEARCH_PLUGINS) == 0:
     SEARCH_PLUGINS = ''
 
 MAX_SPLIT_SIZE = 4194304000 if IS_PREMIUM_USER else 2097152000
-log_info("Max Split Size : {MAX_SPLIT_SIZE}")
+log_info(f"Max Split Size : {MAX_SPLIT_SIZE}")
 
 LEECH_SPLIT_SIZE = environ.get('LEECH_SPLIT_SIZE', '')
 if len(LEECH_SPLIT_SIZE) == 0 or int(LEECH_SPLIT_SIZE) > MAX_SPLIT_SIZE:
