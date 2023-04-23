@@ -352,7 +352,13 @@ Check all yt-dlp api options from this <a href='https://github.com/yt-dlp/yt-dlp
 
 
 async def send_users_settings(client, message):
-    if msg := ''.join(f'<code>{u}</code>: {escape(str(d))}\n\n' for u, d in user_data.items()):
+    if user_data:
+        msg = ''
+        for u, d in user_data.items():
+            kmsg = f'\n<b>{u}:</b>\n'
+            if vmsg := ''.join(f'{k}: <code>{v}</code>\n' for k, v in d.items() if v):
+                msg += kmsg + vmsg
+
         msg_ecd = msg.encode()
         if len(msg_ecd) > 4000:
             with BytesIO(msg_ecd) as ofile:

@@ -75,9 +75,10 @@ async def __onDownloadComplete(api, gid):
         if dl := await getDownloadByGid(new_gid):
             listener = dl.listener()
             if config_dict['BASE_URL'] and listener.select:
-                await sync_to_async(api.client.force_pause, new_gid)
+                if not dl.queued:
+                    await sync_to_async(api.client.force_pause, new_gid)
                 SBUTTONS = bt_selection_buttons(new_gid)
-                msg = "Unduhan dihentikan... Pilih file lalu tekan tombol selesai untuk melanjutkan!"
+                msg = "Unduhan dihentikan...\nPilih file lalu tekan tombol selesai untuk melanjutkan!"
                 await sendMessage(listener.message, msg, SBUTTONS)
     elif download.is_torrent:
         if dl := await getDownloadByGid(gid):

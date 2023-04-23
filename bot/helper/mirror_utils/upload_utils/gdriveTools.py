@@ -592,7 +592,7 @@ class GoogleDriveHelper:
                             url_path = rquote(f'{file.get("name")}')
                         url = f'{index_url}/{url_path}'
                         msg += f' <b>| <a href="{url}">Index Link</a></b>'
-                        if config_dict['VIEW_LINK']:
+                        if mime_type.startswith(('image', 'video', 'audio')):
                             urlv = f'{index_url}/{url_path}?a=view'
                             msg += f' <b>| <a href="{urlv}">View Link</a></b>'
                 msg += '<br><br>'

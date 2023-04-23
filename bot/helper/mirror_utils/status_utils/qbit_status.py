@@ -52,7 +52,7 @@ class QbittorrentStatus:
     def status(self):
         self.__update()
         state = self.__info.state
-        if state == "queuedDL":
+        if state == "queuedDL" or self.queued:
             return MirrorStatus.STATUS_QUEUEDL
         elif state == "queuedUP":
             return MirrorStatus.STATUS_QUEUEUP
@@ -103,9 +103,14 @@ class QbittorrentStatus:
         self.__update()
         await sync_to_async(self.__client.torrents_pause, torrent_hashes=self.__info.hash)
         if self.status() != MirrorStatus.STATUS_SEEDING:
-            LOGGER.info(f"Cancelling Download: {self.__info.name}")
+            if self.queued:
+                LOGGER.info(f'Cancelling QueueDL: {self.name()}')
+                msg = 'Tugas ini dihapus dari antrian!'
+            else:
+                LOGGER.info(f"Cancelling Download: {self.__info.name}")
+                msg = 'Unduhan dibatalkan oleh User!'
             await sleep(0.3)
-            await self.__listener.onDownloadError('Unduhan dibatalkan oleh User!')
+            await self.__listener.onDownloadError(msg)
             await sync_to_async(self.__client.torrents_delete, torrent_hashes=self.__info.hash, delete_files=True)
             await sync_to_async(self.__client.torrents_delete_tags, tags=self.__info.tags)
             async with qb_listener_lock:
