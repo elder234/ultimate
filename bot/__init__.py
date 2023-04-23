@@ -173,8 +173,16 @@ user = ''
 USER_SESSION_STRING = environ.get('USER_SESSION_STRING', '')
 if len(USER_SESSION_STRING) != 0:
     log_info("Creating client from USER_SESSION_STRING")
-    user = tgClient('user', TELEGRAM_API, TELEGRAM_HASH, session_string=USER_SESSION_STRING,
-                    parse_mode=enums.ParseMode.HTML, no_updates=True, max_concurrent_transmissions=1000).start()
+    # If Using Other Account
+    TELEGRAM_API_PREMIUM = environ.get('TELEGRAM_API_PREMIUM', '')
+    TELEGRAM_HASH_PREMIUM = environ.get('TELEGRAM_HASH_PREMIUM', '')
+    if len(TELEGRAM_API_PREMIUM) != 0:
+        log_info("Using another Telegram Api & Telegram Hash for User Session...")
+        user = tgClient('user', TELEGRAM_API_PREMIUM, TELEGRAM_HASH_PREMIUM, session_string=USER_SESSION_STRING,
+                        parse_mode=enums.ParseMode.HTML, no_updates=True, max_concurrent_transmissions=1000).start()
+    else:
+        user = tgClient('user', TELEGRAM_API, TELEGRAM_HASH, session_string=USER_SESSION_STRING,
+                        parse_mode=enums.ParseMode.HTML, no_updates=True, max_concurrent_transmissions=1000).start()
     IS_PREMIUM_USER = user.me.is_premium
 
 MEGA_EMAIL = environ.get('MEGA_EMAIL', '')
@@ -205,6 +213,7 @@ if len(SEARCH_PLUGINS) == 0:
     SEARCH_PLUGINS = ''
 
 MAX_SPLIT_SIZE = 4194304000 if IS_PREMIUM_USER else 2097152000
+log_info("Max Split Size : " + MAX_SPLIT_SIZE)
 
 LEECH_SPLIT_SIZE = environ.get('LEECH_SPLIT_SIZE', '')
 if len(LEECH_SPLIT_SIZE) == 0 or int(LEECH_SPLIT_SIZE) > MAX_SPLIT_SIZE:
