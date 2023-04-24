@@ -492,7 +492,7 @@ async def edit_variable(client, message, pre_message, key):
     elif key == 'EXTENSION_FILTER':
         fx = value.split()
         GLOBAL_EXTENSION_FILTER.clear()
-        GLOBAL_EXTENSION_FILTER.append('.aria2')
+        GLOBAL_EXTENSION_FILTER.append('aria2')
         for x in fx:
             if x.strip().startswith('.'):
                 x = x.lstrip('.')
