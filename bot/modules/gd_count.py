@@ -32,10 +32,10 @@ async def countNode(client, message):
         msg = await sendMessage(message, f"<b>Menghitung :</b>\n<code>{link}</code>")
         gd = GoogleDriveHelper()
         name, mime_type, size, files, folders = await sync_to_async(gd.count, link)
+        await deleteMessage(msg)
         if mime_type is None:
             await sendMessage(message, name)
             return
-        await deleteMessage(msg)
         msg = f'<b>Nama :</b> <code>{name}</code>'
         msg += f'\n\n<b>Ukuran :</b> <code>{get_readable_file_size(size)}</code>'
         msg += f'\n\n<b>Tipe :</b> <code>{mime_type}</code>'
