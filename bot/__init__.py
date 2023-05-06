@@ -11,13 +11,13 @@ from subprocess import Popen, run as srun
 from os import remove as osremove, path as ospath, environ, getcwd
 from aria2p import API as ariaAPI, Client as ariaClient
 from qbittorrentapi import Client as qbClient
-from faulthandler import enable as faulthandler_enable
+# from faulthandler import enable as faulthandler_enable
 from socket import setdefaulttimeout
 from logging import getLogger, FileHandler, StreamHandler, INFO, basicConfig, error as log_error, info as log_info, warning as log_warning
 from uvloop import install
 install()
 
-faulthandler_enable()
+# faulthandler_enable()
 
 setdefaulttimeout(600)
 
@@ -453,7 +453,7 @@ def aria2c_init():
         aria2.add_uris([link], {'dir': dire})
         sleep(3)
         downloads = aria2.get_downloads()
-        sleep(15)
+        sleep(10)
         aria2.remove(downloads, force=True, files=True, clean=True)
     except Exception as e:
         log_error(f"Aria2c initializing error: {e}")
@@ -489,7 +489,7 @@ else:
 
 log_info("Creating client from BOT_TOKEN")
 bot = tgClient('bot', TELEGRAM_API, TELEGRAM_HASH,
-               bot_token=BOT_TOKEN, parse_mode=enums.ParseMode.HTML, max_concurrent_transmissions=1000).start()
+               bot_token=BOT_TOKEN, workers=1000, parse_mode=enums.ParseMode.HTML, max_concurrent_transmissions=1000).start()
 bot_loop = bot.loop
 bot_name = bot.me.username
 scheduler = AsyncIOScheduler(timezone=str(

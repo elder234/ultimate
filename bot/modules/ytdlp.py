@@ -22,7 +22,7 @@ from bot.helper.ext_utils.help_messages import YT_HELP_MESSAGE
 
 
 @new_task
-async def select_format(client, query, obj):
+async def select_format(_, query, obj):
     data = query.data.split()
     message = query.message
     await query.answer()
