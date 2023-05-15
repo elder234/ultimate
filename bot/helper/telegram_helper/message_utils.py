@@ -95,7 +95,6 @@ async def get_tg_link_content(link):
         private = True
         msg = re_match(
             r"tg:\/\/openmessage\?user_id=([0-9]+)&message_id=([0-9]+)", link)
-
         if not user:
             raise Exception('USER_SESSION_STRING required for this private link!')
 
@@ -120,7 +119,6 @@ async def get_tg_link_content(link):
         return message, 'bot'
     else:
         raise Exception("Mostly message has been deleted!")
-
 
 
 async def update_all_messages(force=False):
