@@ -68,6 +68,7 @@ async def _mirror_leech(client, message, isZip=False, extract=False, isQbit=Fals
                 index += 1
             elif x.startswith('m:'):
                 marg = x.split('m:', 1)
+                index += 1
                 if len(marg) > 1:
                     folder_name = f"/{marg[1]}"
                     if not sameDir:
