@@ -51,7 +51,7 @@ def progress_bar(percentage):
     )
 
 
-async def stats(client, message):
+async def stats(_, message):
     if await aiopath.exists('.git'):
         last_commit = await cmd_exec("git log -1 --date=short --pretty=format:'%cd <b>From</b> %cr'", True)
         last_commit = last_commit[0]
@@ -167,7 +167,7 @@ Enjoy :D
         await sendMessage(message, 'Bukan User yang diautorisasi!\nGabung grup untuk menggunakan Bot!', reply_markup)
 
 
-async def restart(client, message):
+async def restart(_, message):
     restart_message = await sendMessage(message, "Restarting...")
     if scheduler.running:
         scheduler.shutdown(wait=False)
@@ -183,14 +183,14 @@ async def restart(client, message):
     osexecl(executable, executable, "-m", "bot")
 
 
-async def ping(client, message):
+async def ping(_, message):
     start_time = int(round(time() * 1000))
     reply = await sendMessage(message, "Mengetest waktu respon bot...")
     end_time = int(round(time() * 1000))
     await editMessage(reply, f'🤖 <b>Respon Bot:</b> <code>{end_time - start_time} ms</code>')
 
 
-async def log(client, message):
+async def log(_, message):
     await sendFile(message, 'log.txt')
 
 help_string = f'''
@@ -229,18 +229,18 @@ help_string = f'''
 /{BotCommands.AddSudoCommand[0]} or /{BotCommands.AddSudoCommand[1]}: Add sudo user (Only Owner).
 /{BotCommands.RmSudoCommand[0]} or /{BotCommands.RmSudoCommand[1]}: Remove sudo users (Only Owner).
 /{BotCommands.RestartCommand[0]} or /{BotCommands.RestartCommand[1]}: Restart and update the bot (Only Owner & Sudo).
-/{BotCommands.LogCommand}: Get a log file of the bot. Handy for getting crash reports (Only Owner & Sudo).
-/{BotCommands.ShellCommand}: Run shell commands (Only Owner).
-/{BotCommands.EvalCommand}: Run Python Code Line | Lines (Only Owner).
-/{BotCommands.ExecCommand}: Run Commands In Exec (Only Owner).
-/{BotCommands.ClearLocalsCommand}: Clear {BotCommands.EvalCommand} or {BotCommands.ExecCommand} locals (Only Owner).
+/{BotCommands.LogCommand[0]} or /{BotCommands.LogCommand[1]}: Get a log file of the bot. Handy for getting crash reports (Only Owner & Sudo).
+/{BotCommands.ShellCommand[0]} or /{BotCommands.ShellCommand[1]}: Run shell commands (Only Owner).
+/{BotCommands.EvalCommand[0]} or /{BotCommands.EvalCommand[1]}: Run Python Code Line | Lines (Only Owner).
+/{BotCommands.ExecCommand[0]} or /{BotCommands.ExecCommand[1]}: Run Commands In Exec (Only Owner).
+/{BotCommands.ClearLocalsCommand[0]} or /{BotCommands.ClearLocalsCommand[1]}: Clear locals (Only Owner)
 /{BotCommands.RssCommand}: RSS Menu.
 
 NOTE: Kirim perintah tanpa argument untuk melihat details perintah!
 '''
 
 
-async def bot_help(client, message):
+async def bot_help(_, message):
     await sendMessage(message, help_string)
 
 
