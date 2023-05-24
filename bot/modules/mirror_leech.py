@@ -71,9 +71,6 @@ async def _mirror_leech(client, message, isZip=False, extract=False, isQbit=Fals
                 index += 1
                 if len(marg) > 1:
                     folder_name = f"/{marg[1]}"
-                    if not sameDir:
-                        sameDir = set()
-                    sameDir.add(message.id)
             elif x == 'b':
                 is_bulk = True
                 bi = index
@@ -88,6 +85,7 @@ async def _mirror_leech(client, message, isZip=False, extract=False, isQbit=Fals
                     bulk_end = dargs[2] or 0
             else:
                 break
+            
         if multi == 0 or len(bulk) != 0:
             message_args = mesg[0].split(maxsplit=index)
             if len(message_args) > index:
@@ -99,6 +97,10 @@ async def _mirror_leech(client, message, isZip=False, extract=False, isQbit=Fals
             seed = False
             ratio = None
             seed_time = None
+            if not is_bulk:
+                if not sameDir:
+                    sameDir = set()
+                sameDir.add(message.id)
 
     if is_bulk:
         bulk = await extract_bulk_links(message, bulk_start, bulk_end)
