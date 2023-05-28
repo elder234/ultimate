@@ -153,12 +153,12 @@ async def start(client, message):
     reply_markup = buttons.build_menu(2)
     if await CustomFilters.authorized(client, message):
         start_string = f'''
-Mirror Tautan Lambat menjadi Tautan Cepat!
+<b>Mirror Tautan Lambat menjadi Tautan Cepat!</b>
 
-Note:
+<b>Note :</b>
 Selalu backup File setelah Mirror untuk menghindari Team Drive terhapus!
 
-Ketik /{BotCommands.HelpCommand} untuk mendapatkan list perintah yang tersedia
+Ketik <code>/{BotCommands.HelpCommand[0]}</code> untuk mendapatkan list perintah yang tersedia!
 
 Enjoy :D
 '''
