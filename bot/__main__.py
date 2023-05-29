@@ -14,7 +14,7 @@ from quoters import Quote
 from pytz import timezone
 from datetime import datetime
 
-from bot import bot, botStartTime, LOGGER, Interval, DATABASE_URL, user, QbInterval, INCOMPLETE_TASK_NOTIFIER, scheduler
+from bot import bot, botStartTime, LOGGER, Interval, DATABASE_URL, user, QbInterval, INCOMPLETE_TASK_NOTIFIER, scheduler, config_dict
 from .helper.ext_utils.fs_utils import start_cleanup, clean_all, exit_clean_up
 from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time, cmd_exec, sync_to_async
 from .helper.ext_utils.db_handler import DbManger
@@ -59,7 +59,7 @@ async def stats(_, message):
         last_commit = 'No UPSTREAM_REPO'
     currentTime = get_readable_time(time() - botStartTime)
     osUptime = get_readable_time(time() - boot_time())
-    total, used, free, disk = disk_usage('/')
+    total, used, free, disk = disk_usage(config_dict['DOWNLOAD_DIR'])
     try:
         total = get_readable_file_size(total)
     except:
