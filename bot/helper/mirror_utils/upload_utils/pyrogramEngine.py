@@ -61,6 +61,7 @@ class TgUploader:
         user_id = self.__listener.message.from_user.id
         user_dict = user_data.get(user_id, {})
         self.__as_doc = user_dict.get('as_doc') or config_dict['AS_DOCUMENT']
+        self.__as_pm = user_dict.get('as_pm') or config_dict['AS_PM']
         self.__lprefix = user_dict.get(
             'lprefix') or config_dict['LEECH_FILENAME_PREFIX']
         if not await aiopath.exists(self.__thumb):
@@ -378,14 +379,22 @@ class TgUploader:
                         self.__last_msg_in_group = True
             if self.__thumb is None and thumb is not None and await aiopath.exists(thumb):
                 await aioremove(thumb)
-            # Forward to Message Chat
             if not self.__is_cancelled:
-                try:
-                    if DUMP_CHAT_ID := config_dict['DUMP_CHAT_ID']:
+                # Forward to PM 
+                if self.__as_pm:
+                    try:
                         await bot.copy_message(
-                            chat_id=self.__listener.message.chat.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
-                except Exception as e:
-                    LOGGER.error(f"Failed forward message to log | {e}")
+                            chat_id=self.__listener.message.from_user.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
+                    except Exception as e:
+                        LOGGER.error(f"Failed forward message to log | {e}")  
+                # Forward to Message Chat
+                else:
+                    try:
+                        if DUMP_CHAT_ID := config_dict['DUMP_CHAT_ID']:
+                            await bot.copy_message(
+                                chat_id=self.__listener.message.chat.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
+                    except Exception as e:
+                        LOGGER.error(f"Failed forward message to log | {e}")              
         except FloodWait as f:
             LOGGER.warning(str(f))
             await sleep(f.value)

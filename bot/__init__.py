@@ -288,6 +288,9 @@ WEB_PINCODE = WEB_PINCODE.lower() == 'true'
 AS_DOCUMENT = environ.get('AS_DOCUMENT', '')
 AS_DOCUMENT = AS_DOCUMENT.lower() == 'true'
 
+AS_PM = environ.get('AS_PM', '')
+AS_PM = AS_PM.lower() == 'true'
+
 EQUAL_SPLITS = environ.get('EQUAL_SPLITS', '')
 EQUAL_SPLITS = EQUAL_SPLITS.lower() == 'true'
 
@@ -300,9 +303,13 @@ BASE_URL_PORT = 80 if len(BASE_URL_PORT) == 0 else int(BASE_URL_PORT)
 BASE_URL = environ.get('BASE_URL', '').rstrip("/")
 if len(BASE_URL) == 0:
     HEROKU_APP_NAME = environ.get('HEROKU_APP_NAME', '')
-    if len(HEROKU_APP_NAME) == 0:
+    RENDER_APP_NAME = environ.get('RENDER_APP_NAME', '')
+    if not len(HEROKU_APP_NAME) == 0:
         log_info('Using HEROKU_APP_NAME as BASE_URL!')
         BASE_URL = 'https://{HEROKU_APP_NAME}.herokuapp.com'
+    elif not len(RENDER_APP_NAME) == 0:
+        log_info('Using RENDER_APP_NAME as BASE_URL!')
+        BASE_URL = 'https://{RENDER_APP_NAME}.onrender.com'     
     else:
         log_warning('BASE_URL not provided!')
         BASE_URL = ''
@@ -333,6 +340,7 @@ if len(RCLONE_SERVE_PASS) == 0:
 
 
 config_dict = {'AS_DOCUMENT': AS_DOCUMENT,
+               'AS_PM': AS_PM,
                'AUTHORIZED_CHATS': AUTHORIZED_CHATS,
                'AUTO_DELETE_MESSAGE_DURATION': AUTO_DELETE_MESSAGE_DURATION,
                'BASE_URL': BASE_URL,

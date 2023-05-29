@@ -29,6 +29,13 @@ async def get_user_settings(from_user):
     thumbpath = f"Thumbnails/{user_id}.jpg"
     rclone_path = f'rclone/{user_id}.conf'
     user_dict = user_data.get(user_id, {})
+    if user_dict.get('as_pm', False) or 'as_pm' not in user_dict and config_dict['AS_PM']:
+        stype = "PRIVATE MESSAGE"
+        buttons.ibutton("Send As PM", f"userset {user_id} pm")
+    else:
+        stype = "GROUP CHAT"
+        buttons.ibutton("Send As PM", f"userset {user_id} pm")
+
     if user_dict.get('as_doc', False) or 'as_doc' not in user_dict and config_dict['AS_DOCUMENT']:
         ltype = "DOCUMENT"
         buttons.ibutton("Send As Media", f"userset {user_id} doc")
@@ -76,6 +83,7 @@ async def get_user_settings(from_user):
 
     buttons.ibutton("Close", f"userset {user_id} close")
     text = f"""<b>Pengaturan untuk user</b> {name}
+<b>Send Type :</b> <code>{stype}</code>
 <b>Leech Type :</b> <code>{ltype}</code>
 <b>Custom Thumbnail :</b> <code>{thumbmsg}</code>
 <b>Rclone Config :</b> <code>{rccmsg}</code>
@@ -198,6 +206,13 @@ async def edit_user_settings(client, query):
     user_dict = user_data.get(user_id, {})
     if user_id != int(data[1]):
         await query.answer("Not Yours!", show_alert=True)
+    elif data[2] == "pm":
+        update_user_ldata(user_id, 'as_pm',
+                          not user_dict.get('as_pm', False))
+        await query.answer()
+        await update_user_settings(query)
+        if DATABASE_URL:
+            await DbManger().update_user_data(user_id)
     elif data[2] == "doc":
         update_user_ldata(user_id, 'as_doc',
                           not user_dict.get('as_doc', False))
