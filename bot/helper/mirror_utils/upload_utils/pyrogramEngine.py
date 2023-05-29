@@ -224,7 +224,7 @@ class TgUploader:
             await self.__listener.onUploadError("Tidak ada file untuk diunggah ke telegram!")
             return
         if self.__total_files <= self.__corrupted:
-            await self.__listener.onUploadError('File rusak atau mungkin berisi file yang diblokir di bot ini!')
+            await self.__listener.onUploadError('Ekstensi file ini diblokir oleh bot!')
             return
         LOGGER.info(f"Leech Completed: {self.name}")
         await self.__listener.onUploadComplete(None, size, self.__msgs_dict, self.__total_files, self.__corrupted, self.name)

@@ -10,9 +10,19 @@ headers = {
 
 try:
     HEROKU_APP_NAME = environ.get("HEROKU_APP_NAME", "")
+    RENDER_APP_NAME = environ.get("RENDER_APP_NAME", "")
     PORT = environ.get("PORT")
     if not len(HEROKU_APP_NAME) == 0:
         BASE_URL = f"https://{HEROKU_APP_NAME}.herokuapp.com"
+        if BASE_URL and len(PORT) != 0:
+            while True:
+                try:
+                    sleep(500)
+                    rget(BASE_URL, headers=headers, timeout=5)
+                except:
+                    pass
+    elif not len(RENDER_APP_NAME) == 0:
+        BASE_URL = f"https://{RENDER_APP_NAME}.onrender.com"
         if BASE_URL and len(PORT) != 0:
             while True:
                 try:
