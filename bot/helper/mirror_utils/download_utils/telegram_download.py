@@ -91,14 +91,11 @@ class TelegramDownloadHelper:
 
     async def add_download(self, message, path, filename, session):
         if IS_PREMIUM_USER and session != 'bot' or session == 'user':
-            if not self.__listener.isSuperGroup and session != 'user':
-                await sendMessage(message, "Gunakan SuperGroup untuk mengunduh dengan USER_SESSION!")
-                return
-            # Download with bot if user not in chat_id
             try:
                 message = await user.get_messages(chat_id=message.chat.id, message_ids=message.id)
             except:
-                pass
+                await sendMessage(message, "Gunakan SuperGroup untuk mengunduh dengan USER_SESSION!")
+                return
 
         media = message.document or message.photo or message.video or message.audio or \
             message.voice or message.video_note or message.sticker or message.animation or None

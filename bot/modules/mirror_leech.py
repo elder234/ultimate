@@ -244,6 +244,9 @@ async def _mirror_leech(client, message, isZip=False, extract=False, isQbit=Fals
             if not await aiopath.exists(config_path):
                 await sendMessage(message, f"Config Rclone <code>{config_path}</code> tidak ditemukan!")
                 return
+        if up != 'gd' and not is_rclone_path(up):
+            await sendMessage(message, 'Tujuan path Rclone tidak ditemukan!')
+            return
 
     if link == 'rcl':
         link = await RcloneList(client, message).get_rclone_path('rcd')
