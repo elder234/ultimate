@@ -386,7 +386,7 @@ class TgUploader:
                         await bot.copy_message(
                             chat_id=self.__listener.message.from_user.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
                     except Exception as e:
-                        LOGGER.error(f"Failed forward message to log | {e}")  
+                        LOGGER.error(f"Failed forward message | {e}")  
                 # Forward to Message Chat
                 else:
                     try:
@@ -394,7 +394,7 @@ class TgUploader:
                             await bot.copy_message(
                                 chat_id=self.__listener.message.chat.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
                     except Exception as e:
-                        LOGGER.error(f"Failed forward message to log | {e}")              
+                        LOGGER.error(f"Failed forward message | {e}")              
         except FloodWait as f:
             LOGGER.warning(str(f))
             await sleep(f.value)
