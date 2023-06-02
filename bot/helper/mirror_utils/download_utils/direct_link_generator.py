@@ -30,7 +30,7 @@ fmed_list = ['fembed.net', 'fembed.com', 'femax20.com', 'fcdn.stream', 'feurl.co
 
 anonfilesBaseSites = ['anonfiles.com', 'hotfile.io', 'bayfiles.com', 'megaupload.nz', 'letsupload.cc',
                       'filechan.org', 'myfile.is', 'vshare.is', 'rapidshare.nu', 'lolabits.se',
-                      'openload.cc', 'share-online.is', 'upvid.cc']
+                      'openload.cc', 'share-online.is', 'upvid.cc', 'zippysha.re']
 
 
 def direct_link_generator(link: str):

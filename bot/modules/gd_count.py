@@ -34,8 +34,8 @@ async def countNode(_, message):
         msg += f'\n\n<b>Ukuran :</b> <code>{get_readable_file_size(size)}</code>'
         msg += f'\n\n<b>Tipe :</b> <code>{mime_type}</code>'
         if mime_type == 'Folder':
-            msg += f'\n<b>Sub Folders :</b> <code>{folders}</code>'
-            msg += f'\n<b>Files :</b> <code>{files}</code>'
+            msg += f'\n\n<b>Sub Folders :</b> <code>{folders}</code>'
+            msg += f'\n\n<b>Files :</b> <code>{files}</code>'
         msg += f'\n\n<b>Oleh :</b> {tag}'
     else:
         msg = 'Send Gdrive link along with command or by replying to the link by command'
