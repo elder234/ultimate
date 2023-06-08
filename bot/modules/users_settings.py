@@ -30,7 +30,7 @@ async def get_user_settings(from_user):
     rclone_path = f'rclone/{user_id}.conf'
     user_dict = user_data.get(user_id, {})
     if user_dict.get('as_pm', False) or 'as_pm' not in user_dict and config_dict['AS_PM']:
-        stype = "PRIVATE MESSAGE"
+        stype = "PRIVATE CHAT"
         buttons.ibutton("Send As PM", f"userset {user_id} pm")
     else:
         stype = "GROUP CHAT"
