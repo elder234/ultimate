@@ -50,7 +50,7 @@ class MirrorLeechListener:
         self.sameDir = sameDir
         self.rcFlags = rcFlags
         self.upPath = upPath
-        self.compress = compress
+        self.join = join
 
     async def clean(self):
         try:
