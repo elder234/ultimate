@@ -21,10 +21,6 @@ from bot.helper.ext_utils.help_messages import YT_HELP_MESSAGE
 from bot.helper.ext_utils.bulk_links import extract_bulk_links
 
 
-arg_base = {'link': '', '-i': 0, '-m': '', '-s': False, '-opt': '',
-            '-b': False, '-n': '', '-z': False, '-up': '', '-rcf': ''}
-
-
 @new_task
 async def select_format(_, query, obj):
     data = query.data.split()
@@ -247,6 +243,9 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
     input_list = text[0].split(' ')
     qual = ''
 
+    arg_base = {'link': '', '-i': 0, '-m': '', '-d': False, '-j': False, '-s': False, '-b': False,
+                '-n': '', '-e': False, '-z': False, '-up': '', '-rcf': '', '-au': '', '-ap': ''}
+
     args = arg_parser(input_list[1:], arg_base)
 
     try:
@@ -263,6 +262,7 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
     rcf = args['-rcf']
     link = args['link']
     compress = args['-z']
+
     bulk_start = 0
     bulk_end = 0
 
