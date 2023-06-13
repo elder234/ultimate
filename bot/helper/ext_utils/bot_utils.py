@@ -7,7 +7,9 @@ from asyncio import create_subprocess_exec, create_subprocess_shell, run_corouti
 from asyncio.subprocess import PIPE
 from functools import partial, wraps
 from concurrent.futures import ThreadPoolExecutor
-from aiohttp import ClientSession
+from aiohttp import ClientSession, TCPConnector
+from ssl import create_default_context
+from certifi import where
 
 from bot import download_dict, download_dict_lock, botStartTime, user_data, config_dict, bot_loop
 from bot.helper.telegram_helper.bot_commands import BotCommands
@@ -286,8 +288,8 @@ def arg_parser(items, arg_base):
 
 
 async def get_content_type(url):
-    async with ClientSession(trust_env=True) as session:
-        async with session.get(url) as response:
+    async with ClientSession(trust_env=True, connector=TCPConnector(ssl=create_default_context(cafile=where()))) as session:
+        async with session.get(url, ) as response:
             return response.headers.get('Content-Type')
 
 
