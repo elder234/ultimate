@@ -243,8 +243,8 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
     input_list = text[0].split(' ')
     qual = ''
 
-    arg_base = {'link': '', '-i': 0, '-m': '', '-d': False, '-j': False, '-s': False, '-b': False,
-                '-n': '', '-e': False, '-z': False, '-up': '', '-rcf': '', '-au': '', '-ap': ''}
+    arg_base = {'link': '', '-i': 0, '-m': '', '-s': False, '-opt': '',
+            '-b': False, '-n': '', '-z': False, '-up': '', '-rcf': ''}
 
     args = arg_parser(input_list[1:], arg_base)
 
