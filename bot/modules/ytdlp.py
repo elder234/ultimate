@@ -213,7 +213,7 @@ class YtSelection:
         buttons.ibutton('Back', 'ytq aq back')
         buttons.ibutton('Cancel', 'ytq aq cancel')
         subbuttons = buttons.build_menu(5)
-        msg = f'<b>Pilih kualitas audio{i} :</b>\n<b>0 adalah kualitas terbaik</b>\n<b>10 adalah kualitas terburuk</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self.__timeout-(time()-self.__time))}</code>'
+        msg = f'<b>Pilih kualitas audio{i} :</b>\n<b>0 = Kualitas terbaik</b>\n<b>10 = Kualitas terburuk</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self.__timeout-(time()-self.__time))}</code>'
         await editMessage(self.__reply_to, msg, subbuttons)
 
 
