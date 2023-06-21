@@ -77,6 +77,6 @@ class TelegraphHelper:
         return
 
 
-telegraph = TelegraphHelper('KQRM Mirror Bot', 'https://t.me/kqrmrip')
+telegraph = TelegraphHelper('KQRM Mirror Bot', 'https://t.me/arakurumi')
 
 bot_loop.run_until_complete(telegraph.create_account())
