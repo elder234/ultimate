@@ -39,10 +39,12 @@ class TgUploader:
         self.__media_dict = {'videos': {}, 'documents': {}}
         self.__last_msg_in_group = False
         self.__up_path = ''
-        self.__lprefix = ''
         self.__as_doc = False
         self.__media_group = False
+        self.__lprefix = ''
+        self.__upload_dest = ''
         self.__up_size = 0
+        
 
     async def __upload_progress(self, current, total):
         if self.__is_cancelled:
@@ -60,22 +62,30 @@ class TgUploader:
     async def __user_settings(self):
         user_id = self.__listener.message.from_user.id
         user_dict = user_data.get(user_id, {})
-        self.__as_doc = user_dict.get('as_doc') or config_dict['AS_DOCUMENT']
-        self.__as_pm = user_dict.get('as_pm') or config_dict['AS_PM']
+        self.__as_doc = user_dict.get(
+            'as_doc', False) or config_dict['AS_DOCUMENT'] if 'as_doc' not in user_dict else False
+        self.__media_group = user_dict.get(
+            'media_group') or config_dict['MEDIA_GROUP'] if 'media_group' not in user_dict else False
         self.__lprefix = user_dict.get(
-            'lprefix') or config_dict['LEECH_FILENAME_PREFIX']
+            'lprefix') or config_dict['LEECH_FILENAME_PREFIX'] if 'lprefix' not in user_dict else ''
+        self.__upload_dest = user_dict.get(
+            'leech_dest', self.__listener.message.chat.id)
         if not await aiopath.exists(self.__thumb):
             self.__thumb = None
 
     async def __msg_to_reply(self):
-        if DUMP_CHAT_ID := config_dict['DUMP_CHAT_ID']:
-            msg = self.__listener.message.link if self.__listener.isSuperGroup else self.__listener.message.text
-            if IS_PREMIUM_USER:
-                self.__sent_msg = await user.send_message(chat_id=DUMP_CHAT_ID, text=msg,
-                                                          disable_web_page_preview=False, disable_notification=True)
-            else:
-                self.__sent_msg = await bot.send_message(chat_id=DUMP_CHAT_ID, text=msg,
-                                                         disable_web_page_preview=False, disable_notification=True)
+        if self.__upload_dest:
+            msg = self.__listener.message.link if self.__listener.isSuperGroup else self.__listener.message.text.lstrip('/')
+            try:
+                if IS_PREMIUM_USER:
+                    self.__sent_msg = await user.send_message(chat_id=self.__upload_dest, text=msg,
+                                                              disable_web_page_preview=False, disable_notification=True)
+                else:
+                    self.__sent_msg = await bot.send_message(chat_id=self.__upload_dest, text=msg,
+                                                             disable_web_page_preview=False, disable_notification=True)
+            except Exception as e:
+                await self.__listener.onUploadError(str(e))
+                return False
         elif IS_PREMIUM_USER:
             if not self.__listener.isSuperGroup:
                 await self.__listener.onUploadError('Gunakan SuperGroup untuk mengunggah dengan USER_SESSION!')
@@ -151,7 +161,7 @@ class TgUploader:
                 del self.__msgs_dict[msg.link]
             await msg.delete()
         del self.__media_dict[key][subkey]
-        if self.__listener.isSuperGroup or config_dict['DUMP_CHAT_ID']:
+        if self.__listener.isSuperGroup or self.__upload_dest:
             for m in msgs_list:
                 self.__msgs_dict[m.link] = m.caption
         self.__sent_msg = msgs_list[-1]
@@ -196,7 +206,7 @@ class TgUploader:
                     await self.__upload_file(cap_mono, file_)
                     if self.__is_cancelled:
                         return
-                    if not self.__is_corrupted and (self.__listener.isSuperGroup or config_dict['DUMP_CHAT_ID']):
+                    if not self.__is_corrupted and (self.__listener.isSuperGroup or self.__upload_dest):
                         self.__msgs_dict[self.__sent_msg.link] = file_
                     await sleep(1)
                 except Exception as err:
@@ -381,18 +391,10 @@ class TgUploader:
                 await aioremove(thumb)
             if not self.__is_cancelled:
                 # Forward to PM 
-                if self.__as_pm:
+                if DUMP_CHAT_ID := config_dict['DUMP_CHAT_ID']:
                     try:
                         await bot.copy_message(
-                            chat_id=self.__listener.message.from_user.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
-                    except Exception as e:
-                        LOGGER.error(f"Failed forward message | {e}")  
-                # Forward to Message Chat
-                else:
-                    try:
-                        if DUMP_CHAT_ID := config_dict['DUMP_CHAT_ID']:
-                            await bot.copy_message(
-                                chat_id=self.__listener.message.chat.id, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
+                            chat_id=self.__upload_dest, from_chat_id=self.__sent_msg.chat.id, message_id=self.__sent_msg.id)
                     except Exception as e:
                         LOGGER.error(f"Failed forward message | {e}")              
         except FloodWait as f:
