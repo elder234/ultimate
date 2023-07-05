@@ -369,15 +369,16 @@ class MirrorLeechListener:
                 msg += f'\n\n<b>Files :</b> <code>{files}</code>'
             if link or rclonePath and config_dict['RCLONE_SERVE_URL']:
                 buttons = ButtonMaker()
-                msg += f'\n\n<b>Path :</b> <code>{rclonePath}</code>'
                 if link:
                     buttons.ubutton("☁️ Cloud Link", link)
-                if rclonePath and (RCLONE_SERVE_URL := config_dict['RCLONE_SERVE_URL']):
-                    remote, path = rclonePath.split(':', 1)
-                    url_path = rutils.quote(f'{path}')
-                    share_url = f'{RCLONE_SERVE_URL}/{remote}/{url_path}'
-                    if mime_type == "Folder":
-                        share_url += '/'
+                if rclonePath:
+                    msg += f'\n\n<b>Path :</b> <code>{rclonePath}</code>'
+                    if (RCLONE_SERVE_URL := config_dict['RCLONE_SERVE_URL']):
+                        remote, path = rclonePath.split(':', 1)
+                        url_path = rutils.quote(f'{path}')
+                        share_url = f'{RCLONE_SERVE_URL}/{remote}/{url_path}'
+                        if mime_type == "Folder":
+                            share_url += '/'
                     buttons.ubutton("🔗 Rclone Link", share_url)
                 elif (INDEX_URL := config_dict['INDEX_URL']) and not rclonePath:
                     url_path = rutils.quote(f'{name}')
