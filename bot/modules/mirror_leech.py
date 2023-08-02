@@ -188,27 +188,27 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         if content_type is None or re_match(r'text/html|text/plain', content_type):
             try:
                 if "uptobox" in link:
-                    ddl = sendMessage(
+                    ddl = await sendMessage(
                         message,
                         f"<b>Generating Uptobox Direct Link (±30s) :</b>\n<code>{link}</code>"
                     )
                     link = await sync_to_async(direct_link_generator, link)
                 elif any(x in link for x in nurlresolver_sites):
-                    ddl = sendMessage(
+                    ddl = await sendMessage(
                         message,
                         f"<b>Generating Direct Link :</b>\n<code>{link}</code>"
                     )
                     link, header = await sync_to_async(direct_link_generator, link)
                 else:
-                    ddl = sendMessage(
+                    ddl = await sendMessage(
                         message,
                         f"<b>Generating Direct Link :</b>\n<code>{link}</code>"
                     )
                     link = await sync_to_async(direct_link_generator, link)
                 LOGGER.info(f"Generated link: {link}")
-                editMessage(ddl, f"<b>Direct Link Generated :</b>\n<code>{link}</code>")
+                await editMessage(ddl, f"<b>Generated Direct Link :</b>\n<code>{link}</code>")
                 sleep(1)
-                deleteMessage(ddl)
+                await deleteMessage(ddl)
             except DirectDownloadLinkException as e:
                 LOGGER.info(str(e))
                 if str(e).startswith('ERROR:'):
