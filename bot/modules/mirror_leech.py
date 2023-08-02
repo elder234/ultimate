@@ -207,7 +207,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
                     link = await sync_to_async(direct_link_generator, link)
                 LOGGER.info(f"Generated link: {link}")
                 await editMessage(ddl, f"<b>Generated Direct Link :</b>\n<code>{link}</code>")
-                sleep(1)
+                await sleep(1)
                 await deleteMessage(ddl)
             except DirectDownloadLinkException as e:
                 LOGGER.info(str(e))
