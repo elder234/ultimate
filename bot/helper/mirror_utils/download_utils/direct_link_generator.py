@@ -126,7 +126,7 @@ def direct_link_generator(link: str):
         return hexupload(link)
     elif any(x in domain for x in ['dooood.com', 'dood.yt']):
         return doodstream(link)
-    elif any(x in domain for x in nurlresolver):
+    elif any(x in domain for x in nurlresolver_sites):
         return nurlresolver(link)
     else:
         raise DirectDownloadLinkException(
