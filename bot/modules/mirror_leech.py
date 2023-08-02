@@ -15,11 +15,11 @@ from bot.helper.mirror_utils.download_utils.qbit_download import add_qb_torrent
 from bot.helper.mirror_utils.download_utils.mega_download import add_mega_download
 from bot.helper.mirror_utils.download_utils.rclone_download import add_rclone_download
 from bot.helper.mirror_utils.rclone_utils.list import RcloneList
-from bot.helper.mirror_utils.download_utils.direct_link_generator import direct_link_generator
+from bot.helper.mirror_utils.download_utils.direct_link_generator import direct_link_generator, nurlresolver_sites
 from bot.helper.mirror_utils.download_utils.telegram_download import TelegramDownloadHelper
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import sendMessage, get_tg_link_content
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, deleteMessage, get_tg_link_content
 from bot.helper.listeners.tasks_listener import MirrorLeechListener
 from bot.helper.ext_utils.help_messages import MIRROR_HELP_MESSAGE, LEECH_HELP_MESSAGE, QBMIRROR_HELP_MESSAGE, QBLEECH_HELP_MESSAGE
 from bot.helper.ext_utils.bulk_links import extract_bulk_links
@@ -187,8 +187,28 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         content_type = await get_content_type(link)
         if content_type is None or re_match(r'text/html|text/plain', content_type):
             try:
-                link, header = await sync_to_async(direct_link_generator, link)
+                if "uptobox" in link:
+                    ddl = sendMessage(
+                        message,
+                        f"<b>Generating Uptobox Direct Link (±30s) :</b>\n<code>{link}</code>"
+                    )
+                    link = await sync_to_async(direct_link_generator, link)
+                elif any(x in link for x in nurlresolver_sites):
+                    ddl = sendMessage(
+                        message,
+                        f"<b>Generating Direct Link :</b>\n<code>{link}</code>"
+                    )
+                    link, header = await sync_to_async(direct_link_generator, link)
+                else:
+                    ddl = sendMessage(
+                        message,
+                        f"<b>Generating Direct Link :</b>\n<code>{link}</code>"
+                    )
+                    link = await sync_to_async(direct_link_generator, link)
                 LOGGER.info(f"Generated link: {link}")
+                editMessage(ddl, f"<b>Direct Link Generated :</b>\n<code>{link}</code>")
+                sleep(1)
+                deleteMessage(ddl)
             except DirectDownloadLinkException as e:
                 LOGGER.info(str(e))
                 if str(e).startswith('ERROR:'):

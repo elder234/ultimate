@@ -34,6 +34,7 @@ anonfilesBaseSites = ['anonfiles.com', 'hotfile.io', 'bayfiles.com', 'megaupload
                       'filechan.org', 'myfile.is', 'vshare.is', 'rapidshare.nu', 'lolabits.se',
                       'openload.cc', 'share-online.is', 'upvid.cc', 'zippysha.re']
 
+nurlresolver_sites = ['gofile.io', 'send.cm']
 
 def direct_link_generator(link: str):
     """ direct links generator """
@@ -125,7 +126,7 @@ def direct_link_generator(link: str):
         return hexupload(link)
     elif any(x in domain for x in ['dooood.com', 'dood.yt']):
         return doodstream(link)
-    elif any(x in domain for x in ['gofile', 'send']):
+    elif any(x in domain for x in nurlresolver):
         return nurlresolver(link)
     else:
         raise DirectDownloadLinkException(
