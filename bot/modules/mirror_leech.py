@@ -186,7 +186,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         content_type = await get_content_type(link)
         if content_type is None or re_match(r'text/html|text/plain', content_type):
             try:
-                link = await sync_to_async(direct_link_generator, link)
+                link, header = await sync_to_async(direct_link_generator, link)
                 LOGGER.info(f"Generated link: {link}")
             except DirectDownloadLinkException as e:
                 LOGGER.info(str(e))
@@ -260,7 +260,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             auth = "Basic " + b64encode(auth.encode()).decode('ascii')
         else:
             auth = ''
-        await add_aria2c_download(link, path, listener, name, auth, ratio, seed_time)
+        await add_aria2c_download(link, path, listener, name, auth, header, ratio, seed_time)
 
 
 async def mirror(client, message):
