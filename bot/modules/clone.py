@@ -161,7 +161,7 @@ async def gdcloneNode(client, message, link, dest_id, listener):
         listener.upDest = dest_id
         if dest_id.startswith('mtp:') and listener.user_dict('stop_duplicate', False) or not dest_id.startswith('mtp:') and config_dict['STOP_DUPLICATE']:
             LOGGER.info('Checking File/Folder if already in Drive...')
-            telegraph_content, contents_no = await sync_to_async(gdSearch(stopDup=True, noMulti=True, listener=listener).drive_list, name, dest_id)
+            telegraph_content, contents_no = await sync_to_async(gdSearch(stopDup=True, noMulti=True, listener=listener).drive_list, name)
             if telegraph_content:
                 msg = f"File/Folder ini sudah ada di Google Drive!\n{contents_no} Hasil pencarian :"
                 button = await get_telegraph_list(telegraph_content)
