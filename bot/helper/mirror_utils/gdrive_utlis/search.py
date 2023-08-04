@@ -72,7 +72,7 @@ class gdSearch(GoogleDriveHelper):
         if self.listener and self.listener.upDest.startswith('mtp:'):
             drives = self.get_user_drive()
         else:
-            drives = zip(DRIVES_NAMES, DRIVES_IDS, INDEX_URLS)
+            drives = list(zip(DRIVES_NAMES, DRIVES_IDS, INDEX_URLS))
         self.service = self.authorize()
         msg = ""
         fileName = self.escapes(str(fileName))
