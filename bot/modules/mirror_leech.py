@@ -186,18 +186,18 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
 
     if not is_mega_link(link) and not isQbit and not is_magnet(link) and not is_rclone_path(link) \
        and not is_gdrive_link(link) and not link.endswith('.torrent') and file_ is None and not is_gdrive_id(link):
-        if "uptobox" in link:
-            ddl = await sendMessage(
-                message,
-                f"<b>Generating Uptobox Direct Link (±30s) :</b>\n<code>{link}</code>"
-            )
-        else:
-            ddl = await sendMessage(
-                message,
-                f"<b>Generating Direct Link :</b>\n<code>{link}</code>"
-            )
         content_type = await get_content_type(link)
         if content_type is None or re_match(r'text/html|text/plain', content_type):
+            if "uptobox" in link:
+                ddl = await sendMessage(
+                    message,
+                    f"<b>Generating Uptobox Direct Link (±30s) :</b>\n<code>{link}</code>"
+                )
+            else:
+                ddl = await sendMessage(
+                    message,
+                    f"<b>Generating Direct Link :</b>\n<code>{link}</code>"
+                )
             try:
                 if any(x in link for x in nurlresolver_sites):
                     link, header = await sync_to_async(direct_link_generator, link)
