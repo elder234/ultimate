@@ -72,7 +72,7 @@ class TgUploader:
         if IS_PREMIUM_USER and (self.__listener.user_dict.get('user_leech', False) or 'user_leech' not in self.__listener.user_dict and config_dict['USER_LEECH']):
             self.__user_leech = True
         self.__upload_dest = self.__listener.upDest or self.__listener.user_dict.get(
-            'leech_dest') or config_dict['DUMP_CHAT_ID']
+            'leech_dest') or self.__listener.message.chat.id
         if str(self.__upload_dest).startswith('b:'):
             self.__upload_dest = int(str(self.__upload_dest).lstrip('b:'))
             self.__user_leech = False
