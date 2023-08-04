@@ -156,7 +156,7 @@ class gdUpload(GoogleDriveHelper):
                     if self.use_sa:
                         if self.sa_count >= self.sa_number:
                             LOGGER.info(
-                                f"Reached maximum number of service accounts switching, which is {self.__sa_count}")
+                                f"Reached maximum number of service accounts switching, which is {self.sa_count}")
                             raise err
                         else:
                             if self.is_cancelled:
