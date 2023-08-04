@@ -68,9 +68,9 @@ async def get_user_settings(from_user):
         leech_dest = 'None'
 
     if IS_PREMIUM_USER and user_dict.get('user_leech', False) or 'user_leech' not in user_dict and config_dict['USER_LEECH']:
-        leech_method = 'user'
+        leech_method = 'User'
     else:
-        leech_method = 'bot'
+        leech_method = 'Bot'
 
     buttons.ibutton("Leech", f"userset {user_id} leech")
 
@@ -338,23 +338,26 @@ async def edit_user_settings(client, query):
             media_group = 'Disabled'
         if IS_PREMIUM_USER and user_dict.get('user_leech', False) or 'user_leech' not in user_dict and config_dict['USER_LEECH']:
             buttons.ibutton("Leech by Bot", f"userset {user_id} user_leech")
-            leech_method = 'user'
+            leech_method = 'User'
         elif IS_PREMIUM_USER:
-            leech_method = 'bot'
+            leech_method = 'Bot'
             buttons.ibutton("Leech by User", f"userset {user_id} user_leech")
         else:
-            leech_method = 'bot'
+            leech_method = 'Bot'
         buttons.ibutton("Back", f"userset {user_id} back")
         buttons.ibutton("Close", f"userset {user_id} close")
-        text = f"""<u>Leech Settings for {name}</u>
-Leech Type is <b>{ltype}</b>
-Custom Thumbnail <b>{thumbmsg}</b>
-Leech Split Size is <b>{split_size}</b>
-Equal Splits is <b>{equal_splits}</b>
-Media Group is <b>{media_group}</b>
-Leech Prefix is <code>{escape(lprefix)}</code>
-Leech Destination is <code>{leech_dest}</code>
-Leech by <b>{leech_method}</b> session
+        text = f"""
+<b>Pengaturan Leech untuk user</b> <code>{name}</code>
+<pre languange="bash">
+<b>Leech By         :</b> <code>{leech_method} Session</code>
+<b>Leech To         :</b> <code>{leech_dest}</code>
+<b>Leech Type       :</b> <code>{ltype}</code>
+<b>Leech Split Size :</b> <code>{split_size}</code>
+<b>Leech Prefix     :</b> <code>{escape(lprefix)}</code>
+<b>Equal Splits     :</b> <code>{equal_splits}</code>
+<b>Media Group      :</b> <code>{media_group}</code>
+<b>Custom Thumbnail :</b> <code>{thumbmsg}</code>
+</pre>
 """
         await editMessage(message, text, buttons.build_menu(2))
     elif data[2] == 'rclone':
@@ -371,9 +374,13 @@ Leech by <b>{leech_method}</b> session
             rccpath = RP
         else:
             rccpath = 'None'
-        text = f"""<u>Rclone Settings for {name}</u>
-Rclone Config <b>{rccmsg}</b>
-Rclone Path is <code>{rccpath}</code>"""
+        text = f"""
+<b>Pengaturan Rclone untuk user</b> <code>{name}</code>
+<pre languange="bash">
+<b>Rclone Config    :</b> <code>{rccmsg}</code>
+<b>Rclone Path      :</b> <code>{rccpath}</code>
+</pre>
+"""
         await editMessage(message, text, buttons.build_menu(1))
     elif data[2] == 'gdrive':
         await query.answer()
@@ -396,11 +403,15 @@ Rclone Path is <code>{rccpath}</code>"""
             sd_msg = 'Enabled'
         else:
             sd_msg = 'Disabled'
-        text = f"""<u>Gdrive Tools Settings for {name}</u>
-Gdrive Token <b>{tokenmsg}</b>
-Gdrive ID is <code>{gdrive_id}</code>
-Index URL is <code>{index}</code>
-Stop Duplicate is <b>{sd_msg}</b>"""
+        text = f"""
+<pre languange="bash">
+<b>Pengaturan Gdrive untuk user</b> <code>{name}</code>
+<b>Gdrive Token     :</b> <code>{tokenmsg}</code>
+<b>Gdrive ID        :</b> <code>{gdrive_id}</code>
+<b>Index URL        :</b> <code>{index}</code>
+<b>Stop Duplicate   :</b> <code>{sd_msg}</code>
+</pre>
+"""
         await editMessage(message, text, buttons.build_menu(1))
     elif data[2] == 'vthumb':
         await query.answer()
