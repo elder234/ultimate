@@ -82,7 +82,7 @@ async def get_confirm(client, query):
     else:
         await query.answer("Tugas ini tidak dalam status mengunduh lagi!", show_alert=True)
         return
-    if user_id != listener.message.from_user.id:
+    if user_id != listener.user_id:
         await query.answer("Bukan tugas darimu!", show_alert=True)
     elif data[1] == "pin":
         await query.answer(data[3], show_alert=True)

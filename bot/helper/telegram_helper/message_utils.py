@@ -87,11 +87,13 @@ async def delete_all_messages():
             except Exception as e:
                 LOGGER.error(str(e))
 
+
 async def get_tg_link_content(link):
     message = None
     if link.startswith('https://t.me/'):
         private = False
-        msg = re_match(r"https:\/\/t\.me\/(?:c\/)?([^\/]+)(?:\/[^\/]+)?\/([0-9]+)", link)
+        msg = re_match(
+            r"https:\/\/t\.me\/(?:c\/)?([^\/]+)(?:\/[^\/]+)?\/([0-9]+)", link)
     else:
         private = True
         msg = re_match(

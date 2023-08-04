@@ -35,14 +35,13 @@ You can add tuple and dict also. Use double quotes inside dict.
 <code>/{BotCommands.YtdlCommand[0]}</code> -i 10(number of links) -m folder name
 
 <b>Upload</b>: -up
-<code>/{BotCommands.YtdlCommand[0]}</code> link -up <code>rcl</code> (To select rclone config, remote & path or Tg id/username)
-You can directly add the upload path: -up remote:dir/subdir
+<code>/{BotCommands.YtdlCommand[0]}</code> link -up <code>rcl/gdl</code> (To select rclone config/token.pickle, remote & path/ gdrive id or Tg id/username)
+You can directly add the upload path: -up remote:dir/subdir or -up (Gdrive_id) or -up id/username
 If DEFAULT_UPLOAD is `rc` then you can pass up: `gd` to upload using gdrive tools to GDRIVE_ID.
 If DEFAULT_UPLOAD is `gd` then you can pass up: `rc` to upload to RCLONE_PATH.
-If you want to add path manually from your config (uploaded from usetting) add <code>mrcc:</code> before the path without space
-<code>/{BotCommands.YtdlCommand[0]}</code> link -up <code>mrcc:</code>main:dump
+If you want to add path or gdrive manually from your config/token (uploaded from usetting) add <code>mrcc:</code> for rclone and <code>mtp:</code> before the path/gdrive_id without space
+<code>/{BotCommands.YtdlCommand[0]}</code> link -up <code>mrcc:</code>main:dump or -up <code>mtp:</code>gdrive_id or -up b:id/username(leech by bot) or -up u:id/username(leech by user)
 DEFAULT_UPLOAD doesn't effect on leech cmds.
-<code>{BotCommands.YtdlLeechCommand[0]}</code> link -up chat_id or username
 
 <b>Rclone Flags</b>: -rcf
 <code>/{BotCommands.YtdlCommand[0]}</code> link -up path|rcl -rcf --buffer-size:8M|--drive-starred-only|key|key:value
@@ -100,14 +99,13 @@ To specify ratio and seed time add -d ratio:time. Ex: -d 0.7:10 (ratio and time)
 <code>/{BotCommands.MirrorCommand[0]}</code> -b -m folder name (bulk-message/file)
 
 <b>Upload</b>: -up
-<code>/{BotCommands.MirrorCommand[0]}</code> link -up <code>rcl</code> (To select rclone config, remote & path or Tg id/username)
-You can directly add the upload path: -up remote:dir/subdir
+<code>/{BotCommands.MirrorCommand[0]}</code> link -up <code>rcl/gdl</code> (To select rclone config/token.pickle, remote & path/ gdrive id or Tg id/username)
+You can directly add the upload path: -up remote:dir/subdir or -up (Gdrive_id) or -up id/username
 If DEFAULT_UPLOAD is `rc` then you can pass up: `gd` to upload using gdrive tools to GDRIVE_ID.
 If DEFAULT_UPLOAD is `gd` then you can pass up: `rc` to upload to RCLONE_PATH.
-If you want to add path manually from your config (uploaded from usetting) add <code>mrcc:</code> before the path without space
-<code>/{BotCommands.MirrorCommand[0]}</code> link -up <code>mrcc:</code>main:dump
+If you want to add path or gdrive manually from your config/token (uploaded from usetting) add <code>mrcc:</code> for rclone and <code>mtp:</code> before the path/gdrive_id without space
+<code>/{BotCommands.MirrorCommand[0]}</code> link -up <code>mrcc:</code>main:dump or -up <code>mtp:</code>gdrive_id or -up b:id/username(leech by bot) or -up u:id/username(leech by user)
 DEFAULT_UPLOAD doesn't effect on leech cmds.
-<code>{BotCommands.LeechCommand[0]}</code> link -up chat_id or username
 
 <b>Rclone Flags</b>: -rcf
 <code>/{BotCommands.MirrorCommand[0]}</code> link|path|rcl -up path|rcl -rcf --buffer-size:8M|--drive-starred-only|key|key:value
@@ -188,14 +186,13 @@ To specify ratio and seed time add -d ratio:time. Ex: -d 0.7:10 (ratio and time)
 <code>/{BotCommands.LeechCommand[0]}</code> -b -m folder name (bulk-message/file)
 
 <b>Upload</b>: -up
-<code>/{BotCommands.LeechCommand[0]}</code> link -up <code>rcl</code> (To select rclone config, remote & path or Tg id/username)
-You can directly add the upload path: -up remote:dir/subdir
+<code>/{BotCommands.LeechCommand[0]}</code> link -up <code>rcl/gdl</code> (To select rclone config/token.pickle, remote & path/ gdrive id or Tg id/username)
+You can directly add the upload path: -up remote:dir/subdir or -up (Gdrive_id) or -up id/username
 If DEFAULT_UPLOAD is `rc` then you can pass up: `gd` to upload using gdrive tools to GDRIVE_ID.
 If DEFAULT_UPLOAD is `gd` then you can pass up: `rc` to upload to RCLONE_PATH.
-If you want to add path manually from your config (uploaded from usetting) add <code>mrcc:</code> before the path without space
-<code>/{BotCommands.LeechCommand[0]}</code> link -up <code>mrcc:</code>main:dump
+If you want to add path or gdrive manually from your config/token (uploaded from usetting) add <code>mrcc:</code> for rclone and <code>mtp:</code> before the path/gdrive_id without space
+<code>/{BotCommands.LeechCommand[0]}</code> link -up <code>mrcc:</code>main:dump or -up <code>mtp:</code>gdrive_id or -up b:id/username(leech by bot) or -up u:id/username(leech by user)
 DEFAULT_UPLOAD doesn't effect on leech cmds.
-<code>{BotCommands.LeechCommand[0]}</code> link -up chat_id or username
 
 <b>Rclone Flags</b>: -rcf
 <code>/{BotCommands.LeechCommand[0]}</code> link|path|rcl -up path|rcl -rcf --buffer-size:8M|--drive-starred-only|key|key:value
@@ -276,14 +273,13 @@ To specify ratio and seed time add -d ratio:time. Ex: -d 0.7:10 (ratio and time)
 <code>/{BotCommands.QbMirrorCommand[0]}</code> -b -m folder name (bulk-message/file)
 
 <b>Upload</b>: -up
-<code>/{BotCommands.QbMirrorCommand[0]}</code> link -up <code>rcl</code> (To select rclone config, remote & path or Tg id/username)
-You can directly add the upload path: -up remote:dir/subdir
+<code>/{BotCommands.QbMirrorCommand[0]}</code> link -up <code>rcl/gdl</code> (To select rclone config/token.pickle, remote & path/ gdrive id or Tg id/username)
+You can directly add the upload path: -up remote:dir/subdir or -up (Gdrive_id) or -up id/username
 If DEFAULT_UPLOAD is `rc` then you can pass up: `gd` to upload using gdrive tools to GDRIVE_ID.
 If DEFAULT_UPLOAD is `gd` then you can pass up: `rc` to upload to RCLONE_PATH.
-If you want to add path manually from your config (uploaded from usetting) add <code>mrcc:</code> before the path without space
-<code>/{BotCommands.QbMirrorCommand[0]}</code> link -up <code>mrcc:</code>main:dump
+If you want to add path or gdrive manually from your config/token (uploaded from usetting) add <code>mrcc:</code> for rclone and <code>mtp:</code> before the path/gdrive_id without space
+<code>/{BotCommands.QbMirrorCommand[0]}</code> link -up <code>mrcc:</code>main:dump or -up <code>mtp:</code>gdrive_id or -up b:id/username(leech by bot) or -up u:id/username(leech by user)
 DEFAULT_UPLOAD doesn't effect on leech cmds.
-<code>{BotCommands.LeechCommand[0]}</code> link -up chat_id or username
 
 <b>Rclone Flags</b>: -rcf
 <code>/{BotCommands.QbMirrorCommand[0]}</code> link|path|rcl -up path|rcl -rcf --buffer-size:8M|--drive-starred-only|key|key:value
@@ -364,14 +360,13 @@ To specify ratio and seed time add -d ratio:time. Ex: -d 0.7:10 (ratio and time)
 <code>/{BotCommands.QbLeechCommand[0]}</code> -b -m folder name (bulk-message/file)
 
 <b>Upload</b>: -up
-<code>/{BotCommands.QbLeechCommand[0]}</code> link -up <code>rcl</code> (To select rclone config, remote & path or Tg id/username)
-You can directly add the upload path: -up remote:dir/subdir
+<code>/{BotCommands.QbLeechCommand[0]}</code> link -up <code>rcl/gdl</code> (To select rclone config/token.pickle, remote & path/ gdrive id or Tg id/username)
+You can directly add the upload path: -up remote:dir/subdir or -up (Gdrive_id) or -up id/username
 If DEFAULT_UPLOAD is `rc` then you can pass up: `gd` to upload using gdrive tools to GDRIVE_ID.
 If DEFAULT_UPLOAD is `gd` then you can pass up: `rc` to upload to RCLONE_PATH.
-If you want to add path manually from your config (uploaded from usetting) add <code>mrcc:</code> before the path without space
-<code>/{BotCommands.QbLeechCommand[0]}</code> link -up <code>mrcc:</code>main:dump
+If you want to add path or gdrive manually from your config/token (uploaded from usetting) add <code>mrcc:</code> for rclone and <code>mtp:</code> before the path/gdrive_id without space
+<code>/{BotCommands.QbLeechCommand[0]}</code> link -up <code>mrcc:</code>main:dump or -up <code>mtp:</code>gdrive_id or -up b:id/username(leech by bot) or -up u:id/username(leech by user)
 DEFAULT_UPLOAD doesn't effect on leech cmds.
-<code>{BotCommands.LeechCommand[0]}</code> link -up chat_id or username
 
 <b>Rclone Flags</b>: -rcf
 <code>/{BotCommands.QbLeechCommand[0]}</code> link|path|rcl -up path|rcl -rcf --buffer-size:8M|--drive-starred-only|key|key:value
@@ -423,11 +418,11 @@ Title1 link (required)
 Title2 link -c cmd -inf xx -exf xx
 Title3 link -c cmd -d ratio:time -z password
 
--c command + any arg
+-c command -up mrcc:remote:path/subdir -rcf --buffer-size:8M|key|key:value
 -inf For included words filter.
 -exf For excluded words filter.
 
-Example: Title https://www.rss-url.com inf: 1080 or 720 or 144p|mkv or mp4|hevc exf: flv or web|xxx opt: up: mrcc:remote:path/subdir rcf: --buffer-size:8M|key|key:value
+Example: Title https://www.rss-url.com inf: 1080 or 720 or 144p|mkv or mp4|hevc exf: flv or web|xxx
 This filter will parse links that it's titles contains `(1080 or 720 or 144p) and (mkv or mp4) and hevc` and doesn't conyain (flv or web) and xxx` words. You can add whatever you want.
 
 Another example: inf:  1080  or 720p|.web. or .webrip.|hvec or x264. This will parse titles that contains ( 1080  or 720p) and (.web. or .webrip.) and (hvec or x264). I have added space before and after 1080 to avoid wrong matching. If this `10805695` number in title it will match 1080 if added 1080 without spaces after it.

@@ -6,8 +6,8 @@ from re import match as re_match
 from asyncio import sleep
 from aiofiles.os import path as aiopath
 
-from bot import bot, DOWNLOAD_DIR, LOGGER, config_dict
-from bot.helper.ext_utils.bot_utils import is_url, is_magnet, is_mega_link, is_gdrive_link, get_content_type, new_task, sync_to_async, is_rclone_path, is_telegram_link, arg_parser
+from bot import bot, DOWNLOAD_DIR, LOGGER, config_dict, user_data
+from bot.helper.ext_utils.bot_utils import is_url, is_magnet, is_mega_link, is_gdrive_link, get_content_type, new_task, sync_to_async, is_rclone_path, is_telegram_link, arg_parser, is_gdrive_id
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 from bot.helper.mirror_utils.download_utils.aria2_download import add_aria2c_download
 from bot.helper.mirror_utils.download_utils.gd_download import add_gd_download
@@ -15,6 +15,7 @@ from bot.helper.mirror_utils.download_utils.qbit_download import add_qb_torrent
 from bot.helper.mirror_utils.download_utils.mega_download import add_mega_download
 from bot.helper.mirror_utils.download_utils.rclone_download import add_rclone_download
 from bot.helper.mirror_utils.rclone_utils.list import RcloneList
+from bot.helper.mirror_utils.gdrive_utlis.list import gdriveList
 from bot.helper.mirror_utils.download_utils.direct_link_generator import direct_link_generator, nurlresolver_sites
 from bot.helper.mirror_utils.download_utils.telegram_download import TelegramDownloadHelper
 from bot.helper.telegram_helper.bot_commands import BotCommands
@@ -168,7 +169,8 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             link = await reply_to.download()
             file_ = None
 
-    if not is_url(link) and not is_magnet(link) and not await aiopath.exists(link) and not is_rclone_path(link) and file_ is None:
+    if not is_url(link) and not is_magnet(link) and not await aiopath.exists(link) and not is_rclone_path(link) \
+         and not is_gdrive_id(link) and file_ is None:
         if isQbit and not isLeech:
             await sendMessage(message, QBMIRROR_HELP_MESSAGE)
         if isQbit and isLeech:
@@ -183,50 +185,47 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         LOGGER.info(link)
 
     if not is_mega_link(link) and not isQbit and not is_magnet(link) and not is_rclone_path(link) \
-       and not is_gdrive_link(link) and not link.endswith('.torrent') and file_ is None:
+       and not is_gdrive_link(link) and not link.endswith('.torrent') and file_ is None and not is_gdrive_id(link):
+        if "uptobox" in link:
+            ddl = await sendMessage(
+                message,
+                f"<b>Generating Uptobox Direct Link (±30s) :</b>\n<code>{link}</code>"
+            )
+        else:
+            ddl = await sendMessage(
+                message,
+                f"<b>Generating Direct Link :</b>\n<code>{link}</code>"
+            )
         content_type = await get_content_type(link)
         if content_type is None or re_match(r'text/html|text/plain', content_type):
             try:
-                if "uptobox" in link:
-                    ddl = await sendMessage(
-                        message,
-                        f"<b>Generating Uptobox Direct Link (±30s) :</b>\n<code>{link}</code>"
-                    )
-                    link = await sync_to_async(direct_link_generator, link)
-                elif any(x in link for x in nurlresolver_sites):
-                    ddl = await sendMessage(
-                        message,
-                        f"<b>Generating Direct Link :</b>\n<code>{link}</code>"
-                    )
+                if any(x in link for x in nurlresolver_sites):
                     link, header = await sync_to_async(direct_link_generator, link)
                 else:
-                    ddl = await sendMessage(
-                        message,
-                        f"<b>Generating Direct Link :</b>\n<code>{link}</code>"
-                    )
                     link = await sync_to_async(direct_link_generator, link)
                 LOGGER.info(f"Generated link: {link}")
                 await editMessage(ddl, f"<b>Generated Direct Link :</b>\n<code>{link}</code>")
-                await sleep(1)
+                await sleep(3)
                 await deleteMessage(ddl)
             except DirectDownloadLinkException as e:
+                await sleep(1)
+                await deleteMessage(ddl)
                 LOGGER.info(str(e))
                 if str(e).startswith('ERROR:'):
                     await sendMessage(message, str(e))
                     return
 
     if not isLeech:
-        if config_dict['DEFAULT_UPLOAD'] == 'rc' and not up or up == 'rc':
-            up = config_dict['RCLONE_PATH']
-        if not up and config_dict['DEFAULT_UPLOAD'] == 'gd':
-            up = 'gd'
-        if up == 'gd' and not config_dict['GDRIVE_ID']:
-            await sendMessage(message, 'GDRIVE_ID tidak ditemukan!')
+        user_dict = user_data.get(message.from_user.id, {})
+        default_upload = user_dict.get('default_upload', '')
+        if not up and (default_upload == 'rc' or not default_upload and config_dict['DEFAULT_UPLOAD'] == 'rc') or up == 'rc':
+            up = user_dict.get('rclone_path') or config_dict['RCLONE_PATH']
+        if not up and (default_upload == 'gd' or not default_upload and config_dict['DEFAULT_UPLOAD'] == 'gd') or up == 'gd':
+            up = user_dict.get('gdrive_id') or config_dict['GDRIVE_ID']
+        if not up:
+            await sendMessage(message, 'Tujuan upload tidak ditemukan!')
             return
-        elif not up:
-            await sendMessage(message, 'Tujuan path Rclone tidak ditemukan!')
-            return
-        elif up not in ['rcl', 'gd']:
+        elif up != 'rcl' and is_rclone_path(up):
             if up.startswith('mrcc:'):
                 config_path = f'rclone/{message.from_user.id}.conf'
             else:
@@ -234,8 +233,16 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             if not await aiopath.exists(config_path):
                 await sendMessage(message, f"Config Rclone <code>{config_path}</code> tidak ditemukan!")
                 return
-        if up != 'gd' and not is_rclone_path(up):
-            await sendMessage(message, 'Tujuan path Rclone tidak ditemukan!')
+        elif up != 'gdl' and is_gdrive_id(up):
+            if up.startswith('mtp:'):
+                token_path = f'tokens/{message.from_user.id}.pickle'
+            else:
+                token_path = 'token.pickle'
+            if not await aiopath.exists(token_path):
+                await sendMessage(message, f"token.pickle: {token_path} not Exists!")
+                return
+        if not is_gdrive_id(up) and not is_rclone_path(up):
+            await sendMessage(message, 'Tujuan upload tidak ditemukan!')
             return
     elif up.isdigit() or up.startswith('-'):
         up = int(up)
@@ -246,11 +253,23 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             await sendMessage(message, link)
             return
 
-    if up == 'rcl' and not isLeech:
-        up = await RcloneList(client, message).get_rclone_path('rcu')
-        if not is_rclone_path(up):
-            await sendMessage(message, up)
+    elif link == 'gdl':
+        link = await gdriveList(client, message).get_target_id('gdd')
+        if not is_gdrive_id(link):
+            await sendMessage(message, link)
             return
+
+    if not isLeech:
+        if up == 'rcl':
+            up = await RcloneList(client, message).get_rclone_path('rcu')
+            if not is_rclone_path(up):
+                await sendMessage(message, up)
+                return
+        elif up == 'gdl':
+            up = await gdriveList(client, message).get_target_id('gdu')
+            if not is_gdrive_id(up):
+                await sendMessage(message, up)
+                return
 
     listener = MirrorLeechListener(
         message, compress, extract, isQbit, isLeech, tag, select, seed, sameDir, rcf, up, join)
@@ -267,7 +286,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             await sendMessage(message, f"Rclone Config: {config_path} not Exists!")
             return
         await add_rclone_download(link, config_path, f'{path}/', name, listener)
-    elif is_gdrive_link(link):
+    elif is_gdrive_link(link) or is_gdrive_id(link):
         await add_gd_download(link, path, listener, name)
     elif is_mega_link(link):
         await add_mega_download(link, f'{path}/', listener, name)
