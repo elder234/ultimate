@@ -169,8 +169,6 @@ if len(EXTENSION_FILTER) > 0:
         x = x.lstrip('.')
         GLOBAL_EXTENSION_FILTER.append(x.strip().lower())
 
-IS_PREMIUM_USER = False
-user = ''
 USER_SESSION_STRING = environ.get('USER_SESSION_STRING', '')
 # Premium account using other Api & Hash
 TELEGRAM_API_PREMIUM = environ.get('TELEGRAM_API_PREMIUM', '')
@@ -187,6 +185,9 @@ if len(USER_SESSION_STRING) != 0:
         user = tgClient('user', TELEGRAM_API, TELEGRAM_HASH, session_string=USER_SESSION_STRING,
                         parse_mode=enums.ParseMode.HTML, no_updates=True, max_concurrent_transmissions=1000).start()
     IS_PREMIUM_USER = user.me.is_premium
+else:
+    IS_PREMIUM_USER = False
+    user = ''
 
 MEGA_EMAIL = environ.get('MEGA_EMAIL', '')
 MEGA_PASSWORD = environ.get('MEGA_PASSWORD', '')

@@ -12,9 +12,9 @@ class gdDelete(GoogleDriveHelper):
     def __init__(self):
         super().__init__()
 
-    def deletefile(self, link):
+    def deletefile(self, link, user_id):
         try:
-            file_id = self.getIdFromUrl(link)
+            file_id = self.getIdFromUrl(link, user_id)
         except (KeyError, IndexError):
             return "<code>Google Drive ID tidak ditemukan!</code>"
         self.service = self.authorize()
