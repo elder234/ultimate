@@ -404,8 +404,8 @@ async def edit_user_settings(client, query):
         else:
             sd_msg = 'Disabled'
         text = f"""
-<pre languange="bash">
 <b>Pengaturan Gdrive untuk user</b> <code>{name}</code>
+<pre languange="bash">
 <b>Gdrive Token     :</b> <code>{tokenmsg}</code>
 <b>Gdrive ID        :</b> <code>{gdrive_id}</code>
 <b>Index URL        :</b> <code>{index}</code>
