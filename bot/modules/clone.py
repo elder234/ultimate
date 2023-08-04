@@ -252,7 +252,7 @@ async def clone(client, message):
         if not config_dict['GDRIVE_ID'] and not listener.user_dict.get('gdrive_id') and not dst_path:
             await sendMessage(message, 'Google Drive ID tidak ditemukan!')
             return
-        await gdcloneNode(client, message, link, dst_path, tag, listener)
+        await gdcloneNode(client, message, link, dst_path, listener)
 
 
 
