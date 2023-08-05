@@ -75,24 +75,14 @@ class TgUploader:
             self.__user_leech = True
         self.__upload_dest = self.__listener.upDest or self.__listener.user_dict.get(
             'leech_dest') or self.__listener.message.chat.id
-        if str(self.__upload_dest).startswith('b:'):
-            self.__upload_dest = int(str(self.__upload_dest).lstrip('b:'))
+        if self.__upload_dest.startswith('b:'):
+            self.__upload_dest = self.__upload_dest.lstrip('b:')
             self.__user_leech = False
-        elif str(self.__upload_dest).startswith('u:'):
-            self.__upload_dest = int(str(self.__upload_dest).lstrip('u:'))
+        elif self.__upload_dest.startswith('u:'):
+            self.__upload_dest = self.__upload_dest.lstrip('u:')
             self.__user_leech = IS_PREMIUM_USER
-        if str(self.__upload_dest).isdigit() or str(self.__upload_dest).startswith('-'):
+        if self.__upload_dest.isdigit() or self.__upload_dest.startswith('-'):
             self.__upload_dest = int(self.__upload_dest)
-        # From official (Error)
-        # if not self.__upload_dest.isdigit():
-        #     if self.__upload_dest.startswith('b:'):
-        #         self.__upload_dest = self.__upload_dest.lstrip('b:')
-        #         self.__user_leech = False
-        #     elif self.__upload_dest.startswith('u:'):
-        #         self.__upload_dest = self.__upload_dest.lstrip('u:')
-        #         self.__user_leech = IS_PREMIUM_USER
-        # if self.__upload_dest.isdigit() or self.__upload_dest.startswith('-'):
-        #     self.__upload_dest = int(self.__upload_dest)
 
     async def __msg_to_reply(self):
         if self.__upload_dest:
