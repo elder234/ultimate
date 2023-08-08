@@ -16,7 +16,7 @@ from bot.helper.mirror_utils.download_utils.mega_download import add_mega_downlo
 from bot.helper.mirror_utils.download_utils.rclone_download import add_rclone_download
 from bot.helper.mirror_utils.rclone_utils.list import RcloneList
 from bot.helper.mirror_utils.gdrive_utlis.list import gdriveList
-from bot.helper.mirror_utils.download_utils.direct_link_generator import direct_link_generator, nurlresolver_sites
+from bot.helper.mirror_utils.download_utils.direct_link_generator import direct_link_generator, nurlresolver_sites, dood_sites
 from bot.helper.mirror_utils.download_utils.telegram_download import TelegramDownloadHelper
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
@@ -199,7 +199,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
                     f"<b>Generating Direct Link :</b>\n<code>{link}</code>"
                 )
             try:
-                if any(x in link for x in nurlresolver_sites):
+                if any(x in link for x in nurlresolver_sites) or any(x in link for x in dood_sites):
                     link, header = await sync_to_async(direct_link_generator, link)
                 else:
                     link = await sync_to_async(direct_link_generator, link)
