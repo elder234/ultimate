@@ -6,6 +6,7 @@ from os import execl as osexecl
 from psutil import disk_usage, cpu_percent, cpu_count, virtual_memory, net_io_counters, boot_time, cpu_freq
 from time import time
 from sys import executable
+from pyrogram import __version__ as prv
 from pyrogram.handlers import MessageHandler
 from pyrogram.filters import command
 from asyncio import create_subprocess_exec, gather
@@ -53,7 +54,7 @@ async def stats(_, message):
         last_commit = await cmd_exec("git log -1 --date=short --pretty=format:'%cd <b>From</b> %cr'", True)
         last_commit = last_commit[0]
     else:
-        last_commit = 'No UPSTREAM_REPO'
+        last_commit = 'UPSTREAM_REPO tidak ditemukan!'
     currentTime = get_readable_time(time() - botStartTime)
     osUptime = get_readable_time(time() - boot_time())
     total, used, free, disk = disk_usage(config_dict['DOWNLOAD_DIR'])
@@ -113,32 +114,72 @@ async def stats(_, message):
     # Neofetch
     neofetch = check_output(
         ["neofetch --shell_version off --stdout"], shell=True).decode()
-    stats = f'<b>System</b>\n' \
-            f'<code>{neofetch}</code>' \
-            f'<b>CPU</b>\n' \
-            f'<b>Cores :</b> <code>{p_core}</code>\n' \
-            f'<b>Logical :</b> <code>{t_core}</code>\n' \
-            f'<b>Frequency :</b> <code>{freqcurrent}</code>\n' \
-            f'<code>[{progress_bar(cpuUsage)}] {cpuUsage}%</code>\n\n' \
-            f'<b>RAM</b>\n' \
-            f'<b>Terpakai :</b> <code>{mem_u}</code>\n' \
-            f'<b>Tersedia :</b> <code>{mem_a}</code>\n' \
-            f'<b>Total :</b> <code>{mem_t}</code>\n' \
-            f'<code>[{progress_bar(mem_p)}] {mem_p}%</code>\n\n' \
-            f'<b>Penyimpanan</b>\n' \
-            f'<b>Terpakai :</b> <code>{used}</code>\n' \
-            f'<b>Tersedia :</b> <code>{free}</code>\n' \
-            f'<b>Total :</b> <code>{total}</code>\n' \
-            f'<code>[{progress_bar(disk)}] {disk}%</code>\n\n' \
-            f'<b>Jaringan</b>\n'\
-            f'<b>Unduhan :</b> <code>{recv}</code>\n' \
-            f'<b>Unggahan :</b> <code>{sent}</code>\n\n' \
-            f'<b>Lainnya</b>\n'\
-            f'<b>Waktu aktif Bot :</b> <code>{currentTime}</code>\n' \
-            f'<b>Waktu aktif Mesin :</b> <code>{osUptime}</code>\n' \
-            f'<b>Terakhir diperbarui :</b> <code>{last_commit}</code>\n\n'
-    stats += f'<b>Quotes Hari ini :</b>\n' \
-             f'<code>{get_quotes()}</code>\n'
+    # Versi
+    try:
+        arv = check_output(["chrome --v"], shell=True).decode().split("\n")[0].split(" ")[2]
+        ffv = check_output(['opera -version | grep "ffmpeg version" | sed -e "s/ffmpeg version //" -e "s/[^0-9.].*//"'], shell=True).decode().replace("\n", "")
+        gav = check_output(["pip show google-api-python-client | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
+        msv = check_output(["pip show megasdk | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
+        p7v = check_output(["7z | grep Version"], shell=True).decode().split(" ")[2]
+        prv = prv
+        rcv = check_output(["edge --version"], shell=True).decode().split("\n")[0].split(" ")[2]
+        qbv = check_output(["firefox --version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
+        ytv = check_output(["yt-dlp --version"], shell=True).decode().split("\n")[0]
+    except:
+        arv = ""
+        ffv = ""
+        gav = ""
+        msv = ""
+        p7v = ""
+        prv = ""
+        rcv = ""
+        qbv = ""
+        ytv = ""
+    stats = f'''
+<pre languange="bash">
+<code>{neofetch}</code>
+<b>CPU</b>
+<b>Cores        :</b> <code>{p_core}</code>
+<b>Logical      :</b> <code>{t_core}</code>
+<b>Frequency    :</b> <code>{freqcurrent}</code>
+<code>[{progress_bar(cpuUsage)}] {cpuUsage}%</code>
+
+<b>RAM</b> 
+<b>Terpakai     :</b> <code>{mem_u}</code>
+<b>Tersedia     :</b> <code>{mem_a}</code>
+<b>Total        :</b> <code>{mem_t}</code>
+<code>[{progress_bar(mem_p)}] {mem_p}%</code>
+
+<b>Penyimpanan</b> 
+<b>Terpakai     :</b> <code>{used}</code>
+<b>Tersedia     :</b> <code>{free}</code>
+<b>Total        :</b> <code>{total}</code>
+<code>[{progress_bar(disk)}] {disk}%</code>
+
+<b>Jaringan</b>
+<b>Unduhan      :</b> <code>{recv}</code>
+<b>Unggahan     :</b> <code>{sent}</code>
+
+<b>Versi</b>
+<b>Aria2c       :</b> <code>v{arv}</code>
+<b>FFMPEG       :</b> <code>v{ffv}</code>
+<b>Google Api   :</b> <code>v{gav}</code>
+<b>MegaSDK      :</b> <code>v{msv}</code>
+<b>P7Zip        :</b> <code>v{p7v}</code>
+<b>Pyrogram     :</b> <code>v{prv}</code>
+<b>Rclone       :</b> <code>{rcv}</code>
+<b>Qbittorrent  :</b> <code>{qbv}</code>
+<b>YT-DLP       :</b> <code>v{ytv}</code>
+
+<b>Lainnya</b>
+<b>Waktu Bot    :</b> <code>{currentTime}</code>
+<b>Waktu Mesin  :</b> <code>{osUptime}</code>
+<b>Diperbarui   :</b> <code>{last_commit}</code>
+
+<b>Quotes       :</b> 
+<code>{get_quotes()}</code>
+</pre>
+'''
     await sendMessage(message, stats)
 
 
@@ -153,7 +194,7 @@ async def start(client, message):
 <b>Mirror Tautan Lambat menjadi Tautan Cepat!</b>
 
 <b>Note :</b>
-Selalu backup File setelah Mirror untuk menghindari Team Drive terhapus!
+Selalu backup File setelah Mirror untuk menghindari Drive terhapus!
 
 Ketik <code>/{BotCommands.HelpCommand[0]}</code> untuk mendapatkan list perintah yang tersedia!
 
@@ -161,7 +202,7 @@ Enjoy :D
 '''
         await sendMessage(message, start_string, reply_markup)
     else:
-        await sendMessage(message, 'Bukan User yang diautorisasi!\nGabung grup untuk menggunakan Bot!', reply_markup)
+        await sendMessage(message, 'Tidak ada izin!\nGabung grup untuk menggunakan Bot!', reply_markup)
 
 
 async def restart(_, message):
@@ -184,7 +225,7 @@ async def ping(_, message):
     start_time = int(round(time() * 1000))
     reply = await sendMessage(message, "Mengetest waktu respon bot...")
     end_time = int(round(time() * 1000))
-    await editMessage(reply, f'🤖 <b>Respon Bot:</b> <code>{end_time - start_time} ms</code>')
+    await editMessage(reply, f'🤖 <b>Respon Bot :</b> <code>{end_time - start_time} ms</code>')
 
 
 async def log(_, message):
@@ -240,7 +281,7 @@ async def restart_notification():
 
     async def send_incompelete_task_message(cid, msg):
         try:
-            if msg.startswith('Restarted Successfully!'):
+            if msg.startswith('Bot berhasil dimulai ulang!'):
                 await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text=msg)
                 await aioremove(".restartmsg")
             else:
@@ -255,7 +296,7 @@ async def restart_notification():
     if INCOMPLETE_TASK_NOTIFIER and DATABASE_URL:
         if notifier_dict := await DbManger().get_incomplete_tasks():
             for cid, data in notifier_dict.items():
-                msg = 'Restarted Successfully!' if cid == chat_id else 'Bot Restarted!'
+                msg = 'Bot berhasil dimulai ulang!' if cid == chat_id else 'Bot dimulai ulang!'
                 msg += f"\n<b>Waktu :</b> <code>{time}</code>"
                 msg += f"\n<b>Tanggal :</b> <code>{date}</code>"
                 msg += f"\n<b>Quotes Today :</b>"
@@ -274,7 +315,7 @@ async def restart_notification():
 
     if await aiopath.isfile(".restartmsg"):
         try:
-            await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text='Restarted Successfully!')
+            await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text='Bot berhasil dimulai ulang!')
         except:
             pass
         await aioremove(".restartmsg")

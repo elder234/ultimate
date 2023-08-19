@@ -20,8 +20,10 @@ async def countNode(_, message):
 
     link = args[1] if len(args) > 1 else ''
     if len(link) == 0 and (reply_to := message.reply_to_message):
-        link = reply_to.text.split(maxsplit=1)[0].strip()
-
+        if reply_to.text:
+            link = reply_to.text.split(maxsplit=1)[0].strip()
+        elif reply_to.reply_markup:
+            link = reply_to.reply_markup.inline_keyboard[0].url
     if is_gdrive_link(link):
         msg = await sendMessage(message, f"<b>Menghitung :</b>\n<code>{link}</code>")
         name, mime_type, size, files, folders = await sync_to_async(gdCount().count, link, message.from_user.id)
