@@ -9,6 +9,7 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.message_utils import sendMessage, sendPhoto, deleteMessage, editMessage
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, new_task
 
+
 @new_task
 async def speedtest(_, message):
     msg = await sendMessage(message, "<code>Mengetes kecepatan Unduh & Unggah...</code>")
@@ -21,7 +22,7 @@ async def speedtest(_, message):
     image = result['share']
     caption = f'''
 <pre languange="bash">
-<b>Informasi</b>
+<b>Hasil SpeedTest</b>
 <b>Ping         :</b> <code>{result['ping']} ms</code>
 <b>Waktu        :</b> <code>{result['timestamp']}</code>
 <b>Unggah       :</b> <code>{get_readable_file_size(result['upload'] / 8)}/s</code>

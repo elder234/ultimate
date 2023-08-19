@@ -18,8 +18,11 @@ async def deletefile(_, message):
     elif reply_to := message.reply_to_message:
         if reply_to.text:
             link = reply_to.text.split(maxsplit=1)[0].strip()
-        elif reply_to.reply_markup:
-            link = reply_to.reply_markup.inline_keyboard[0].url
+            if not is_gdrive_link(link) and reply_to.reply_markup:
+                try:
+                    link = reply_to.reply_markup.inline_keyboard[0][0].url
+                except:
+                    link = reply_to.reply_markup.inline_keyboard[0].url
     else:
         link = ''
     if is_gdrive_link(link):

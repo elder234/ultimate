@@ -47,16 +47,17 @@ non_queued_dl = set()
 non_queued_up = set()
 
 try:
-    arv = check_output(["chrome --v"], shell=True).decode().split("\n")[0].split(" ")[2]
+    arv = check_output(["chrome --v"], shell=True).decode().split("\n")[0].split(" ")[2] 
     ffv = check_output(['opera -version | grep "ffmpeg version" | sed -e "s/ffmpeg version //" -e "s/[^0-9.].*//"'], shell=True).decode().replace("\n", "")
     gav = check_output(["pip show google-api-python-client | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
     msv = check_output(["pip show megasdk | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
     p7v = check_output(["7z | grep Version"], shell=True).decode().split(" ")[2]
     prv = prv
-    rcv = check_output(["edge --version"], shell=True).decode().split("\n")[0].split(" ")[2]
+    rcv = check_output(["edge --version"], shell=True).decode().split("\n")[0].split(" ")[1]
     qbv = check_output(["firefox --version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
     ytv = check_output(["yt-dlp --version"], shell=True).decode().split("\n")[0]
-except:
+except Exception as e:
+    LOGGER.warning(f"Failed when get apps version! => {e}")
     arv, ffv, gav, msv, p7v, prv, rcv, qbv, ytv = "", "", "", "", "", "", "", "", ""
 
 try:
