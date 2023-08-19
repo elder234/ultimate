@@ -15,7 +15,7 @@ from quoters import Quote
 from pytz import timezone
 from datetime import datetime
 
-from bot import bot, botStartTime, LOGGER, Interval, DATABASE_URL, user, QbInterval, INCOMPLETE_TASK_NOTIFIER, scheduler, config_dict
+from bot import bot, botStartTime, LOGGER, Interval, DATABASE_URL, QbInterval, INCOMPLETE_TASK_NOTIFIER, scheduler, config_dict, arv, ffv, gav, msv, p7v, prv, rcv, qbv, ytv
 from .helper.ext_utils.fs_utils import start_cleanup, clean_all, exit_clean_up
 from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time, cmd_exec, sync_to_async
 from .helper.ext_utils.db_handler import DbManger
@@ -115,26 +115,6 @@ async def stats(_, message):
     neofetch = check_output(
         ["neofetch --shell_version off --stdout"], shell=True).decode()
     # Versi
-    try:
-        arv = check_output(["chrome --v"], shell=True).decode().split("\n")[0].split(" ")[2]
-        ffv = check_output(['opera -version | grep "ffmpeg version" | sed -e "s/ffmpeg version //" -e "s/[^0-9.].*//"'], shell=True).decode().replace("\n", "")
-        gav = check_output(["pip show google-api-python-client | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
-        msv = check_output(["pip show megasdk | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
-        p7v = check_output(["7z | grep Version"], shell=True).decode().split(" ")[2]
-        prv = prv
-        rcv = check_output(["edge --version"], shell=True).decode().split("\n")[0].split(" ")[2]
-        qbv = check_output(["firefox --version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
-        ytv = check_output(["yt-dlp --version"], shell=True).decode().split("\n")[0]
-    except:
-        arv = ""
-        ffv = ""
-        gav = ""
-        msv = ""
-        p7v = ""
-        prv = ""
-        rcv = ""
-        qbv = ""
-        ytv = ""
     stats = f'''
 <pre languange="bash">
 <code>{neofetch}</code>
@@ -336,7 +316,7 @@ async def main():
         BotCommands.HelpCommand) & CustomFilters.authorized))
     bot.add_handler(MessageHandler(stats, filters=command(
         BotCommands.StatsCommand) & CustomFilters.authorized))
-    LOGGER.info("Bot Started!")
+    LOGGER.info(f"Bot Started! => @{bot.me.username}")
     signal(SIGINT, exit_clean_up)
 
 bot.loop.run_until_complete(main())

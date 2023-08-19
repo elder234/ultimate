@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from tzlocal import get_localzone
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from pyrogram import Client as tgClient, enums
+from pyrogram import Client as tgClient, enums, __version__ as prv
 from pymongo import MongoClient
 from asyncio import Lock
 from dotenv import load_dotenv, dotenv_values
 from threading import Thread
 from time import sleep, time
-from subprocess import Popen, run as srun
+from subprocess import Popen, run as srun, check_output
 from os import remove as osremove, path as ospath, environ, getcwd
 from aria2p import API as ariaAPI, Client as ariaClient
 from qbittorrentapi import Client as qbClient
@@ -45,6 +45,19 @@ queued_dl = {}
 queued_up = {}
 non_queued_dl = set()
 non_queued_up = set()
+
+try:
+    arv = check_output(["chrome --v"], shell=True).decode().split("\n")[0].split(" ")[2]
+    ffv = check_output(['opera -version | grep "ffmpeg version" | sed -e "s/ffmpeg version //" -e "s/[^0-9.].*//"'], shell=True).decode().replace("\n", "")
+    gav = check_output(["pip show google-api-python-client | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
+    msv = check_output(["pip show megasdk | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
+    p7v = check_output(["7z | grep Version"], shell=True).decode().split(" ")[2]
+    prv = prv
+    rcv = check_output(["edge --version"], shell=True).decode().split("\n")[0].split(" ")[2]
+    qbv = check_output(["firefox --version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
+    ytv = check_output(["yt-dlp --version"], shell=True).decode().split("\n")[0]
+except:
+    arv, ffv, gav, msv, p7v, prv, rcv, qbv, ytv = "", "", "", "", "", "", "", "", ""
 
 try:
     if bool(environ.get('_____REMOVE_THIS_LINE_____')):
