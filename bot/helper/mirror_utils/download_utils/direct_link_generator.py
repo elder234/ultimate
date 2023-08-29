@@ -561,7 +561,7 @@ def terabox(url) -> str:
         jsToken = jsToken[0]
     else:
         session.close()
-        raise DirectDownloadLinkException('ERROR: jsToken tidak ditemukan!.')
+        raise DirectDownloadLinkException('ERROR: jsToken tidak ditemukan!')
     shortUrl = _res.url.split('?surl=')[-1]
 
     details = {'contents':[], 'title': '', 'total_size': 0}
