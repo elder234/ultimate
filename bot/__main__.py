@@ -276,16 +276,16 @@ async def restart_notification():
         if notifier_dict := await DbManger().get_incomplete_tasks():
             for cid, data in notifier_dict.items():
                 msg = f"""{'Bot berhasil dimulai ulang!' if cid == chat_id else 'Bot dimulai ulang!'}
-<pre languange="bash">'
+<pre languange="bash">
 <b>Hari      :</b> <code>{now.strftime('%A')}</code>
 <b>Tanggal   :</b> <code>{now.strftime('%d %B %Y')}</code>
 <b>Waktu     :</b> <code>{now.strftime('%H:%M:%S WIB')}</code>
-<b>Quotes    :</b>"
+<b>Quotes    :</b>
 <code>{get_quotes()}</code>
 </pre>           
 """
                 if data.items():
-                    msg += f"\n\n<b>Tugas yang belum selesai :</b>"
+                    msg += f"\n<b>Tugas yang belum selesai :</b>"
                 for tag, links in data.items():
                     msg += f"\n{tag} :"
                     for index, link in enumerate(links, start=1):
@@ -298,7 +298,16 @@ async def restart_notification():
 
     if await aiopath.isfile(".restartmsg"):
         try:
-            await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text='Bot berhasil dimulai ulang!')
+            msg = f"""Bot berhasil dimulai ulang!
+<pre languange="bash">
+<b>Hari      :</b> <code>{now.strftime('%A')}</code>
+<b>Tanggal   :</b> <code>{now.strftime('%d %B %Y')}</code>
+<b>Waktu     :</b> <code>{now.strftime('%H:%M:%S WIB')}</code>
+<b>Quotes    :</b>
+<code>{get_quotes()}</code>
+</pre>           
+"""
+            await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text=msg)
         except:
             pass
         await aioremove(".restartmsg")
