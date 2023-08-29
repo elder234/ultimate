@@ -67,8 +67,6 @@ def direct_link_generator(link: str):
         return pixeldrain(link)
     elif 'antfiles.com' in domain:
         return antfiles(link)
-    elif 'streamtape.com' in domain:
-        return streamtape(link)
     elif 'racaty' in domain:
         return racaty(link)
     elif '1fichier.com' in domain:
@@ -89,11 +87,13 @@ def direct_link_generator(link: str):
         return letsupload(link)
     elif 'gofile.io' in domain:
         return gofile(link)
+    elif any(x in domain for x in ['streamtape.com', 'streamtape.co', 'streamtape.cc', 'streamtape.to', 'streamtape.net', 'streamta.pe', 'streamtape.xyz']):
+        return streamtape(link)
     elif any(x in domain for x in ['wetransfer.com', 'we.tl']):
         return wetransfer(link)
     elif any(x in domain for x in anonfilesBaseSites):
         return anonfilesBased(link)
-    elif any(x in domain for x in ['terabox', 'nephobox', '4funbox', 'mirrobox', 'momerybox', 'teraboxapp', '1024tera']):
+    elif any(x in domain for x in ['terabox.com', 'nephobox.com', '4funbox.com', 'mirrobox.com', 'momerybox.com', 'teraboxapp.com', '1024tera.com']):
         return terabox(link)
     elif any(x in domain for x in fmed_list):
         return fembed(link)
@@ -374,12 +374,14 @@ def streamtape(url: str) -> str:
     Based on https://github.com/zevtyardt/lk21
     """
     try:
-        link = Bypass().bypass_streamtape(url)
+        with requests.Session() as session:
+            res = session.get(url)
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
-    if not link:
+    if link := findall(r"document.*((?=id\=)[^\"']+)", res.text):
+        return f"https://streamtape.com/get_video?{link[-1]}"
+    else:
         raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
-    return link
 
 
 def racaty(url: str) -> str:
@@ -568,10 +570,17 @@ def terabox(url) -> str:
     details["header"] = ' '.join(f'{key}: {value}' for key, value in cookies.items())
 
     def __fetch_links(folderPath=''):
-        _url = f'https://www.1024tera.com/share/list?app_id=250528&jsToken={jsToken}&shorturl={shortUrl}&'
-        _url += f'dir={folderPath}' if folderPath else "root=1"
+        params = {
+            'app_id': '250528',
+            'jsToken': jsToken,
+            'shorturl': shortUrl
+            }
+        if folderPath:
+            params['dir'] = folderPath
+        else:
+            params['root'] = '1'
         try:
-            _json = session.get(_url, cookies=cookies).json()
+            _json = session.get("https://www.1024tera.com/share/list", params=params, cookies=cookies).json()
         except Exception as e:
             raise DirectDownloadLinkException(f'ERROR: {e.__class__.__name__}')
         if _json['errno'] not in [0, '0']:
