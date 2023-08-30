@@ -146,7 +146,7 @@ async def stats(_, message):
 <b>Google Api   :</b> <code>v{gav}</code>
 <b>MegaSDK      :</b> <code>v{msv}</code>
 <b>P7Zip        :</b> <code>v{p7v}</code>
-<b>Pyrogram     :</b> <code>v{prv}</code>
+<b>Pyro         :</b> <code>v{prv}</code>
 <b>Rclone       :</b> <code>{rcv}</code>
 <b>Qbittorrent  :</b> <code>{qbv}</code>
 <b>YT-DLP       :</b> <code>v{ytv}</code>

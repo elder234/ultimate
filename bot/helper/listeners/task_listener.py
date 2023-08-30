@@ -102,7 +102,7 @@ class MirrorLeechListener:
         LOGGER.info(f"Download completed: {name}")
 
         if multi_links:
-            await self.onUploadError('Menunggu tugas lain selesai diunduh...')
+            await self.onUploadError('Selesai, Menunggu tugas lain selesai diunduh...')
             return
         
         if name == "None" or self.isQbit or not await aiopath.exists(f"{self.dir}/{name}"):
