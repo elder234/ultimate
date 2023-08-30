@@ -47,6 +47,7 @@ class TgUploader:
         self.__upload_dest = ''
         self.__up_size = 0
         self.__user_leech = False
+        self.__thread_id = None
         
 
     async def __upload_progress(self, current, total):
@@ -75,7 +76,7 @@ class TgUploader:
             self.__user_leech = True
         self.__upload_dest = self.__listener.upDest or self.__listener.user_dict.get(
             'leech_dest') or self.__listener.message.chat.id
-        self.__thread_id = self.__listener.message.message_thread_id if self.__listener.message.chat.is_forum else None
+        self.__thread_id = int(self.__listener.message.message_thread_id) if self.__listener.message.chat.is_forum else None
         if not isinstance(self.__upload_dest, int):
             if self.__upload_dest.startswith('b:'):
                 self.__upload_dest = self.__upload_dest.lstrip('b:')
