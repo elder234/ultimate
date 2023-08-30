@@ -418,7 +418,7 @@ class MirrorLeechListener:
                                            disable_notification=True,
                                            reply_markup=buttons.build_menu(2))
             except Exception as e:
-                LOGGER.error(f"Failed forward message | {e}")
+                LOGGER.error(f"Failed when forward message => {e}")
             if self.seed:
                 if self.newDir:
                     await clean_target(self.newDir)

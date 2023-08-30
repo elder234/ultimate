@@ -24,9 +24,9 @@ if not ospath.exists('config.env'):
             with open('config.env', 'wb+') as f:
                 f.write(res.content)
         else:
-            log_error(f"Failed to download config.env | {res.status_code}")
+            log_error(f"Failed when download config.env => {res.status_code}")
     except Exception as e:
-        log_error(f"Failed to download config.env | {e}")
+        log_error(f"Failed when download config.env => {e}")
 
 load_dotenv('config.env', override=True)
 
