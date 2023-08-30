@@ -212,7 +212,7 @@ async def log(_, message):
     await sendFile(message, 'log.txt')
 
 help_string = f'''
-<b>Daftar Perintah Bot</b> <code>@{bot.me.username}</code>"
+<b>Daftar Perintah</b> <code>@{bot.me.username}</code>
 <code>/{BotCommands.MirrorCommand[0]}</code> atau <code>/{BotCommands.MirrorCommand[1]}</code> : Mirror ke Google Drive/Cloud.
 <code>/{BotCommands.QbMirrorCommand[0]}</code> atau <code>/{BotCommands.QbMirrorCommand[1]}</code> : Mirror ke Google Drive/Cloud menggunakan qBittorrent.
 <code>/{BotCommands.YtdlCommand[0]}</code> atau <code>/{BotCommands.YtdlCommand[1]}</code> : Mirror link yang disupport YT-DLP.
