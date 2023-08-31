@@ -1212,7 +1212,7 @@ def pake(url: str) -> str:
             details = {'contents':[], 'title': '', 'total_size': 0}
 
             if not details['title']:
-                details['title'] = req["data"]["title"]
+                details['title'] = f"{req['data']['title']}.mp4"
 
             item = {
                 "path": path.join(details['title']),
