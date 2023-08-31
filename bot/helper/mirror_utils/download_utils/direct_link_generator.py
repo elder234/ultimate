@@ -37,7 +37,7 @@ anonfilesBaseSites = ['anonfiles.com', 'hotfile.io', 'bayfiles.com', 'megaupload
                       'filechan.org', 'myfile.is', 'vshare.is', 'rapidshare.nu', 'lolabits.se',
                       'openload.cc', 'share-online.is', 'upvid.cc', 'zippysha.re']
 
-dood_sites = ['dooood.com', 'doods.pro', 'dood.yt']
+pake_sites = ['doodstream.com', 'dooood.com', 'doods.pro', 'dood.yt']
 
 nurlresolver_sites = ['send.cm']
 
@@ -130,8 +130,8 @@ def direct_link_generator(link: str):
         return link if domain == "static.romsget.io" else romsget(link)
     elif "hexupload.net" in domain:
         return hexupload(link)
-    elif any(x in domain for x in dood_sites):
-        return doodstream(link)
+    elif any(x in domain for x in pake_sites):
+        return pake(link)
     elif any(x in domain for x in nurlresolver_sites):
         return nurlresolver(link)
     else:
@@ -791,7 +791,7 @@ def linkbox(url):
     if not data:
         raise DirectDownloadLinkException('ERROR: Data tidak ditemukan!')
     if 'itemInfo' not in data:
-        raise DirectDownloadLinkException('ERROR: Item info tidak ditemukan!')
+        raise DirectDownloadLinkException('ERROR: Item Info tidak ditemukan!')
     itemInfo = data['itemInfo']
     if 'url' not in itemInfo:
         raise DirectDownloadLinkException('ERROR: Link File tidak ditemukan!')
@@ -1133,13 +1133,12 @@ def hexupload(url) -> str:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
 
 
+""" 
 def doodstream(url: str) -> str:
-    """ 
     DoodStream direct link generator
     Scrapped by https://github.com/arakurumi
     NOTE: Working on my machine, not work in vps (digitalocean) and heroku
     TODO: Rescrape with better method (This method sometimes got Cloudflare version 2 Captcha challenge)
-    """
 
     base_url = "https://dood.yt"
     headers = "Referer: https://dood.yt/"
@@ -1191,6 +1190,40 @@ def doodstream(url: str) -> str:
             return ddl_link, headers
     except Exception as e:
         raise DirectDownloadLinkException(f'ERROR: {e.__class__.__name__}')
+"""
+
+
+def pake(url: str) -> str:
+    """
+    URL : https://api.pake.tk
+    Supported Sites :
+    - Dood (Slow)
+    - Vidstream (Untested)
+    """
+    
+    base = "https://dd-cdn.pakai.eu.org/download?url="  # For bypass different IP
+    req = requests.get(f"https://api.pake.tk/dood?url={url}")
+    if req.status_code != 200:
+        raise DirectDownloadLinkException(f'ERROR: Gagal mendapatkan direct link!')
+    else:
+        try:
+            req = req.json()
+
+            details = {'contents':[], 'title': '', 'total_size': 0}
+
+            if not details['title']:
+                details['title'] = req["data"]["title"]
+
+            item = {
+                "path": path.join(details['title']),
+                "filename": details['title'],
+                "url": f"{base}{req['data']['direct_link']}&title={details['title']}.mp4",
+            }
+       
+            details["contents"].append(item)
+        except ValueError:
+            raise DirectDownloadLinkException(f'ERROR: Gagal mendapatkan direct link!')
+    return details
 
 
 def nurlresolver(url: str) -> str:
@@ -1200,14 +1233,35 @@ def nurlresolver(url: str) -> str:
     You can check supported sites here :
     https://github.com/mnsrulz/nurlresolver/tree/master/src/libs
     """
-    req = requests.get(f"https://nurlresolver.netlify.app/.netlify/functions/server/resolve?q={url}&m=&r=false").json()
-    if len(req) == 0:
+    req = requests.get(f"https://nurlresolver.netlify.app/.netlify/functions/server/resolve?q={url}&m=&r=false")
+    if req.status_code != 200:
         raise DirectDownloadLinkException(f'ERROR: Gagal mendapatkan direct link!')
-    for link in req:
-        headers = link.get("headers")
-        direct_link = link.get("link")
-    # Parse headers for aria2c
-    for header, value in (headers or {}).items():
-        headers = f"{header}: {value}"
-    return direct_link, headers
+    try:
+        req = req.json()
+        if len(req) == 0:
+            raise DirectDownloadLinkException(f'ERROR: Gagal mendapatkan direct link!')
         
+        details = {'contents':[], 'title': '', 'total_size': 0}
+        
+        for file in req:
+            headers = file["headers"]
+            details["header"] = ' '.join(f'{key}: {value}' for key, value in headers.items())
+            
+            if not details['title']:
+                details['title'] = file["title"]
+            
+            item = {
+                "path": path.join(details['title']),
+                "filename": details['title'],
+                "url": file["link"],
+            }
+            
+            size = file["size"]
+            if isinstance(size, str) and size.isdigit():
+                size = float(size)
+            details["total_size"] += size
+
+            details["content"].append(item)
+    except ValueError:
+        raise DirectDownloadLinkException(f'ERROR: Gagal mendapatkan direct link!')
+    return details
