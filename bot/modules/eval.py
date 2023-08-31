@@ -40,7 +40,7 @@ async def send(msg, message):
             await sendFile(message, out_file)
     else:
         LOGGER.info(f"OUT: '{msg}'")
-        await sendMessage(message, f"<code>{msg}</code>")
+        await sendMessage(message, f"<pre language='python'>{msg}</pre>")
 
 
 @new_task
@@ -108,7 +108,7 @@ async def clear(client, message):
     global namespaces
     if message.chat.id in namespaces:
         del namespaces[message.chat.id]
-    await send("<b>Penyimpanan Locals berhasil dihapus!</b>", message)
+    await send("<b>Locals berhasil dihapus!</b>", message)
 
 
 bot.add_handler(MessageHandler(evaluate, filters=command(

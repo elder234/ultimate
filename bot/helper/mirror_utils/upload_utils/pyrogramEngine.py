@@ -277,7 +277,7 @@ class TgUploader:
                 thumb_path = f"{self.__path}/yt-dlp-thumb/{file_name}.jpg"
                 if await aiopath.isfile(thumb_path):
                     thumb = thumb_path
-                elif not is_video and is_audio:
+                elif is_audio and not is_video:
                     thumb = await get_audio_thumb(self.__up_path)
             # Use User when up size more than 2GB
             if IS_PREMIUM_USER:
