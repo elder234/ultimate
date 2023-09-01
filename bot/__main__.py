@@ -186,7 +186,7 @@ Enjoy :D
 
 
 async def restart(_, message):
-    restart_message = await sendMessage(message, "Restarting...")
+    restart_message = await sendMessage(message, "<b>Restarting...</b>")
     if scheduler.running:
         scheduler.shutdown(wait=False)
     for interval in [QbInterval, Interval]:

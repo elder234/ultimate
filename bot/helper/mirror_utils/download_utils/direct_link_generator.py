@@ -265,8 +265,7 @@ def mediafireFolder(url: str):
     except Exception as e:
         raise DirectDownloadLinkException(e)
 
-    if isinstance(folderkey, str):
-        details['title'] = folder_infos[0]["name"]
+    details['title'] = folder_infos[0]["name"]
 
     def __scraper(url):
         try:
@@ -1336,8 +1335,7 @@ def pake(url: str) -> str:
 
             details = {'contents':[], 'title': '', 'total_size': 0}
 
-            if not details['title']:
-                details['title'] = f"{req['data']['title']}.mp4"
+            details['title'] = f"{req['data']['title']}.mp4"
 
             item = {
                 "path": path.join(details['title']),
@@ -1372,8 +1370,7 @@ def nurlresolver(url: str) -> str:
             headers = file["headers"]
             details["header"] = ' '.join(f'{key}: {value}' for key, value in headers.items())
             
-            if not details['title']:
-                details['title'] = file["title"]
+            details['title'] = file["title"]
             
             item = {
                 "path": path.join(details['title']),
