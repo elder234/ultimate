@@ -167,8 +167,8 @@ def uptobox(url: str) -> str:
         raise DirectDownloadLinkException("ERROR: Link Uptobox tidak ditemukan!")
     if urls := findall(r'\bhttps?://.*\.uptobox\.com/dl\S+', url):
         return urls[0]
-    if "::" in urls:
-        pswd = urls.split("::")[-1]
+    if "::" in url:
+        pswd = url.split("::")[-1]
     else:
         pswd = None
     cget = create_scraper().request
