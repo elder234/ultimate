@@ -40,6 +40,8 @@ anonfilesBaseSites = ['anonfiles.com', 'hotfile.io', 'bayfiles.com', 'megaupload
                       'filechan.org', 'myfile.is', 'vshare.is', 'rapidshare.nu', 'lolabits.se',
                       'openload.cc', 'share-online.is', 'upvid.cc', 'zippysha.re']
 
+pake_sites = ['doodstream.com', 'dooood.com', 'doods.pro', 'dood.yt']
+
 
 def direct_link_generator(link: str):
     """ direct links generator """
@@ -89,8 +91,10 @@ def direct_link_generator(link: str):
         return gofile(link)
     elif 'send.cm' in domain:
         return send_cm(link)
-    elif 'doods.pro' in domain:
-        return doods(link)
+    # elif 'doods.pro' in domain:
+    #     return doods(link)
+    elif any(x in domain for x in pake_sites):
+        return pake(link)
     elif any(x in domain for x in ['streamtape.com', 'streamtape.co', 'streamtape.cc', 'streamtape.to', 'streamtape.net', 'streamta.pe', 'streamtape.xyz', 'tapewithadblock.org']):
         return streamtape(link)
     elif any(x in domain for x in ['wetransfer.com', 'we.tl']):
@@ -1157,7 +1161,7 @@ def doods(url):
         raise DirectDownloadLinkException(
             f'ERROR: {e.__class__.__name__} ketika mencoba mendapatkan Token!')
     if not (link := html.xpath("//div[@class='download-content']//a/@href")):
-        raise DirectDownloadLinkException('ERROR: Token Link not found')
+        raise DirectDownloadLinkException('ERROR: Token Link tidak ditemukan!')
     link = f'{parsed_url.scheme}://{parsed_url.hostname}/{link[0]}'
     try:
         _res = session.get(link)
@@ -1402,7 +1406,6 @@ def hexupload(url) -> str:
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
 
-
 """ 
 def doodstream(url: str) -> str:
     DoodStream direct link generator
@@ -1460,13 +1463,15 @@ def doodstream(url: str) -> str:
             return ddl_link, headers
     except Exception as e:
         raise DirectDownloadLinkException(f'ERROR: {e.__class__.__name__}')
-
+"""
 
 def pake(url: str) -> str:
+    """
     URL : https://api.pake.tk
     Supported Sites :
     - Dood (Slow)
     - Vidstream (Untested)
+    """
 
     base = "https://dd-cdn.pakai.eu.org/download?url="  # For bypass different IP
     req = requests.get(f"https://api.pake.tk/dood?url={url}")
@@ -1491,7 +1496,7 @@ def pake(url: str) -> str:
             raise DirectDownloadLinkException(f'ERROR: Gagal mendapatkan direct link!')
     return details
 
-
+"""
 def nurlresolver(url: str) -> str:
     NOTE:
     There're many sites supported by this api
