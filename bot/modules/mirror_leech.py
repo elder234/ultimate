@@ -218,8 +218,10 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             except DirectDownloadLinkException as e:
                 await sleep(1)
                 await deleteMessage(ddl)
-                LOGGER.info(str(e))
-                if str(e).startswith('ERROR:'):
+                e = str(e)
+                if "password" not in e:
+                    LOGGER.info(e)
+                if e.startswith('ERROR:'):
                     await sendMessage(message, str(e))
                     return
 

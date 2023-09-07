@@ -456,3 +456,15 @@ Send Gdrive|Gdot|Filepress|Filebee|Appdrive|Gdflix link or rclone path along wit
 
 Note: If -up not specified then rclone destination will be the RCLONE_PATH from config.env
 """
+
+PASSWORD_ERROR_MESSAGE = """
+Link File ini memerlukan password!
+Tambahkan password dengan menambahkan tanda <code>::</code> setelah link dan masukan password setelah tanda!
+
+<b>Contoh :</b>
+<code>/mirror {}::ini password</code>
+
+<b>Note :</b>
+- Tidak ada spasi setelah tanda <code>::</code>
+- Password bisa menggunakan spasi
+"""
