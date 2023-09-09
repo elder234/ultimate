@@ -74,9 +74,10 @@ class TgUploader:
             self.__thumb = None
         if IS_PREMIUM_USER and (self.__listener.user_dict.get('user_leech', False) or 'user_leech' not in self.__listener.user_dict and config_dict['USER_LEECH']):
             self.__user_leech = True
-        self.__upload_dest = self.__listener.upDest or self.__listener.user_dict.get(
+        self.__upload_dest = self.__listener.user_dict.get(
             'leech_dest') or self.__listener.message.chat.id
-        self.__thread_id = int(self.__listener.message.message_thread_id) if self.__listener.message.chat.is_forum else None
+        self.__thread_id = int(str(self.__listener.user_dict.get(
+            'leech_dest')).split(":")[1]) or int(self.__listener.message.message_thread_id) if self.__listener.message.chat.is_forum else None
         if not isinstance(self.__upload_dest, int):
             if self.__upload_dest.startswith('b:'):
                 self.__upload_dest = self.__upload_dest.lstrip('b:')
