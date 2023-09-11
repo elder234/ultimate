@@ -1219,20 +1219,20 @@ def filelions(url):
     result = _res['result']
     if not result['versions']:
         raise DirectDownloadLinkException("ERROR: Versi tidak ditemukan!")
-    error = '\nPilih kualitas Video :\nKualitas yang tersedia :'
+    error = '\n<b>Pilih kualitas Video :</b>\n<b>Kualitas yang tersedia :</b>'
     for version in result['versions']:
         if quality == version['name']:
             return version['url']
         elif version['name'] == 'l':
-            error += f"\nLow"
+            error += f"\n<b>Low</b>"
         elif version['name'] == 'n':
-            error += f"\nNormal"
+            error += f"\n<b>Normal</b>"
         elif version['name'] == 'o':
-            error += f"\nOriginal"
+            error += f"\n<b>Original</b>"
         elif version['name'] == "h":
-            error += f"\nHD"
-        error +=f" <code>{url}_{version['name']}</code>"
-    raise DirectDownloadLinkException(f'ERROR: {error}')
+            error += f"\n<b>HD</b>"
+        error +=f": <code>{url}_{version['name']}</code>"
+    raise DirectDownloadLinkException(f'{error}')
 
 
 def pake(url):
@@ -1245,9 +1245,6 @@ def pake(url):
     with requests.Session() as session:
         try:
             req = session.get(f"https://api.pake.tk/dood?url={url}").json()
-            if req.status_code != 200:
-                session.close()
-                raise DirectDownloadLinkException(f'ERROR: Link File tidak ditemukan!')
             try:
                 details = {'contents':[], 'title': '', 'total_size': 0}
 
