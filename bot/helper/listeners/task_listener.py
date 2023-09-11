@@ -412,14 +412,16 @@ class MirrorLeechListener:
             msg += f'\n\n<b>Oleh :</b> {self.tag}'
             await sendMessage(self.message, msg, button)
             # Log Chat
-            if LOG_CHAT_ID := config_dict['LOG_CHAT_ID']:
+            if LOG_CHAT_IDS := config_dict['LOG_CHAT_ID']:
                 LOG_CHAT_THREAD_ID = None
-                if not isinstance(LOG_CHAT_ID, int):
-                    if ":" in LOG_CHAT_ID:
-                        LOG_CHAT_ID = LOG_CHAT_ID.split(":")[0]
-                        LOG_CHAT_THREAD_ID = int(LOG_CHAT_ID.split(":")[1])
+                if not isinstance(LOG_CHAT_IDS, int):
+                    if ":" in LOG_CHAT_IDS:
+                        LOG_CHAT_ID = LOG_CHAT_IDS.split(":")[0]
+                        LOG_CHAT_THREAD_ID = int(LOG_CHAT_IDS.split(":")[1])
                     if LOG_CHAT_ID.isdigit():
                         LOG_CHAT_ID = int(LOG_CHAT_ID)
+                else:
+                    LOG_CHAT_ID = LOG_CHAT_IDS
                 try:
                     await bot.send_message(chat_id=LOG_CHAT_ID,
                                            text=msg,
