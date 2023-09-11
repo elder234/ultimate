@@ -413,6 +413,7 @@ class MirrorLeechListener:
             await sendMessage(self.message, msg, button)
             # Log Chat
             if LOG_CHAT_IDS := config_dict['LOG_CHAT_ID']:
+                LOG_CHAT_ID = ''
                 LOG_CHAT_THREAD_ID = None
                 if not isinstance(LOG_CHAT_IDS, int):
                     if ":" in LOG_CHAT_IDS:

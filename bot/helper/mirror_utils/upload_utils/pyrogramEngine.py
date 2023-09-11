@@ -298,6 +298,7 @@ class TgUploader:
                 app = bot
             # Leech Chat
             LEECH_CHAT = False
+            LEECH_CHAT_ID = ''
             LEECH_CHAT_THREAD_ID = None
             if LEECH_CHAT_IDS := config_dict['LEECH_CHAT_ID']:
                 LEECH_CHAT = True
