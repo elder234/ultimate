@@ -310,12 +310,8 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         pssw = args['-ap']
         if ussr or pssw:
             auth = f"{ussr}:{pssw}"
-            auth = f"Authorization: Basic {b64encode(auth.encode()).decode('ascii')}"
-        else:
-            auth = ''
-        if headers:
-            auth += f'{auth} {headers}'
-        await add_aria2c_download(link, path, listener, name, auth, ratio, seed_time)
+            headers += f" authorization: Basic {b64encode(auth.encode()).decode('ascii')}"
+        await add_aria2c_download(link, path, listener, name, headers, ratio, seed_time)
 
 
 async def mirror(client, message):
