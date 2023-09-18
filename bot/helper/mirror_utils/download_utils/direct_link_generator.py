@@ -57,8 +57,6 @@ def direct_link_generator(link: str):
         return onedrive(link)
     elif 'pixeldrain.com' in domain:
         return pixeldrain(link)
-    elif 'antfiles.com' in domain:
-        return antfiles(link)
     elif 'racaty' in domain:
         return racaty(link)
     elif '1fichier.com' in domain:
