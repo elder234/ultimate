@@ -146,21 +146,24 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
             MirrorStatus.STATUS_SAMVID,
         ]:
             msg += f"\n<b>├ Proses :</b> <code>{task.processed_bytes()}</code> dari <code>{task.size()}</code>"
-            msg += f"\n<b>├ Kecepatan :</b> <code>{task.speed()}</code> | <b>ETA:</b> <code>{task.eta()}</code>"
+            msg += f"\n<b>├ Kecepatan :</b> <code>{task.speed()}</code>"
+            msg += f"\n<b>├ Perkiraan :</b> <code>{task.eta()}</code>"
             if hasattr(task, "seeders_num"):
                 try:
-                    msg += f"\n<b>├ Seeders :</b> <code>{task.seeders_num()}</code> | <b>Leechers :</b> <code>{task.leechers_num()}</code>"
+                    msg += f"\n<b>├ Seeders :</b> <code>{task.seeders_num()}</code>"
+                    msg += f"\n<b>├ Leechers :</b> <code>{task.leechers_num()}</code>"
                 except:
                     pass
         elif tstatus == MirrorStatus.STATUS_SEEDING:
-            msg += f"\n<b>├ Ukuran : </b> <code>{task.size()}</code>"
-            msg += f"\n<b>├ Kecepatan : </b> <code>{task.seed_speed()}</code>"
-            msg += f" | <b>Diupload : </b> <code>{task.uploaded_bytes()}</code>"
             msg += f"\n<b>├ Rasio : </b> <code>{task.ratio()}</code>"
-            msg += f" | <b>Waktu : </b> <code>{task.seeding_time()}</code>"
+            msg += f"\n<b>├ Waktu : </b> <code>{task.seeding_time()}</code>"
+            msg += f"\n<b>├ Ukuran : </b> <code>{task.size()}</code>"
+            msg += f"\n<b>├ Diupload : </b> <code>{task.uploaded_bytes()}</code>"
+            msg += f"\n<b>├ Kecepatan : </b> <code>{task.seed_speed()}</code>"
         else:
             msg += f"\n<b>├ Ukuran : </b> <code>{task.size()}</code>"
-        msg += f"\n<b>├ User :</b> <code>{task.listener.message.from_user.first_name}</code> | <b>ID :</b> <code>{task.listener.message.from_user.id}</code>"
+        msg += f"\n<b>├ ID :</b> <code>{task.listener.message.from_user.id}</code>"
+        msg += f"\n<b>├ User :</b> <code>{task.listener.message.from_user.first_name}</code>"
         msg += f"\n<b>└</b> <code>/{BotCommands.CancelTaskCommand[0]} {task.gid()}</code>\n\n"
 
     if len(msg) == 0 and status == "All":

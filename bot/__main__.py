@@ -235,7 +235,7 @@ Enjoy :D
     else:
         await sendMessage(
             message, 
-            "<b>Tidak ada izin!</b>\n<b>Gabung Grup/Channel untuk menggunakan Bot!</b>\n\n<b>Note :</b>\n<b>Jika Group ini mengaktifkan Topik, Kirim perintah di Topik yang diizinkan!</b>", 
+            "<b>Tidak ada izin!</b>\nGabung Grup/Channel untuk menggunakan Bot!\n\n<b>Note :</b>\nJika Group ini mengaktifkan Topik, Kirim perintah di Topik yang diizinkan!", 
             reply_markup
         )
 
