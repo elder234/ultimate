@@ -1,9 +1,16 @@
-#!/usr/bin/env python3
 from signal import signal, SIGINT
 from aiofiles.os import path as aiopath, remove as aioremove
 from aiofiles import open as aiopen
 from os import execl as osexecl
-from psutil import disk_usage, cpu_percent, cpu_count, virtual_memory, net_io_counters, boot_time, cpu_freq
+from psutil import (
+    disk_usage, 
+    cpu_percent, 
+    cpu_count, 
+    virtual_memory, 
+    net_io_counters, 
+    boot_time, 
+    cpu_freq
+)
 from time import time
 from sys import executable
 from pyrogram import __version__ as prv
@@ -15,16 +22,54 @@ from quoters import Quote
 from pytz import timezone
 from datetime import datetime
 
-from bot import bot, botStartTime, LOGGER, Interval, DATABASE_URL, QbInterval, INCOMPLETE_TASK_NOTIFIER, scheduler, config_dict, arv, ffv, gav, msv, p7v, prv, rcv, qbv, ytv
-from .helper.ext_utils.fs_utils import start_cleanup, clean_all, exit_clean_up
-from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time, cmd_exec, sync_to_async
+from bot import (
+    bot, 
+    botStartTime, 
+    LOGGER, 
+    Interval, 
+    DATABASE_URL, 
+    QbInterval, 
+    INCOMPLETE_TASK_NOTIFIER, 
+    scheduler, 
+    config_dict, 
+    arv, 
+    ffv, 
+    gav, 
+    msv, 
+    p7v, 
+    prv, 
+    rcv, 
+    qbv, 
+    ytv
+)
+from .helper.ext_utils.files_utils import start_cleanup, clean_all, exit_clean_up
+from .helper.ext_utils.bot_utils import cmd_exec, sync_to_async, initiate_help_messages
+from .helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
 from .helper.ext_utils.db_handler import DbManger
 from .helper.telegram_helper.bot_commands import BotCommands
 from .helper.telegram_helper.message_utils import sendMessage, editMessage, sendFile
 from .helper.telegram_helper.filters import CustomFilters
 from .helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.listeners.aria2_listener import start_aria2_listener
-from .modules import authorize, clone, gd_count, gd_delete, cancel_mirror, gd_search, mirror_leech, status, torrent_search, torrent_select, ytdlp, rss, shell, eval, users_settings, bot_settings, speedtest
+from .modules import (
+    authorize, 
+    clone, 
+    gd_count, 
+    gd_delete, 
+    cancel_task, 
+    gd_search, 
+    mirror_leech, 
+    status, 
+    torrent_search, 
+    torrent_select, 
+    ytdlp, 
+    rss, 
+    shell, 
+    eval, 
+    users_settings, 
+    bot_settings, 
+    speedtest
+)
 
 def get_quotes():
     try:
@@ -39,18 +84,18 @@ def get_quotes():
 
 def progress_bar(percentage):
     if isinstance(percentage, str):
-        return 'NaN'
+        return "NaN"
     try:
         percentage = int(percentage)
     except:
         percentage = 0
-    return ''.join(
-        '■' if i <= percentage // 10 else '□' for i in range(1, 11)
+    return "".join(
+        "■" if i <= percentage // 10 else "□" for i in range(1, 11)
     )
 
 
 async def stats(_, message):
-    if await aiopath.exists('.git'):
+    if await aiopath.exists(".git"):
         last_commit = await cmd_exec("git log -1 --date=short --pretty=format:'%cd <b>From</b> %cr'", True)
         last_commit = last_commit[0]
     else:
@@ -61,62 +106,61 @@ async def stats(_, message):
     try:
         total = get_readable_file_size(total)
     except:
-        total = 'n/a'
+        total = "NaN"
     try:
         used = get_readable_file_size(used)
     except:
-        used = 'n/a'
+        used = "NaN"
     try:
         free = get_readable_file_size(free)
     except:
-        free = 'n/a'
+        free = "NaN"
     # Net Usage
     try:
         sent = get_readable_file_size(net_io_counters().bytes_sent)
     except:
-        sent = 'n/a'
+        sent = "NaN"
     try:
         recv = get_readable_file_size(net_io_counters().bytes_recv)
     except:
-        recv = 'n/a'
+        recv = "NaN"
     # Cpu
     cpuUsage = cpu_percent(interval=0.5)
     try:
         p_core = cpu_count(logical=False)
     except:
-        p_core = 'n/a'
+        p_core = "NaN"
     try:
         t_core = cpu_count(logical=True)
     except:
-        t_core = 'n/a'
+        t_core = "NaN"
     try:
         cpufreq = cpu_freq()
     except:
-        cpufreq = 'n/a'
+        cpufreq = "NaN"
     try:
         freqcurrent = round(cpufreq.current)
     except:
-        freqcurrent = 'n/a'
+        freqcurrent = "NaN"
     memory = virtual_memory()
     mem_p = memory.percent
     try:
         mem_t = get_readable_file_size(memory.total)
     except:
-        mem_t = 'n/a'
+        mem_t = "NaN"
     try:
         mem_a = get_readable_file_size(memory.available)
     except:
-        mem_a = 'n/a'
+        mem_a = "NaN"
     try:
         mem_u = get_readable_file_size(memory.used)
     except:
-        mem_u = 'n/a'
+        mem_u = "NaN"
     # Neofetch
     neofetch = check_output(
         ["neofetch --shell_version off --stdout"], shell=True).decode()
-    # Versi
-    stats = f'''
-<pre languange="bash"><code>{neofetch}</code>
+    stats = f"""
+<pre languange='bash'><code>{neofetch}</code>
 <b>CPU</b>
 <b>Cores        :</b> <code>{p_core}</code>
 <b>Logical      :</b> <code>{t_core}</code>
@@ -159,18 +203,21 @@ async def stats(_, message):
 <b>Quotes       :</b> 
 <code>{get_quotes()}</code>
 </pre>
-'''
-    await sendMessage(message, stats)
+"""
+    await sendMessage(
+        message, 
+        stats
+    )
 
 
 async def start(client, message):
     buttons = ButtonMaker()
     buttons.ubutton(
         "Owner", "https://t.me/save_usdt")
-    buttons.ubutton("Group", "https://t.me/arakurumi")
+    buttons.ubutton("Channel", "https://t.me/arakurumi")
     reply_markup = buttons.build_menu(2)
     if await CustomFilters.authorized(client, message):
-        start_string = f'''
+        start_string = f"""
 <b>Mirror Tautan Lambat menjadi Tautan Cepat!</b>
 
 <b>Note :</b>
@@ -179,22 +226,35 @@ Selalu backup File setelah Mirror untuk menghindari Drive terhapus!
 Ketik <code>/{BotCommands.HelpCommand[0]}</code> untuk mendapatkan list perintah yang tersedia!
 
 Enjoy :D
-'''
-        await sendMessage(message, start_string, reply_markup)
+"""
+        await sendMessage(
+            message, 
+            start_string, 
+            reply_markup
+        )
     else:
-        await sendMessage(message, '<b>Tidak ada izin!</b>\n<b>Gabung grup untuk menggunakan Bot!</b>', reply_markup)
+        await sendMessage(
+            message, 
+            "<b>Tidak ada izin!</b>\n<b>Gabung Grup/Channel untuk menggunakan Bot!</b>\n\n<b>Note :</b>\n<b>Jika Group ini mengaktifkan Topik, Kirim perintah di Topik yang diizinkan!</b>", 
+            reply_markup
+        )
 
 
 async def restart(_, message):
-    restart_message = await sendMessage(message, "<b>Restarting...</b>")
+    restart_message = await sendMessage(
+        message, 
+        "<b>Restarting...</b>"
+    )
     if scheduler.running:
         scheduler.shutdown(wait=False)
-    for interval in [QbInterval, Interval]:
-        if interval:
-            interval[0].cancel()
+    if QbInterval:
+        QbInterval[0].cancel()
+    if Interval:
+        for intvl in list(Interval.values()):
+            intvl.cancel()
     await sync_to_async(clean_all)
-    proc1 = await create_subprocess_exec('pkill', '-9', '-f', 'gunicorn|chrome|firefox|opera|edge')
-    proc2 = await create_subprocess_exec('python3', 'update.py')
+    proc1 = await create_subprocess_exec("pkill", "-9", "-f", "gunicorn|chrome|firefox|opera|edge")
+    proc2 = await create_subprocess_exec("python3", "update.py")
     await gather(proc1.wait(), proc2.wait())
     async with aiopen(".restartmsg", "w") as f:
         await f.write(f"{restart_message.chat.id}\n{restart_message.id}\n")
@@ -203,15 +263,21 @@ async def restart(_, message):
 
 async def ping(_, message):
     start_time = int(round(time() * 1000))
-    reply = await sendMessage(message, "<b>Mengetest waktu respon bot...</b>")
+    reply = await sendMessage(
+        message, 
+        "<b>Mengetest waktu respon bot...</b>"
+    )
     end_time = int(round(time() * 1000))
-    await editMessage(reply, f'🤖 <b>Respon Bot :</b> <code>{end_time - start_time} ms</code>')
+    await editMessage(
+        reply, 
+        f"🤖 <b>Respon Bot :</b> <code>{end_time - start_time} ms</code>"
+    )
 
 
 async def log(_, message):
-    await sendFile(message, 'log.txt')
+    await sendFile(message, "log.txt")
 
-help_string = f'''
+help_string = f"""
 <b>Daftar Perintah</b> <code>@{bot.me.username}</code>
 <code>/{BotCommands.MirrorCommand[0]}</code> atau <code>/{BotCommands.MirrorCommand[1]}</code> : Mirror ke Google Drive/Cloud.
 <code>/{BotCommands.QbMirrorCommand[0]}</code> atau <code>/{BotCommands.QbMirrorCommand[1]}</code> : Mirror ke Google Drive/Cloud menggunakan qBittorrent.
@@ -225,7 +291,7 @@ help_string = f'''
 <code>/{BotCommands.UserSetCommand[0]}</code> atau <code>/{BotCommands.UserSetCommand[1]}</code> : Pengaturan User.
 <code>/{BotCommands.BotSetCommand[0]}</code> atau <code>/{BotCommands.BotSetCommand[1]}</code> : Pengaturan Bot (Hanya Owner & Sudo).
 <code>/{BotCommands.BtSelectCommand[0]}</code> atau <code>/{BotCommands.BtSelectCommand[1]}</code> : Memilih file dari torrent.
-<code>/{BotCommands.CancelMirror[0]}</code> atau <code>/{BotCommands.CancelMirror[1]}</code> : Membatalkan tugas.
+<code>/{BotCommands.CancelTaskCommand[0]}</code> atau <code>/{BotCommands.CancelTaskCommand[1]}</code> : Membatalkan tugas.
 <code>/{BotCommands.CancelAllCommand[0]}</code> atau <code>/{BotCommands.CancelAllCommand[1]}</code> : Membatalkan semua tugas.
 <code>/{BotCommands.ListCommand[0]}</code> atau <code>/{BotCommands.ListCommand[1]}</code> [query] : Mencari file/folder di Google Drive.
 <code>/{BotCommands.SearchCommand[0]}</code> atau <code>/{BotCommands.SearchCommand[1]}</code> [query] : Mencari torrent menggunakan API.
@@ -246,11 +312,14 @@ help_string = f'''
 <code>/{BotCommands.RssCommand}</code> : Menu RSS.
 
 <b>NOTE :</b> Kirim perintah tanpa argument untuk melihat perintah secara detail!
-'''
+"""
 
 
 async def bot_help(_, message):
-    await sendMessage(message, help_string)
+    await sendMessage(
+        message, 
+        help_string
+    )
 
 
 async def restart_notification():
@@ -263,15 +332,23 @@ async def restart_notification():
     async def send_incompelete_task_message(cid, msg):
         try:
             if msg.startswith('<b>Bot berhasil dimulai ulang!</b>'):
-                await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text=msg)
+                await bot.edit_message_text(
+                    chat_id=chat_id, 
+                    message_id=msg_id, 
+                    text=msg
+                )
                 await aioremove(".restartmsg")
             else:
-                await bot.send_message(chat_id=cid, text=msg, disable_web_page_preview=True,
-                                       disable_notification=True)
+                await bot.send_message(
+                    chat_id=cid, 
+                    text=msg, 
+                    disable_web_page_preview=True,
+                    disable_notification=True
+                )
         except Exception as e:
             LOGGER.error(e)
 
-    now = datetime.now(timezone(f'Asia/Jakarta'))
+    now = datetime.now(timezone(f"Asia/Jakarta"))
     if INCOMPLETE_TASK_NOTIFIER and DATABASE_URL:
         if notifier_dict := await DbManger().get_incomplete_tasks():
             for cid, data in notifier_dict.items():
@@ -307,27 +384,75 @@ async def restart_notification():
 <code>{get_quotes()}</code>
 </pre>           
 """
-            await bot.edit_message_text(chat_id=chat_id, message_id=msg_id, text=msg)
+            await bot.edit_message_text(
+                chat_id=chat_id, 
+                message_id=msg_id, 
+                text=msg
+            )
         except:
             pass
         await aioremove(".restartmsg")
 
 
 async def main():
-    await gather(start_cleanup(), torrent_search.initiate_search_tools(), restart_notification())
-    await sync_to_async(start_aria2_listener, wait=False)
-    bot.add_handler(MessageHandler(
-        start, filters=command(BotCommands.StartCommand)))
-    bot.add_handler(MessageHandler(log, filters=command(
-        BotCommands.LogCommand) & CustomFilters.sudo))
-    bot.add_handler(MessageHandler(restart, filters=command(
-        BotCommands.RestartCommand) & CustomFilters.sudo))
-    bot.add_handler(MessageHandler(ping, filters=command(
-        BotCommands.PingCommand) & CustomFilters.authorized))
-    bot.add_handler(MessageHandler(bot_help, filters=command(
-        BotCommands.HelpCommand) & CustomFilters.authorized))
-    bot.add_handler(MessageHandler(stats, filters=command(
-        BotCommands.StatsCommand) & CustomFilters.authorized))
+    await gather(
+        start_cleanup(), 
+        torrent_search.initiate_search_tools(), 
+        restart_notification(),
+        initiate_help_messages()
+    )
+    await sync_to_async(
+        start_aria2_listener, 
+        wait=False
+    )
+    bot.add_handler(
+        MessageHandler(
+            start, 
+            filters=command(
+                BotCommands.StartCommand
+            )
+        )
+    )
+    bot.add_handler(
+        MessageHandler(
+            log, 
+            filters=command(
+                BotCommands.LogCommand
+            ) & CustomFilters.sudo
+        )
+    )
+    bot.add_handler(
+        MessageHandler(
+            restart, 
+            filters=command(
+                BotCommands.RestartCommand
+            ) & CustomFilters.sudo
+        )
+    )
+    bot.add_handler(
+        MessageHandler(
+            ping, 
+            filters=command(
+                BotCommands.PingCommand
+            ) & CustomFilters.authorized
+        )
+    )
+    bot.add_handler(
+        MessageHandler(
+            bot_help, 
+            filters=command(
+                BotCommands.HelpCommand
+            ) & CustomFilters.authorized
+        )
+    )
+    bot.add_handler(
+        MessageHandler(
+            stats, 
+            filters=command(
+                BotCommands.StatsCommand
+            ) & CustomFilters.authorized
+        )
+    )
     LOGGER.info(f"Bot Started! => @{bot.me.username}")
     signal(SIGINT, exit_clean_up)
 

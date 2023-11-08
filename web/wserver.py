@@ -1,20 +1,38 @@
-from logging import getLogger, FileHandler, StreamHandler, INFO, basicConfig
 from time import sleep
 from qbittorrentapi import NotFound404Error, Client as qbClient
 from aria2p import API as ariaAPI, Client as ariaClient
 from flask import Flask, request, render_template
+from logging import (
+    getLogger,
+    basicConfig,
+    FileHandler,
+    StreamHandler,
+    INFO
+)
 
 from web.nodes import make_tree
 
-app = Flask(__name__, template_folder='/usr/src/app/templates', static_folder='/usr/src/app/templates')
+app = Flask(
+    __name__, 
+    template_folder='/usr/src/app/templates', 
+    static_folder='/usr/src/app/templates'
+)
 
-aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
+aria2 = ariaAPI(
+    ariaClient(
+        host="http://localhost", 
+        port=6800, 
+        secret=""
+    )
+)
 
-basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            handlers=[FileHandler('log.txt'), StreamHandler()],
-            level=INFO)
+basicConfig(
+    format="%(asctime)s - %(name)s [%(module)s:%(lineno)d] - %(levelname)s - %(message)s",
+    handlers=[FileHandler("log.txt"), StreamHandler()],
+    level=INFO,
+)
 
-LOGGER = getLogger(__name__)
+LOGGER = getLogger("__name__")
 
 page = """
 <html lang="en">

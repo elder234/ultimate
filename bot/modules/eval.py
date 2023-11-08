@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from pyrogram.handlers import MessageHandler
 from pyrogram.filters import command
 from os import path as ospath, getcwd, chdir
@@ -54,9 +53,9 @@ async def execute(client, message):
 
 
 def cleanup_code(code):
-    if code.startswith('```') and code.endswith('```'):
-        return '\n'.join(code.split('\n')[1:-1])
-    return code.strip('` \n')
+    if code.startswith("```") and code.endswith("```"):
+        return "\n".join(code.split("\n")[1:-1])
+    return code.strip("` \n")
 
 
 def do(func, message):
@@ -66,7 +65,7 @@ def do(func, message):
     env = namespace_of(message)
 
     chdir(getcwd())
-    with open(ospath.join(getcwd(), 'bot/modules/temp.txt'), 'w') as temp:
+    with open(ospath.join(getcwd(), "bot/modules/temp.txt"), "w") as temp:
         temp.write(body)
 
     stdout = StringIO()
@@ -76,29 +75,29 @@ def do(func, message):
     try:
         exec(to_compile, env)
     except Exception as e:
-        return f'{e.__class__.__name__}: {e}'
+        return f"{e.__class__.__name__}: {e}"
 
-    func = env['func']
+    func = env["func"]
 
     try:
         with redirect_stdout(stdout):
             func_return = func()
     except Exception as e:
         value = stdout.getvalue()
-        return f'{value}{format_exc()}'
+        return f"{value}{format_exc()}"
     else:
         value = stdout.getvalue()
         result = None
         if func_return is None:
             if value:
-                result = f'{value}'
+                result = f"{value}"
             else:
                 try:
-                    result = f'{repr(eval(body, env))}'
+                    result = f"{repr(eval(body, env))}"
                 except:
                     pass
         else:
-            result = f'{value}{func_return}'
+            result = f"{value}{func_return}"
         if result:
             return result
 
@@ -111,9 +110,24 @@ async def clear(client, message):
     await send("<b>Locals berhasil dihapus!</b>", message)
 
 
-bot.add_handler(MessageHandler(evaluate, filters=command(
-    BotCommands.EvalCommand) & CustomFilters.owner))
-bot.add_handler(MessageHandler(execute, filters=command(
-    BotCommands.ExecCommand) & CustomFilters.owner))
-bot.add_handler(MessageHandler(clear, filters=command(
-    BotCommands.ClearLocalsCommand) & CustomFilters.owner))
+bot.add_handler(
+    MessageHandler(
+        evaluate, filters=command(
+            BotCommands.EvalCommand
+        ) & CustomFilters.owner
+    )
+)
+bot.add_handler(
+    MessageHandler(
+        execute, filters=command(
+            BotCommands.ExecCommand
+        ) & CustomFilters.owner
+    )
+)
+bot.add_handler(
+    MessageHandler(
+        clear, filters=command(
+            BotCommands.ClearLocalsCommand
+        ) & CustomFilters.owner
+    )
+)

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from pyrogram.handlers import MessageHandler
 from pyrogram.filters import command
 
@@ -18,13 +17,13 @@ async def authorize(_, message):
         id_ = reply_to.from_user.id
     else:
         id_ = message.chat.id
-    if id_ in user_data and user_data[id_].get('is_auth'):
-        msg = '🙃 <b>Sudah diautorisasi!</b>'
+    if id_ in user_data and user_data[id_].get("is_auth"):
+        msg = "🙃 <b>Sudah diautorisasi!</b>"
     else:
-        update_user_ldata(id_, 'is_auth', True)
+        update_user_ldata(id_, "is_auth", True)
         if DATABASE_URL:
             await DbManger().update_user_data(id_)
-        msg = '😉 <b>Berhasil diautorisasi!</b>'
+        msg = "😉 <b>Berhasil diautorisasi!</b>"
     await sendMessage(message, msg)
 
 
@@ -36,13 +35,13 @@ async def unauthorize(_, message):
         id_ = reply_to.from_user.id
     else:
         id_ = message.chat.id
-    if id_ not in user_data or user_data[id_].get('is_auth'):
-        update_user_ldata(id_, 'is_auth', False)
+    if id_ not in user_data or user_data[id_].get("is_auth"):
+        update_user_ldata(id_, "is_auth", False)
         if DATABASE_URL:
             await DbManger().update_user_data(id_)
-        msg = '😉 <b>Berhasil diunautorisasi!</b>'
+        msg = "😉 <b>Berhasil diunautorisasi!</b>"
     else:
-        msg = '🙃 <b>Sudah diunautorisasi!</b>'
+        msg = "🙃 <b>Sudah diunautorisasi!</b>"
     await sendMessage(message, msg)
 
 
@@ -54,13 +53,13 @@ async def addSudo(_, message):
     elif reply_to := message.reply_to_message:
         id_ = reply_to.from_user.id
     if id_:
-        if id_ in user_data and user_data[id_].get('is_sudo'):
-            msg = '🙃 <b>Sudah menjadi sudo user!</b>'
+        if id_ in user_data and user_data[id_].get("is_sudo"):
+            msg = "🙃 <b>Sudah menjadi sudo user!</b>"
         else:
-            update_user_ldata(id_, 'is_sudo', True)
+            update_user_ldata(id_, "is_sudo", True)
             if DATABASE_URL:
                 await DbManger().update_user_data(id_)
-            msg = '😉 <b>Berhasil dinaikan menjadi sudo user!</b>'
+            msg = "😉 <b>Berhasil dinaikan menjadi sudo user!</b>"
     else:
         msg = "<b>Berikan ID atau balas pesan dari User yang ingin dinaikan menjadi Sudo User!</b>"
     await sendMessage(message, msg)
@@ -73,20 +72,44 @@ async def removeSudo(_, message):
         id_ = int(msg[1].strip())
     elif reply_to := message.reply_to_message:
         id_ = reply_to.from_user.id
-    if id_ and id_ not in user_data or user_data[id_].get('is_sudo'):
-        update_user_ldata(id_, 'is_sudo', False)
+    if id_ and id_ not in user_data or user_data[id_].get("is_sudo"):
+        update_user_ldata(id_, "is_sudo", False)
         if DATABASE_URL:
             await DbManger().update_user_data(id_)
-        msg = '😉 <b>Berhasil diturunkan dari Sudo User!</b>'
+        msg = "😉 <b>Berhasil diturunkan dari Sudo User!</b>"
     else:
         msg = "<b>Berikan ID atau balas pesan dari User yang ingin diturunkan dari Sudo User!</b>"
     await sendMessage(message, msg)
 
-bot.add_handler(MessageHandler(authorize, filters=command(
-    BotCommands.AuthorizeCommand) & CustomFilters.sudo))
-bot.add_handler(MessageHandler(unauthorize, filters=command(
-    BotCommands.UnAuthorizeCommand) & CustomFilters.sudo))
-bot.add_handler(MessageHandler(addSudo, filters=command(
-    BotCommands.AddSudoCommand) & CustomFilters.sudo))
-bot.add_handler(MessageHandler(removeSudo, filters=command(
-    BotCommands.RmSudoCommand) & CustomFilters.sudo))
+bot.add_handler(
+    MessageHandler(
+        authorize, 
+        filters=command(
+            BotCommands.AuthorizeCommand
+        ) & CustomFilters.sudo
+    )
+)
+bot.add_handler(
+    MessageHandler(
+        unauthorize,
+        filters=command(
+            BotCommands.UnAuthorizeCommand
+        ) & CustomFilters.sudo,
+    )
+)
+bot.add_handler(
+    MessageHandler(
+        addSudo, 
+        filters=command(
+            BotCommands.AddSudoCommand
+        ) & CustomFilters.sudo
+    )
+)
+bot.add_handler(
+    MessageHandler(
+        removeSudo, 
+        filters=command(
+            BotCommands.RmSudoCommand
+        ) & CustomFilters.sudo
+    )
+)

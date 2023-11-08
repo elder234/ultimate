@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from speedtest import Speedtest
 from pyrogram.handlers import MessageHandler
 from pyrogram.filters import command
@@ -6,8 +5,14 @@ from pyrogram.filters import command
 from bot import bot, LOGGER
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.telegram_helper.message_utils import sendMessage, sendPhoto, deleteMessage, editMessage
-from bot.helper.ext_utils.bot_utils import get_readable_file_size, new_task
+from bot.helper.telegram_helper.message_utils import (
+    sendMessage, 
+    sendPhoto, 
+    deleteMessage, 
+    editMessage
+)
+from bot.helper.ext_utils.bot_utils import new_task
+from bot.helper.ext_utils.status_utils import get_readable_file_size
 
 
 @new_task
@@ -19,9 +24,8 @@ async def speedtest(_, message):
     test.upload()
     test.results.share()
     result = test.results.dict()
-    image = result['share']
-    caption = f'''
-<pre languange="bash">
+    caption = f"""
+<pre languange='bash'>
 <b>Hasil SpeedTest</b>
 <b>Ping         :</b> <code>{result['ping']} ms</code>
 <b>Waktu        :</b> <code>{result['timestamp']}</code>
@@ -46,13 +50,23 @@ async def speedtest(_, message):
 <b>Latitude     :</b> <code>{result['server']['lat']}</code>
 <b>Longitude    :</b> <code>{result['server']['lon']}</code>
 </pre>
-'''
+"""
     try:
-        await sendPhoto(message, image, caption)
+        await sendPhoto(
+            message, 
+            result["share"], 
+            caption
+        )
         await deleteMessage(msg)
     except Exception as e:
         LOGGER.error(str(e))
         await editMessage(msg, caption)
 
-bot.add_handler(MessageHandler(speedtest, filters=command(
-    BotCommands.SpeedCommand) & CustomFilters.owner))
+bot.add_handler(
+    MessageHandler(
+        speedtest, 
+        filters=command(
+            BotCommands.SpeedCommand
+        ) & CustomFilters.owner
+    )
+)
