@@ -192,10 +192,12 @@ class Mirror(TaskListener):
                 or reply_to.video_note
                 or reply_to.sticker
                 or reply_to.animation
-            ):
+            ) and reply_to.caption:
                 self.link = reply_to.caption
-            else:
+            elif reply_to.text:
                 self.link = reply_to.text.split("\n", 1)[0].strip()
+            else:
+                self.link = self.message.text.split("\n", 1)[0].strip()
         if is_telegram_link(self.link):
             try:
                 reply_to, self.session = await get_tg_link_message(self.link)
