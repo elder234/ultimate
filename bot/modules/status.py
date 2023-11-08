@@ -144,9 +144,9 @@ async def status_pages(_, query):
 EX : {tasks['Extract']} | SP : {tasks['Split']} | QD : {tasks['QueueDl']} | QU : {tasks['QueueUp']}
 CL : {tasks['Clone']} | CH : {tasks['CheckUp']} | PA :{tasks['Pause']}
 
+Kec. Seed : {get_readable_file_size(seed_speed)}/s
 Kec. Unduh : {get_readable_file_size(dl_speed)}/s
 Kec. Unggah : {get_readable_file_size(up_speed)}/s
-Kec. Seed : {get_readable_file_size(seed_speed)}/s
 
 @{bot.me.username}
 """
