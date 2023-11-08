@@ -328,6 +328,17 @@ async def restart_notification():
             chat_id, msg_id = map(int, f)
     else:
         chat_id, msg_id = 0, 0
+    
+    # Get thread_id from AUTHORIZED_CHATS
+    if thread_id := config_dict.get("AUTHORIZED_CHATS"):
+        if not isinstance(thread_id, int):
+            if ":" in thread_id:
+                thread_id = thread_id.split(":")[1]
+        
+            if thread_id.isdigit():
+                thread_id = int(thread_id)
+        else:
+            thread_id = None
 
     async def send_incompelete_task_message(cid, msg):
         try:
@@ -343,7 +354,8 @@ async def restart_notification():
                     chat_id=cid, 
                     text=msg, 
                     disable_web_page_preview=True,
-                    disable_notification=True
+                    disable_notification=True,
+                    message_thread_id=thread_id,
                 )
         except Exception as e:
             LOGGER.error(e)
