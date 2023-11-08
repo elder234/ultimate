@@ -124,7 +124,7 @@ async def _search(key, site, message, method):
             )
             return
         msg = f"<b>Menemukan {min(total_results, TELEGRAPH_LIMIT)}</b>"
-        mmsg += f" <b>hasil pencarian dengan kata kunci :</b>\n<code>{key}</code>\n<b>Situs Torrent :</b>\n<code>{site.capitalize()}</code>"
+        msg += f" <b>hasil pencarian dengan kata kunci :</b>\n<code>{key}</code>\n<b>Situs Torrent :</b>\n<code>{site.capitalize()}</code>"
         await sync_to_async(client.search_delete, search_id=search_id)
         await sync_to_async(client.auth_log_out)
     link = await _getResult(search_results, key, message, method)
