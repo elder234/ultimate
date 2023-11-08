@@ -85,7 +85,7 @@ async def get_user_settings(from_user):
 
     if user_dict.get("leech_dest", False):
         leech_dest = user_dict["leech_dest"]
-    elif "leech_dest" not in user_dict and (LD := config_dict["LEECH_DUMP_CHAT"]):
+    elif "leech_dest" not in user_dict and (LD := config_dict["LEECH_CHAT_ID"]):
         leech_dest = LD
     else:
         leech_dest = "None"
@@ -356,7 +356,7 @@ async def edit_user_settings(client, query):
         buttons.ibutton("Leech Destination", f"userset {user_id} ldest")
         if user_dict.get("leech_dest", False):
             leech_dest = user_dict["leech_dest"]
-        elif "leech_dest" not in user_dict and (LD := config_dict["LEECH_DUMP_CHAT"]):
+        elif "leech_dest" not in user_dict and (LD := config_dict["LEECH_CHAT_ID"]):
             leech_dest = LD
         else:
             leech_dest = "None"
@@ -619,7 +619,7 @@ Check all yt-dlp api options from this <a href='https://github.com/yt-dlp/yt-dlp
         if (
             user_dict.get("leech_dest", False)
             or "leech_dest" not in user_dict
-            and config_dict["LEECH_DUMP_CHAT"]
+            and config_dict["LEECH_CHAT_ID"]
         ):
             buttons.ibutton("Reset Leech Destination", f"userset {user_id} leech_dest")
         buttons.ibutton("Back", f"userset {user_id} leech")
