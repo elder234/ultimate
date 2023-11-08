@@ -182,7 +182,17 @@ class Mirror(TaskListener):
         path = f"{DOWNLOAD_DIR}{self.mid}{folder_name}"
 
         if not self.link and (reply_to := self.message.reply_to_message):
-            if reply_to.web_page_preview:
+            if (
+                reply_to.web_page_preview
+                or reply_to.document
+                or reply_to.photo
+                or reply_to.video
+                or reply_to.audio
+                or reply_to.voice
+                or reply_to.video_note
+                or reply_to.sticker
+                or reply_to.animation
+            ):
                 self.link = reply_to.caption
             else:
                 self.link = reply_to.text.split("\n", 1)[0].strip()
