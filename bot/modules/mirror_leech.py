@@ -329,6 +329,8 @@ class Mirror(TaskListener):
                         await sleep(3)
                     await deleteMessage(ddl)
                 except DirectDownloadLinkException as e:
+                    await sleep(1)
+                    await deleteMessage(ddl)
                     e = str(e)
                     if "This link requires a password!" not in e:
                         LOGGER.info(e)

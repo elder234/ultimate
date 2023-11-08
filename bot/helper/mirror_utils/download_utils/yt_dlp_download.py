@@ -190,7 +190,7 @@ class YoutubeDLHelper:
                 raise ValueError
             async_to_sync(self._listener.onDownloadComplete)
         except ValueError:
-            self._onDownloadError("Download Stopped by User!")
+            self._onDownloadError("Tugas dibatalkan oleh User!")
 
     async def add_download(self, path, qual, playlist, options):
         if playlist:
