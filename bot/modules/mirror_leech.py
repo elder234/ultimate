@@ -243,10 +243,12 @@ class Mirror(TaskListener):
             )
 
             if file_ is None:
-                if reply_to.web_page_preview:
+                if reply_text := reply_to.text:
+                    self.link = reply_text.split("\n", 1)[0].strip()
+                elif reply_to.caption:
                     reply_text = reply_to.caption
                 else:
-                    reply_text = reply_to.text.split("\n", 1)[0].strip()
+                    reply_to = None
                 if (
                     is_url(reply_text)
                     or is_magnet(reply_text)
@@ -272,12 +274,15 @@ class Mirror(TaskListener):
                 file_ = None
 
         if (
-            not is_url(self.link)
+            not self.link
+            and file_ is None
+            or is_telegram_link(self.link)
+            and reply_to is None
+            or not is_url(self.link)
             and not is_magnet(self.link)
             and not await aiopath.exists(self.link)
             and not is_rclone_path(self.link)
             and not is_gdrive_id(self.link)
-            and file_ is None
         ):
             await sendMessage(
                 self.message, 
