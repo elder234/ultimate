@@ -330,13 +330,19 @@ async def restart_notification():
         chat_id, msg_id = 0, 0
     
     # Get thread_id from AUTHORIZED_CHATS
-    if thread_id := config_dict.get("AUTHORIZED_CHATS"):
-        if not isinstance(thread_id, int):
-            if ":" in thread_id:
-                thread_id = thread_id.split(":")[1]
-        
-            if thread_id.isdigit():
-                thread_id = int(thread_id)
+    chat_id_ = None
+    thread_id = None
+    if authorized_chat_id := config_dict.get("AUTHORIZED_CHATS"):
+        if not isinstance(authorized_chat_id, int):
+            if ":" in authorized_chat_id:
+                chat_id_ = authorized_chat_id.split(":")[0]
+                thread_id = authorized_chat_id.split(":")[1]
+            
+            if chat_id == int(chat_id_):
+                if thread_id.isdigit():
+                    thread_id = int(thread_id)
+            else:
+                thread_id = None
         else:
             thread_id = None
 

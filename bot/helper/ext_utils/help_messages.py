@@ -18,7 +18,7 @@ Incase default quality added from yt-dlp options using format option and you nee
 /cmd link -z password (zip password protected)<br>
 <br>
 <b>Options</b>: -opt<br>
-/cmd link -opt playliststart:^10|fragment_retries:^inf|matchtitle:S13|writesubtitles:true|live_from_start:true|postprocessor_args:{"ffmpeg": ["-threads", "4"]}|wait_for_video:(5, 100)<br>
+/cmd link -opt playliststart:^10|fragment_retries:^inf|matchtitle:S13|writesubtitles:true|live_from_start:true|postprocessor_args:{"opera": ["-threads", "4"]}|wait_for_video:(5, 100)<br>
 Note: Add `^` before integer or float, some values must be numeric and some string.<br>
 Like playlist_items:10 works with string, so no need to add `^` before the number but playlistend works only with integer so you must add `^` before the number like example above.<br>
 You can add tuple and dict also. Use double quotes inside dict.<br>

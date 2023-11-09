@@ -131,7 +131,7 @@ if DATABASE_URL:
             del pf_dict["_id"]
             for key, value in pf_dict.items():
                 if value:
-                    file_ = key.replace("__", ".")
+                    file_ = key.replace("_", ".")
                     with open(file_, "wb+") as f:
                         f.write(value)
         if a2c_options := db.settings.aria2c.find_one({"_id": bot_id}):
@@ -167,6 +167,11 @@ TELEGRAM_HASH = environ.get("TELEGRAM_HASH", "")
 if len(TELEGRAM_HASH) == 0:
     log_error("TELEGRAM_HASH variable is missing! Exiting now")
     exit(1)
+
+# Using different TELEGRAM_API  & TELEGRAM_HASH for USER_SESSION_STRING
+TELEGRAM_API_PREMIUM = environ.get("TELEGRAM_API_PREMIUM", "")
+
+TELEGRAM_HASH_PREMIUM = environ.get("TELEGRAM_HASH_PREMIUM", "")
 
 GDRIVE_ID = environ.get("GDRIVE_ID", "")
 if len(GDRIVE_ID) == 0:
@@ -214,12 +219,8 @@ if len(EXTENSION_FILTER) > 0:
         GLOBAL_EXTENSION_FILTER.append(x.strip().lower())
 
 USER_SESSION_STRING = environ.get("USER_SESSION_STRING", "")
-# Using different TELEGRAM_API  & TELEGRAM_HASH for USER_SESSION_STRING
-TELEGRAM_API_PREMIUM = environ.get("TELEGRAM_API_PREMIUM", "")
-TELEGRAM_HASH_PREMIUM = environ.get("TELEGRAM_HASH_PREMIUM", "")
 if len(USER_SESSION_STRING) != 0:
     log_info("Creating client from USER_SESSION_STRING")
-    # Using different TELEGRAM_API  & TELEGRAM_HASH for USER_SESSION_STRING
     if len(TELEGRAM_API_PREMIUM) != 0 and len(TELEGRAM_HASH_PREMIUM) != 0:
         log_info("Using another Telegram Api & Telegram Hash for User Session...")
         TELEGRAM_API_PREMIUM = int(TELEGRAM_API_PREMIUM)
