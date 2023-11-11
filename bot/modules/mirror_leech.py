@@ -216,7 +216,10 @@ class Mirror(TaskListener):
             nextmsg = await self.client.get_messages(
                 chat_id=self.message.chat.id, message_ids=nextmsg.id
             )
-            nextmsg.from_user = self.message.from_user
+            if self.message.from_user:
+                nextmsg.from_user = self.user
+            else:
+                nextmsg.sender_chat = self.user
             Mirror(
                 self.client,
                 nextmsg,
@@ -286,7 +289,7 @@ class Mirror(TaskListener):
         ):
             await sendMessage(
                 self.message, 
-                "<b>Buka link berikut untuk mendapatkan bantuan!</b>", 
+                f"<b>Hai {self.tag} !</b>\n<b>Sepertinya perintah yang kamu gunakan tidak tepat</b>\n<b>Buka tautan berikut untuk mendapatkan bantuan!</b>", 
                 COMMAND_USAGE["main"]
             )
             self.removeFromSameDir()

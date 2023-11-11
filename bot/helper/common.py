@@ -59,7 +59,8 @@ class TaskConfig:
     def __init__(self, message):
         self.message = message
         self.mid = self.message.id
-        self.user_id = self.message.from_user.id
+        self.user = self.message.from_user or self.message.sender_chat
+        self.user_id = self.user.id
         self.user_dict = user_data.get(self.user_id, {})
         self.sameDir = {}
         self.bulk = []
@@ -289,12 +290,12 @@ class TaskConfig:
     async def getTag(self, text: list):
         if len(text) > 1 and text[1].startswith("Tag: "):
             self.tag, id_ = text[1].split("Tag: ")[1].split()
-            self.message.from_user = await self.client.get_users(id_)
+            self.user = self.message.from_user = await self.client.get_users(id_)
             try:
                 await self.message.unpin()
             except:
                 pass
-        if username := self.message.from_user.username:
+        if username := self.user.username:
             self.tag = f"@{username}"
         else:
             self.tag = self.message.from_user.mention
@@ -338,7 +339,10 @@ class TaskConfig:
         )
         if folder_name:
             self.sameDir["tasks"].add(nextmsg.id)
-        nextmsg.from_user = self.message.from_user
+        if self.message.from_user:
+            nextmsg.from_user = self.user
+        else:
+            nextmsg.sender_chat = self.user
         obj(
             self.client,
             nextmsg,
@@ -367,7 +371,10 @@ class TaskConfig:
             nextmsg = await self.client.get_messages(
                 chat_id=self.message.chat.id, message_ids=nextmsg.id
             )
-            nextmsg.from_user = self.message.from_user
+            if self.message.from_user:
+                nextmsg.from_user = self.user
+            else:
+                nextmsg.sender_chat = self.user
             obj(
                 self.client,
                 nextmsg,

@@ -14,7 +14,7 @@ async def authorize(_, message):
     if len(msg) > 1:
         id_ = int(msg[1].strip())
     elif reply_to := message.reply_to_message:
-        id_ = reply_to.from_user.id
+        id_ = reply_to.from_user.id if reply_to.from_user else reply_to.sender_chat.id
     else:
         id_ = message.chat.id
     if id_ in user_data and user_data[id_].get("is_auth"):
@@ -32,7 +32,7 @@ async def unauthorize(_, message):
     if len(msg) > 1:
         id_ = int(msg[1].strip())
     elif reply_to := message.reply_to_message:
-        id_ = reply_to.from_user.id
+        id_ = reply_to.from_user.id if reply_to.from_user else reply_to.sender_chat.id
     else:
         id_ = message.chat.id
     if id_ not in user_data or user_data[id_].get("is_auth"):
@@ -51,7 +51,7 @@ async def addSudo(_, message):
     if len(msg) > 1:
         id_ = int(msg[1].strip())
     elif reply_to := message.reply_to_message:
-        id_ = reply_to.from_user.id
+        id_ = reply_to.from_user.id if reply_to.from_user else reply_to.sender_chat.id
     if id_:
         if id_ in user_data and user_data[id_].get("is_sudo"):
             msg = "🙃 <b>Sudah menjadi sudo user!</b>"
@@ -71,7 +71,7 @@ async def removeSudo(_, message):
     if len(msg) > 1:
         id_ = int(msg[1].strip())
     elif reply_to := message.reply_to_message:
-        id_ = reply_to.from_user.id
+        id_ = reply_to.from_user.id if reply_to.from_user else reply_to.sender_chat.id
     if id_ and id_ not in user_data or user_data[id_].get("is_sudo"):
         update_user_ldata(id_, "is_sudo", False)
         if DATABASE_URL:

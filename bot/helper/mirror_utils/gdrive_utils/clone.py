@@ -44,7 +44,14 @@ class gdClone(GoogleDriveHelper):
         try:
             file_id = self.getIdFromUrl(self.listener.link)
         except (KeyError, IndexError):
-            return "Google Drive ID tidak ditemukan!"
+            return (
+                "Google Drive ID tidak ditemukan!", 
+                None, 
+                None, 
+                None,
+                None, 
+                None
+            )
         self.service = self.authorize()
         msg = ""
         LOGGER.info(f"File ID: {file_id}")

@@ -375,10 +375,12 @@ class YtDlp(TaskListener):
             else:
                 self.link = reply_to.text.split("\n", 1)[0].strip()
 
+        await self.getTag(text)
+
         if not is_url(self.link):
             await sendMessage(
                 self.message, 
-                "<b>Buka link berikut untuk mendapatkan bantuan!</b>", 
+                f"<b>Hai {self.tag} !</b>\n<b>Sepertinya perintah yang kamu gunakan tidak tepat</b>\n<b>Buka tautan berikut untuk mendapatkan bantuan!</b>", 
                 COMMAND_USAGE["yt"]
             )
             self.removeFromSameDir()
@@ -414,8 +416,6 @@ class YtDlp(TaskListener):
                 options[key] = value
 
         options["playlist_items"] = "0"
-
-        await self.getTag(text)
 
         try:
             result = await sync_to_async(extract_info, self.link, options)

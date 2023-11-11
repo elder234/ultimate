@@ -14,7 +14,8 @@ from bot.helper.ext_utils.status_utils import get_readable_file_size
 @new_task
 async def countNode(_, message):
     args = message.text.split()
-    if username := message.from_user.username:
+    user = message.from_user or message.sender_chat
+    if username := user.username:
         tag = f"@{username}"
     else:
         tag = message.from_user.mention
@@ -33,7 +34,7 @@ async def countNode(_, message):
         name, mime_type, size, files, folders = await sync_to_async(
             gdCount().count, 
             link, 
-            message.from_user.id
+            user.id
         )
         await deleteMessage(msg)
         if mime_type is None:
