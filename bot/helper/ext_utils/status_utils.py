@@ -7,7 +7,7 @@ from psutil import (
     virtual_memory
 )
 
-from bot import DOWNLOAD_DIR, task_dict, task_dict_lock, botStartTime, config_dict
+from bot import task_dict, task_dict_lock, botStartTime, config_dict
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.button_build import ButtonMaker
 
@@ -17,9 +17,9 @@ SIZE_UNITS = ["B", "KB", "MB", "GB", "TB", "PB"]
 class MirrorStatus:
     STATUS_DOWNLOADING = "Unduh"
     STATUS_UPLOADING = "Unggah"
-    STATUS_QUEUEDL = "AntrianDownload"
-    STATUS_QUEUEUP = "AntrianUpload"
-    STATUS_PAUSED = "Dihentikan"
+    STATUS_QUEUEDL = "AntriDownload"
+    STATUS_QUEUEUP = "AntriUpload"
+    STATUS_PAUSED = "Henti"
     STATUS_ARCHIVING = "Arsip"
     STATUS_EXTRACTING = "Ekstrak"
     STATUS_CLONING = "Clone"

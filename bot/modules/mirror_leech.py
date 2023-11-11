@@ -74,16 +74,10 @@ class Mirror(TaskListener):
     @new_task
     async def newEvent(self):
         text = (
-            self.message.caption
-            if ( 
-                ( 
-                    self.message.is_topic_message
-                    or self.message.web_page_preview
-                )
-                and self.message.caption
-            ) 
-            else self.message.text
+            self.message.text
+            or self.message.caption
         ).split("\n")
+        
         input_list = text[0].split(" ")
 
         arg_base = {
@@ -182,19 +176,7 @@ class Mirror(TaskListener):
         path = f"{DOWNLOAD_DIR}{self.mid}{folder_name}"
 
         if not self.link and (reply_to := self.message.reply_to_message):
-            if (
-                reply_to.web_page_preview
-                or reply_to.document
-                or reply_to.photo
-                or reply_to.video
-                or reply_to.audio
-                or reply_to.voice
-                or reply_to.video_note
-                or reply_to.sticker
-                or reply_to.animation
-            ) and reply_to.caption:
-                self.link = reply_to.caption
-            elif reply_to.text:
+            if reply_to.text:
                 self.link = reply_to.text.split("\n", 1)[0].strip()
             else:
                 self.link = self.message.text.split("\n", 1)[0].strip()
@@ -248,34 +230,23 @@ class Mirror(TaskListener):
             if file_ is None:
                 if reply_text := reply_to.text:
                     self.link = reply_text.split("\n", 1)[0].strip()
-                elif reply_to.caption:
-                    reply_text = reply_to.caption
+                elif reply_caption := reply_to.caption:
+                    self.link = reply_caption.strip()
+                elif reply_markup := reply_to.reply_markup:
+                    reply_markup = (
+                        reply_markup.inline_keyboard[0][0].url
+                        or reply_markup.inline_keyboard[0].url
+                    )
+                    self.link = reply_markup
                 else:
                     reply_to = None
-                if (
-                    is_url(reply_text)
-                    or is_magnet(reply_text)
-                    or is_rclone_path(reply_text)
-                ):
-                    self.link = reply_text
-                elif reply_to.reply_markup:
-                    try:
-                        inline_link = reply_to.reply_markup.inline_keyboard[0][0].url
-                    except:
-                        inline_link = reply_to.reply_markup.inline_keyboard[0].url
-                    if (
-                        is_gdrive_link(inline_link) 
-                        or is_url(inline_link) 
-                        or is_magnet(inline_link)
-                    ):
-                        self.link = inline_link
             elif reply_to.document and (
                 file_.mime_type == "application/x-bittorrent"
                 or file_.file_name.endswith(".torrent")
             ):
                 self.link = await reply_to.download()
                 file_ = None
-
+            
         if (
             not self.link
             and file_ is None

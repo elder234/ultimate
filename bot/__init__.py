@@ -131,7 +131,10 @@ if DATABASE_URL:
             del pf_dict["_id"]
             for key, value in pf_dict.items():
                 if value:
-                    file_ = key.replace("_", ".")
+                    if key == "list_drives_txt":
+                        file_ = "list_drives.txt"
+                    else:
+                        file_ = key.replace("_", ".")
                     with open(file_, "wb+") as f:
                         f.write(value)
         if a2c_options := db.settings.aria2c.find_one({"_id": bot_id}):

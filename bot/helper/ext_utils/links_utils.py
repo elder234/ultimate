@@ -15,11 +15,11 @@ def is_url(url: str):
 
 
 def is_gdrive_link(url: str):
-    return "drive.google.com" in url
+    return bool("drive.google.com" in url)
 
 
 def is_telegram_link(url: str):
-    return url.startswith(("https://t.me/", "tg://openmessage?user_id="))
+    return bool(url.startswith(("https://t.me/", "tg://openmessage?user_id=")))
 
 
 def is_share_link(url: str):
@@ -32,7 +32,7 @@ def is_share_link(url: str):
 
 
 def is_mega_link(url: str):
-    return "mega.nz" in url or "mega.co.nz" in url
+    return bool("mega.nz" in url or "mega.co.nz" in url)
 
 
 def is_rclone_path(path: str):

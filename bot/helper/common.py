@@ -57,6 +57,7 @@ from bot.helper.ext_utils.exceptions import NotSupportedExtractionArchive
 
 class TaskConfig:
     def __init__(self, message):
+        LOGGER.info(message)
         self.message = message
         self.mid = self.message.id
         self.user = self.message.from_user or self.message.sender_chat
@@ -150,7 +151,7 @@ class TaskConfig:
 
         if not self.isLeech:
             self.stopDuplicate = (
-                self.user_dict.get("stop_duplicate")
+                self.user_dict.get("stop_duplicate", config_dict["STOP_DUPLICATE"])
                 or "stop_duplicate" in self.user_dict
                 and config_dict["STOP_DUPLICATE"]
             )

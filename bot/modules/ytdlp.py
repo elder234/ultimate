@@ -285,16 +285,10 @@ class YtDlp(TaskListener):
     @new_task
     async def newEvent(self):
         text = (
-            self.message.caption
-            if ( 
-                ( 
-                    self.message.is_topic_message
-                    or self.message.web_page_preview
-                )
-                and self.message.caption
-            ) 
-            else self.message.text
+            self.message.text
+            or self.message.caption
         ).split("\n")
+        
         input_list = text[0].split(" ")
         qual = ""
 

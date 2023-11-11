@@ -44,7 +44,7 @@ async def stop_duplicate_check(listener):
             listener.user_id,
         )
         if telegraph_content:
-            msg = f"<b>File/Folder ini sudah ada di Google Drive!</b>\n<code>{contents_no}</code> <b>hasil pencarian :</b>"
+            msg = f"File/Folder ini sudah ada di Google Drive!\n{contents_no} hasil pencarian :"
             button = await get_telegraph_list(telegraph_content)
             return msg, button
     return False, None
