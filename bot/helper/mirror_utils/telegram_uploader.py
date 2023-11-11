@@ -465,13 +465,24 @@ class TgUploader:
                 not self._is_cancelled
                 and not self._is_corrupted
             ):
-                if self._forwardChatId != "":
-                    await bot.copy_message(
-                        chat_id=self._forwardChatId, 
-                        from_chat_id=self._sent_msg.chat.id, 
-                        message_id=self._sent_msg.id, 
-                        message_thread_id=self._forwardThreadId
-                    )
+                try:
+                    if self._forwardChatId != "":
+                        if self._listener.userTransmission:
+                            await user.copy_message(
+                                chat_id=self._forwardChatId, 
+                                from_chat_id=self._sent_msg.chat.id, 
+                                message_id=self._sent_msg.id, 
+                                message_thread_id=self._forwardThreadId
+                            )
+                        else:
+                            await bot.copy_message(
+                                chat_id=self._forwardChatId, 
+                                from_chat_id=self._sent_msg.chat.id, 
+                                message_id=self._sent_msg.id, 
+                                message_thread_id=self._forwardThreadId
+                            )
+                except Exception as e:
+                    LOGGER.error(f"Failed when forward message => {e}")
         except FloodWait as f:
             LOGGER.warning(str(f))
             await sleep(f.value)
