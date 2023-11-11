@@ -232,12 +232,19 @@ class Mirror(TaskListener):
                     self.link = reply_text.split("\n", 1)[0].strip()
                 elif reply_caption := reply_to.caption:
                     self.link = reply_caption.strip()
-                elif reply_markup := reply_to.reply_markup:
+                if (
+                    not is_url(self.link)
+                    or not is_magnet(self.link)
+                ) and reply_to.reply_markup:
                     reply_markup = (
-                        reply_markup.inline_keyboard[0][0].url
-                        or reply_markup.inline_keyboard[0].url
+                        reply_to.reply_markup.inline_keyboard[0][0].url
+                        or reply_to.reply_markup.inline_keyboard[0].url
                     )
-                    self.link = reply_markup
+                    if (
+                        is_url(reply_markup)
+                        or is_magnet(reply_markup)
+                    ):
+                        self.link = reply_markup
                 else:
                     reply_to = None
             elif reply_to.document and (
@@ -246,13 +253,14 @@ class Mirror(TaskListener):
             ):
                 self.link = await reply_to.download()
                 file_ = None
-            
+                
         if (
             not self.link
             and file_ is None
             or is_telegram_link(self.link)
             and reply_to is None
-            or not is_url(self.link)
+            or file_ is None
+            and not is_url(self.link)
             and not is_magnet(self.link)
             and not await aiopath.exists(self.link)
             and not is_rclone_path(self.link)
