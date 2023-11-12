@@ -119,7 +119,11 @@ class Clone(TaskListener):
         self.run_multi(input_list, "", Clone)
 
         if len(self.link) == 0:
-            await sendMessage(self.message, f"<b>Hai {self.tag} !</b>\n<b>Sepertinya perintah yang kamu gunakan tidak tepat</b>\n<b>Buka tautan berikut untuk mendapatkan bantuan!</b>", COMMAND_USAGE["clone"])
+            await sendMessage(
+                self.message, 
+                f"<b>Hai {self.tag} !</b>\n<b>Sepertinya perintah yang kamu gunakan tidak tepat. Buka tautan berikut untuk mendapatkan bantuan!</b>", 
+                COMMAND_USAGE["clone"]
+            )
             return
         await self.beforeStart()
         await self._proceedToClone()

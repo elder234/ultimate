@@ -169,7 +169,7 @@ async def rssSub(client, message, pre_event):
                 f"Rss Feed Added: id: {user_id} - title: {title} - link: {feed_link} - c: {cmd} - inf: {inf} - exf: {exf}"
             )
         except (IndexError, AttributeError) as e:
-            emsg = f"<b>Link</b> <code>{feed_link}</code> <b>sepertinya bukan RSS Feed atau Bot diblokir oleh Link!</b>"
+            emsg = f"<b>Link</b> <code>{feed_link}</code> <b>sepertinya bukan RSS Feed atau Bot diblokir oleh RSS!</b>"
             await sendMessage(message, emsg + "\nError: " + str(e))
         except Exception as e:
             await sendMessage(message, str(e))

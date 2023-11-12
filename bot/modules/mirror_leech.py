@@ -268,7 +268,7 @@ class Mirror(TaskListener):
         ):
             await sendMessage(
                 self.message, 
-                f"<b>Hai {self.tag} !</b>\n<b>Sepertinya perintah yang kamu gunakan tidak tepat</b>\n<b>Buka tautan berikut untuk mendapatkan bantuan!</b>", 
+                f"<b>Hai {self.tag} !</b>\n<b>Sepertinya perintah yang kamu gunakan tidak tepat. Buka tautan berikut untuk mendapatkan bantuan!</b>", 
                 COMMAND_USAGE["main"]
             )
             self.removeFromSameDir()
