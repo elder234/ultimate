@@ -364,10 +364,19 @@ class YtDlp(TaskListener):
         opt = opt or self.user_dict.get("yt_opt") or config_dict["YT_DLP_OPTIONS"]
 
         if not self.link and (reply_to := self.message.reply_to_message):
-            if reply_to.web_page_preview:
-                self.link = reply_to.caption
-            else:
-                self.link = reply_to.text.split("\n", 1)[0].strip()
+            if reply_text := reply_to.text:
+                self.link = reply_text.split("\n", 1)[0].strip()
+            if not is_url(self.link) and (reply_caption := reply_to.caption):
+                self.link = reply_caption.strip()
+            if not is_url(self.link) and (reply_markup := reply_to.reply_markup):
+                self.link = (
+                    reply_markup.inline_keyboard[0][0].url
+                    or reply_markup.inline_keyboard[0].url
+                )
+            if not is_url(self.link):
+                self.link = self.message.text.split("\n", 1)[0].strip()
+        
+        LOGGER.info(f"YT-DLP: {self.link}")
 
         await self.getTag(text)
 
@@ -414,8 +423,11 @@ class YtDlp(TaskListener):
         try:
             result = await sync_to_async(extract_info, self.link, options)
         except Exception as e:
-            msg = str(e).replace("<", " ").replace(">", " ")
-            await sendMessage(self.message, f"{self.tag} {msg}")
+            error = str(e).replace("<", " ").replace(">", " ")
+            await sendMessage(
+                self.message, 
+                msg = f"<b>Hai {self.tag} !</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{error}</code>"
+            )
             self.removeFromSameDir()
             return
         finally:
@@ -437,7 +449,7 @@ class YtDlp(TaskListener):
             self.removeFromSameDir()
             return
 
-        LOGGER.info(f"Downloading with YT-DLP : {self.link}")
+        LOGGER.info(f"Downloading with YT-DLP: {self.link}")
         playlist = "entries" in result
         ydl = YoutubeDLHelper(self)
         await ydl.add_download(path, qual, playlist, opt)

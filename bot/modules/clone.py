@@ -109,12 +109,28 @@ class Clone(TaskListener):
         await self.getTag(text)
 
         if not self.link and (reply_to := self.message.reply_to_message):
-            if reply_to.web_page_preview:
-                self.link = reply_to.caption
-            else:
-                self.link = reply_to.text.split("\n", 1)[0].strip()
+            if reply_text := reply_to.text:
+                self.link = reply_text.split("\n", 1)[0].strip()
+            if not (
+                is_gdrive_link(self.link)
+                or is_rclone_path(self.link)
+            ) and (reply_caption := reply_to.caption):
+                self.link = reply_caption.strip()
+            if not (
+                is_gdrive_link(self.link)
+                or is_rclone_path(self.link)
+            ) and (reply_markup := reply_to.reply_markup):
+                self.link = (
+                    reply_markup.inline_keyboard[0][0].url
+                    or reply_markup.inline_keyboard[0].url
+                )
+            if not (
+                is_gdrive_link(self.link)
+                or is_rclone_path(self.link)
+            ):
+                self.link = self.message.text.split("\n", 1)[0].strip()
 
-        LOGGER.info(self.link)
+        LOGGER.info(f"Clone: {self.link}")
 
         self.run_multi(input_list, "", Clone)
 
@@ -279,7 +295,9 @@ class Clone(TaskListener):
                 )
         else:
             await sendMessage(
-                self.message, "Open this link for usage help!", COMMAND_USAGE["clone"]
+                self.message, 
+                f"<b>Hai {self.tag} !</b>\n<b>Sepertinya perintah yang kamu gunakan tidak tepat. Buka tautan berikut untuk mendapatkan bantuan!</b>",
+                COMMAND_USAGE["clone"]
             )
 
 

@@ -176,9 +176,25 @@ class Mirror(TaskListener):
         path = f"{DOWNLOAD_DIR}{self.mid}{folder_name}"
 
         if not self.link and (reply_to := self.message.reply_to_message):
-            if reply_to.text:
-                self.link = reply_to.text.split("\n", 1)[0].strip()
-            else:
+            if reply_text := reply_to.text:
+                self.link = reply_text.split("\n", 1)[0].strip()
+            if not ( 
+                is_url(self.link) 
+                or is_magnet(self.link)
+            ) and (reply_caption := reply_to.caption):
+                self.link = reply_caption.strip()
+            if not ( 
+                is_url(self.link) 
+                or is_magnet(self.link)
+            ) and (reply_markup := reply_to.reply_markup):
+                self.link = (
+                    reply_markup.inline_keyboard[0][0].url
+                    or reply_markup.inline_keyboard[0].url
+                )
+            if not ( 
+                is_url(self.link) 
+                or is_magnet(self.link)
+            ):
                 self.link = self.message.text.split("\n", 1)[0].strip()
         if is_telegram_link(self.link):
             try:
@@ -230,21 +246,19 @@ class Mirror(TaskListener):
             if file_ is None:
                 if reply_text := reply_to.text:
                     self.link = reply_text.split("\n", 1)[0].strip()
-                elif reply_caption := reply_to.caption:
+                if not ( 
+                    is_url(self.link) 
+                    or is_magnet(self.link)
+                ) and (reply_caption := reply_to.caption):
                     self.link = reply_caption.strip()
-                if (
-                    not is_url(self.link)
-                    or not is_magnet(self.link)
-                ) and reply_to.reply_markup:
-                    reply_markup = (
-                        reply_to.reply_markup.inline_keyboard[0][0].url
-                        or reply_to.reply_markup.inline_keyboard[0].url
+                if not (
+                    is_url(self.link)
+                    or is_magnet(self.link)
+                ) and (reply_markup := reply_to.reply_markup):
+                    self.link = (
+                        reply_markup.inline_keyboard[0][0].url
+                        or reply_markup.inline_keyboard[0].url
                     )
-                    if (
-                        is_url(reply_markup)
-                        or is_magnet(reply_markup)
-                    ):
-                        self.link = reply_markup
                 else:
                     reply_to = None
             elif reply_to.document and (
