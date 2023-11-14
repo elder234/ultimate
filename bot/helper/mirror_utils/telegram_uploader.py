@@ -95,12 +95,13 @@ class TgUploader:
             )
         if not isinstance(self._forwardChatId, int):
             if ":" in self._forwardChatId:
-                self._forwardChatId = self._forwardChatId.split(":")[0]
-                self._forwardThreadId = self._forwardChatId.split(":")[1]
+                self.__forwardChatId = self._forwardChatId
+                self._forwardChatId = self.__forwardChatId.split(":")[0]
+                self._forwardThreadId = self.__forwardChatId.split(":")[1]
             if self._forwardChatId.isdigit():
                 self._forwardChatId = int(self._forwardChatId)
                 
-        if not isinstance(self._forwardChatId, int):
+        if not isinstance(self._forwardThreadId, int):
             if self._forwardThreadId.isdigit():
                 self._forwardThreadId = int(self._forwardThreadId)
         
