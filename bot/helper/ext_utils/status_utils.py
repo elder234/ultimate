@@ -182,10 +182,10 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         if tasks_no > 30:
             for i in [1, 2, 4, 6, 8, 10, 15, 20]:
                 buttons.ibutton(i, f"status {sid} ps {i}", position="footer")
-    if len(task_dict) > STATUS_LIMIT or status != "All":
-        for label, status_value in STATUS_VALUES:
-            if status_value != status:
-                buttons.ibutton(label, f"status {sid} st {status_value}")
+        if len(task_dict) > STATUS_LIMIT or status != "All":
+            for label, status_value in STATUS_VALUES:
+                if status_value != status:
+                    buttons.ibutton(label, f"status {sid} st {status_value}")
     buttons.ibutton("♻️", f"status {sid} ref", position="header")
     button = buttons.build_menu(8)
     msg += f"\n<b>🅲🄿🆄 :</b> <code>{cpu_percent()}%</code> | <b>🆁🄰🅼 :</b> <code>{virtual_memory().percent}%</code>"

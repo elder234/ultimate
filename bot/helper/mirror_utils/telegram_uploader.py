@@ -8,7 +8,7 @@ from aiofiles.os import (
 from os import walk, path as ospath
 from time import time
 from PIL import Image
-from pyrogram.types import InputMediaVideo, InputMediaDocument
+from pyrogram.types import InputMediaVideo, InputMediaDocument, InputMediaPhoto
 from pyrogram.errors import FloodWait, RPCError
 from asyncio import sleep
 from tenacity import (
@@ -28,8 +28,9 @@ from bot.helper.ext_utils.bot_utils import sync_to_async
 from bot.helper.ext_utils.media_utils import (
     get_media_info,
     get_document_type,
-    take_ss,
+    create_thumbnail,
     get_audio_thumb,
+    take_ss,
 )
 from bot.helper.telegram_helper.message_utils import deleteMessage
 
@@ -55,9 +56,7 @@ class TgUploader:
         self._lprefix = ""
         self._forwardChatId = ""
         self._forwardThreadId = ""
-        self._as_doc = False
         self._media_group = False
-        self.name = self._listener.name
 
     async def _upload_progress(self, current, total):
         if self._is_cancelled:
@@ -70,11 +69,6 @@ class TgUploader:
         self._processed_bytes += chunk_size
 
     async def _user_settings(self):
-        self._as_doc = self._listener.user_dict.get("as_doc", False) or (
-            config_dict["AS_DOCUMENT"]
-            if "as_doc" not in self._listener.user_dict
-            else False
-        )
         self._media_group = self._listener.user_dict.get("media_group") or (
             config_dict["MEDIA_GROUP"]
             if "media_group" not in self._listener.user_dict
@@ -120,7 +114,7 @@ class TgUploader:
                     self._sent_msg = await user.send_message(
                         chat_id=self._listener.upDest,
                         text=msg,
-                        disable_web_page_preview=False,
+                        disable_web_page_preview=True,
                         disable_notification=True,
                         message_thread_id=self._listener.threadId
                     )
@@ -128,7 +122,7 @@ class TgUploader:
                     self._sent_msg = await self._listener.client.send_message(
                         chat_id=self._listener.upDest,
                         text=msg,
-                        disable_web_page_preview=False,
+                        disable_web_page_preview=True,
                         disable_notification=True,
                         message_thread_id=self._listener.threadId
                     )
@@ -206,6 +200,29 @@ class TgUploader:
                 )
             rlist.append(input_media)
         return rlist
+
+    async def _send_screenshots(self):
+        if isinstance(self._listener.screenShots, str):
+            ss_nb = int(self._listener.screenShots)
+        else:
+            ss_nb = 10
+        outputs = await take_ss(self._up_path, ss_nb)
+        inputs = []
+        if outputs:
+            for m in outputs:
+                if await aiopath.exists(m):
+                    cap = m.rsplit("/", 1)[-1]
+                    inputs.append(InputMediaPhoto(m, cap))
+                else:
+                    outputs.remove(m)
+            if outputs:
+                self._sent_msg = (await self._sent_msg.reply_media_group(
+                    media=inputs,
+                    quote=True,
+                    disable_notification=True,
+                ))[-1]
+                for m in outputs:
+                    await aioremove(m)
 
     async def _send_media_group(self, subkey, key, msgs):
         msgs_list = await msgs[0].reply_to_message.reply_media_group(
@@ -321,7 +338,7 @@ class TgUploader:
                 "Ekstensi file ini diblokir oleh bot!"
             )
             return
-        LOGGER.info(f"Leech Completed: {self.name}")
+        LOGGER.info(f"Leech Completed: {self._listener.name}")
         await self._listener.onUploadComplete(
             None, size, self._msgs_dict, self._total_files, self._corrupted
         )
@@ -348,13 +365,17 @@ class TgUploader:
                     thumb = await get_audio_thumb(self._up_path)
 
             if (
-                self._as_doc
+                self._listener.as_doc
                 or force_document
                 or (not is_video and not is_audio and not is_image)
             ):
                 key = "documents"
-                if is_video and thumb is None:
-                    thumb = await take_ss(self._up_path, None)
+                if is_video:
+                    if self._listener.screenShots:
+                        await self._send_screenshots()
+                    if thumb is None:
+                        thumb = await create_thumbnail(self._up_path, None)
+
                 if self._is_cancelled:
                     return
                 self._sent_msg = await self._sent_msg.reply_document(
@@ -367,10 +388,12 @@ class TgUploader:
                     progress=self._upload_progress,
                 )
             elif is_video:
+                if self._listener.screenShots:
+                    await self._send_screenshots()
                 key = "videos"
                 duration = (await get_media_info(self._up_path))[0]
                 if thumb is None:
-                    thumb = await take_ss(self._up_path, duration)
+                    thumb = await create_thumbnail(self._up_path, duration)
                 if thumb is not None:
                     with Image.open(thumb) as img:
                         width, height = img.size
@@ -506,5 +529,5 @@ class TgUploader:
 
     async def cancel_task(self):
         self._is_cancelled = True
-        LOGGER.info(f"Cancelling Upload: {self.name}")
+        LOGGER.info(f"Cancelling Upload: {self._listener.name}")
         await self._listener.onUploadError("Unggahan dibatalkan oleh User!")
