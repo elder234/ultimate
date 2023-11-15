@@ -221,6 +221,17 @@ class TgUploader:
                     quote=True,
                     disable_notification=True,
                 ))[-1]
+                # Forward ScreenShots to ForwardChatId
+                try:
+                    if self._forwardChatId != "":
+                        await bot.copy_message(
+                            chat_id=self._forwardChatId, 
+                            from_chat_id=self._sent_msg.chat.id, 
+                            message_id=self._sent_msg.id, 
+                            message_thread_id=self._forwardThreadId
+                        )
+                except Exception as e:
+                    LOGGER.error(f"Failed when forward message => {e}")
                 for m in outputs:
                     await aioremove(m)
 

@@ -231,17 +231,17 @@ class TaskConfig:
                     uploader_id = self.client.me.id
                 if chat.type.name not in ["SUPERGROUP", "CHANNEL"]:
                     raise ValueError(
-                        "Custom Leech Destination only allowed for super-group or channel!"
+                        "<b>Tujuan leech kustom hanya untuk SuperGroup atau Channel!</b>"
                     )
                 member = await chat.get_member(uploader_id)
                 if (
                     not member.privileges.can_manage_chat
                     or not member.privileges.can_delete_messages
                 ):
-                    raise ValueError("You don't have enough privileges in this chat!")
+                    raise ValueError("<b>Kamu tidak memiliki ijin pada chat ini!</b>")
             elif self.userTransmission and not self.isSuperChat:
                 raise ValueError(
-                    "Use SuperGroup incase you want to upload using User session!"
+                    "<b>Gunakan SuperGroup untuk mengupload menggunakan User Session!</b>"
                 )
             if self.splitSize:
                 if self.splitSize.isdigit():
