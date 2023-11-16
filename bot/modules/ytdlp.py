@@ -428,7 +428,7 @@ class YtDlp(TaskListener):
             error = str(e).replace("<", " ").replace(">", " ")
             await sendMessage(
                 self.message, 
-                msg = f"<b>Hai {self.tag} !</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{error}</code>"
+                f"<b>Hai {self.tag} !</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{error}</code>"
             )
             self.removeFromSameDir()
             return
