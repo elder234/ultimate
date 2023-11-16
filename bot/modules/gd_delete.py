@@ -12,7 +12,10 @@ from bot.helper.ext_utils.links_utils import is_gdrive_link
 
 @new_task
 async def deletefile(_, message):
-    args = message.text.split()
+    args = (
+        message.text 
+        or message.caption
+    ).split()
     user = message.from_user or message.sender_chat
     if len(args) > 1:
         link = args[1]

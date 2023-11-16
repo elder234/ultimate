@@ -13,7 +13,10 @@ from bot.helper.ext_utils.status_utils import get_readable_file_size
 
 @new_task
 async def countNode(_, message):
-    args = message.text.split()
+    args = (
+        message.text 
+        or message.caption
+    ).split()
     user = message.from_user or message.sender_chat
     if username := user.username:
         tag = f"@{username}"
