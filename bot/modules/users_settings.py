@@ -1,6 +1,6 @@
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex, create
-from aiofiles.os import remove as aioremove, path as aiopath, mkdir
+from aiofiles.os import remove as aioremove, path as aiopath, makedirs
 from os import getcwd
 from time import time
 from functools import partial
@@ -207,8 +207,7 @@ async def add_rclone(_, message, pre_event):
     user_id = message.from_user.id
     handler_dict[user_id] = False
     path = f"{getcwd()}/rclone/"
-    if not await aiopath.isdir(path):
-        await mkdir(path)
+    await makedirs(path, exist_ok=True)
     des_dir = f"{path}{user_id}.conf"
     await message.download(file_name=des_dir)
     update_user_ldata(user_id, "rclone_config", f"rclone/{user_id}.conf")
@@ -222,8 +221,7 @@ async def add_token_pickle(_, message, pre_event):
     user_id = message.from_user.id
     handler_dict[user_id] = False
     path = f"{getcwd()}/tokens/"
-    if not await aiopath.isdir(path):
-        await mkdir(path)
+    await makedirs(path, exist_ok=True)
     des_dir = f"{path}{user_id}.pickle"
     await message.download(file_name=des_dir)
     update_user_ldata(user_id, "token_pickle", f"tokens/{user_id}.pickle")

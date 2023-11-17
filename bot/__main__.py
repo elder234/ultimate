@@ -24,6 +24,7 @@ from datetime import datetime
 
 from bot import (
     bot, 
+    user,
     botStartTime, 
     LOGGER, 
     Interval, 
@@ -254,6 +255,8 @@ async def restart(_, message):
             intvl.cancel()
     await sync_to_async(clean_all)
     proc1 = await create_subprocess_exec("pkill", "-9", "-f", "gunicorn|chrome|firefox|opera|edge")
+    if user:
+        await user.stop()
     proc2 = await create_subprocess_exec("python3", "update.py")
     await gather(proc1.wait(), proc2.wait())
     async with aiopen(".restartmsg", "w") as f:
@@ -330,21 +333,17 @@ async def restart_notification():
         chat_id, msg_id = 0, 0
     
     # Get thread_id from AUTHORIZED_CHATS
-    chat_id_ = None
-    thread_id = None
-    if authorized_chat_id := config_dict.get("AUTHORIZED_CHATS"):
-        if not isinstance(authorized_chat_id, int):
-            if ":" in authorized_chat_id:
-                chat_id_ = authorized_chat_id.split(":")[0]
-                thread_id = authorized_chat_id.split(":")[1]
-            
-            if chat_id == int(chat_id_):
+    if chat_id == 0:
+        chat_id = None
+        thread_id = None
+        if authorized_chat_id := config_dict.get("AUTHORIZED_CHATS"):
+            if not isinstance(authorized_chat_id, int):
+                if ":" in authorized_chat_id:
+                    chat_id = authorized_chat_id.split(":")[0]
+                    thread_id = authorized_chat_id.split(":")[1]
+                
                 if thread_id.isdigit():
                     thread_id = int(thread_id)
-            else:
-                thread_id = None
-        else:
-            thread_id = None
 
     async def send_incompelete_task_message(cid, msg):
         try:
