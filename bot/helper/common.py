@@ -298,6 +298,8 @@ class TaskConfig:
         if len(text) > 1 and text[1].startswith("Tag: "):
             self.tag, id_ = text[1].split("Tag: ")[1].split()
             self.user = self.message.from_user = await self.client.get_users(id_)
+            self.user_id = self.user.id
+            self.user_dict = user_data.get(self.user_id, {})
             try:
                 await self.message.unpin()
             except:
@@ -619,7 +621,9 @@ class TaskConfig:
                     )
                     return res
             else:
-                for dirpath, _, files in await sync_to_async(walk, dl_path, topdown=False):
+                for dirpath, _, files in await sync_to_async(
+                    walk, dl_path, topdown=False
+                ):
                     for file_ in files:
                         f_path = ospath.join(dirpath, file_)
                         if (await get_document_type(f_path))[0]:
