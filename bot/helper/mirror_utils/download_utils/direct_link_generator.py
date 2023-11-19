@@ -66,7 +66,10 @@ def direct_link_generator(link: str):
     elif "racaty" in domain:
         return racaty(link)
     elif "1fichier.com" in domain:
-        return fichier(link)
+        if len(config_dict['ALLDEBRID_API']) == 0:
+            return fichier(link)
+        else:
+            return alldebrid(link)
     elif "solidfiles.com" in domain:
         return solidfiles(link)
     elif "krakenfiles.com" in domain:
@@ -232,6 +235,94 @@ def direct_link_generator(link: str):
         return link if domain == "static.romsget.io" else romsget(link)
     elif "hexupload.net" in domain:
         return hexupload(link)
+    # Add AllDebrid supported link here
+    elif any(
+        x in domain
+        for x in [
+            "4shared.com",
+            "alfafile.net",
+            "alterupload.com",
+            "apkadmin.com",
+            "cjoint.net",
+            "clickndownload.org",
+            "clicknupload.co",
+            "clicknupload.vip",
+            "clipwatching.com",
+            "darkibox.com",
+            "ddl.to",
+            "desfichiers.com",
+            "dfichiers.com",
+            "dl4free.com",
+            "drop.download",
+            "dropapk.to",
+            "dropgalaxy.in",
+            "fastbit.cc",
+            "file-upload.com",
+            "file.al",
+            "filedot.to",
+            "filedot.xyz",
+            "filespace.com",
+            "flashbit.cc",
+            "gigapeta.com",
+            "gulf-up.com",
+            "harefile.com",
+            "hexupload.net",
+            "hitf.cc",
+            "hitf.to",
+            "hitfile.net",
+            "htfl.net",
+            "isra.cloud",
+            "load.to",
+            "megadl.fr",
+            "mesfichiers.org",
+            "mexa.sh",
+            "mexashare.com",
+            "modsbase.com",
+            "mp4upload.com",
+            "piecejointe.net",
+            "pjointe.com",
+            "playvidto.com",
+            "prefiles.com",
+            "rapidfileshare.net",
+            "rapidgator.net",
+            "rg.to",
+            "scribd.com",
+            "sendit.cloud",
+            "sharemods.com",
+            "simfileshare.net",
+            "tenvoi.com",
+            "trbbt.net",
+            "turb.cc",
+            "turb.pw",
+            "turbo.to",
+            "turbobif.com",
+            "turbobit.cc",
+            "turbobit.cloud",
+            "turbobit.net",
+            "up-4ever.net",
+            "up-load.io",
+            "upload-4ever.com",
+            "upload42.com",
+            "uploadboy.com",
+            "uploadev.com",
+            "uploadev.org",
+            "uploadrar.com",
+            "uploadydl.com",
+            "uppit.com",
+            "userscloud.com",
+            "userupload.net",
+            "vev.io",
+            "vidoza.net",
+            "vidoza.org",
+            "vidto-do.com",
+            "vidtodo.com",
+            "vipfile.cc",
+            "wayupload.com",
+            "world-files.com",
+            "worldbytez.com",
+        ]
+    ):
+        return alldebrid(link)
     else:
         raise DirectDownloadLinkException(
             f"Tidak ada fungsi Generator Direct Link untuk {link}")
@@ -1430,9 +1521,43 @@ def pcloud(url):
     raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
 
 
-def pake(url):
+def alldebrid(url: str) -> str:
     """
-    URL : https://api.pake.tk
+    URL : 
+    https://api.alldebrid.com/
+    
+    Documentation :
+    https://docs.alldebrid.com/
+    
+    Supported Sites : 
+    https://alldebrid.com/hosts/
+    """
+    agent_name = "TelegramBot" # Maybe we can add this on env? So its can customizable.
+    alldebrid_api = config_dict['ALLDEBRID_API']
+    if len(alldebrid_api) == 0:
+        raise DirectDownloadLinkException("ERROR: ALLDEBRID_API tidak ditemukan!")
+    with Session() as session:
+        r = session.get(
+            f"https://api.alldebrid.com/v4/link/unlock?agent={agent_name}&apikey={alldebrid_api}&link={url}"
+        )
+
+        if r.ok:
+            r = r.json()
+            if r["status"] == "success":
+                session.close()
+                if r["data"]["host"] == "stream":
+                    raise DirectDownloadLinkException("ERROR: Tidak support stream. Gunakan perintah YT-DLP!")
+                return r["data"]["link"]
+            else:
+                session.close()
+                raise DirectDownloadLinkException(f"ERROR: {r['error']['message']}")
+        
+
+def pake(url: str) -> str:
+    """
+    URL : 
+    https://api.pake.tk
+    
     Supported Sites :
     - Dood (Slow)
     - Vidstream (Untested)

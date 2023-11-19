@@ -721,6 +721,10 @@ async def load_config():
     if len(STREAMWISH_API) == 0:
         STREAMWISH_API = ""
 
+    ALLDEBRID_API = environ.get("ALLDEBRID_API", "")
+    if len(ALLDEBRID_API) != 0:
+        ALLDEBRID_API = ""
+
     INDEX_URL = environ.get("INDEX_URL", "").rstrip("/")
     if len(INDEX_URL) == 0:
         INDEX_URL = ""
@@ -924,6 +928,7 @@ async def load_config():
 
     config_dict.update(
         {
+            "ALLDEBRID_API": ALLDEBRID_API,
             "AS_DOCUMENT": AS_DOCUMENT,
             "AUTHORIZED_CHATS": AUTHORIZED_CHATS,
             "AUTO_DELETE_MESSAGE_DURATION": AUTO_DELETE_MESSAGE_DURATION,

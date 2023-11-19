@@ -272,6 +272,12 @@ if len(STREAMWISH_API) == 0:
     log_warning("STREAMWISH Credentials not provided!")
     STREAMWISH_API = ""
 
+ALLDEBRID_API = environ.get("ALLDEBRID_API", "")
+if len(ALLDEBRID_API) != 0:
+    log_info("You're provided ALLDEBRID_API, Don't forget to auth in email before using this!")
+else:
+    ALLDEBRID_API = ""
+
 INDEX_URL = environ.get("INDEX_URL", "").rstrip("/")
 if len(INDEX_URL) == 0:
     INDEX_URL = ""
@@ -417,6 +423,7 @@ if len(RCLONE_SERVE_PASS) == 0:
 
 
 config_dict = {
+    "ALLDEBRID_API": ALLDEBRID_API,
     "AS_DOCUMENT": AS_DOCUMENT,
     "AUTHORIZED_CHATS": AUTHORIZED_CHATS,
     "AUTO_DELETE_MESSAGE_DURATION": AUTO_DELETE_MESSAGE_DURATION,
