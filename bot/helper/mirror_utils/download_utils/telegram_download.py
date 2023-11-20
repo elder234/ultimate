@@ -1,5 +1,6 @@
 from time import time
 from asyncio import Lock
+from pyrogram.enums import ChatType
 
 from bot import (
     LOGGER,
@@ -95,6 +96,7 @@ class TelegramDownloadHelper:
         if (
             self._listener.session not in ["user", "bot"]
             and self._listener.userTransmission
+            and message.chat.type != ChatType.PRIVATE
         ):
             self._listener.session = "user"
             message = await user.get_messages(

@@ -48,7 +48,7 @@ def direct_link_generator(link: str):
         raise DirectDownloadLinkException("ERROR: URL Salah!")
     if "youtube.com" in domain or "youtu.be" in domain:
         raise DirectDownloadLinkException(
-            "ERROR: Gunakan perintah ytdl untuk mengunduh Youtube!")
+            "ERROR: Gunakan perintah YT-DLP untuk mengunduh Youtube!")
     elif "mediafire.com" in domain:
         return mediafire(link)
     elif "uptobox.com" in domain:
@@ -1559,8 +1559,8 @@ def pake(url: str) -> str:
     https://api.pake.tk
     
     Supported Sites :
-    - Dood (Slow)
-    - Vidstream (Untested)
+    - Dood
+    - Vidstream
     """
     with Session() as session:
         try:

@@ -58,9 +58,12 @@ class TgUploader:
         self._forwardThreadId = ""
         self._media_group = False
 
-    async def _upload_progress(self, current, total):
+    async def _upload_progress(self, current, _):
         if self._is_cancelled:
-            if self._listener.userTransmission:
+            if (
+                self._listener.userTransmission
+                or self._listener.session == "user"
+            ):
                 user.stop_transmission()
             else:
                 self._listener.client.stop_transmission()
@@ -95,7 +98,10 @@ class TgUploader:
             if self._forwardChatId.isdigit():
                 self._forwardChatId = int(self._forwardChatId)
                 
-        if not isinstance(self._forwardThreadId, int):
+        if (
+            self._forwardThreadId
+            and not isinstance(self._forwardThreadId, int)
+        ):
             if self._forwardThreadId.isdigit():
                 self._forwardThreadId = int(self._forwardThreadId)
         
@@ -110,7 +116,10 @@ class TgUploader:
                 else self._listener.message.text.lstrip("/")
             )
             try:
-                if self._listener.userTransmission:
+                if (
+                    self._listener.userTransmission
+                    or self._listener.session == "user"
+                ):
                     self._sent_msg = await user.send_message(
                         chat_id=self._listener.upDest,
                         text=msg,
@@ -129,7 +138,10 @@ class TgUploader:
             except Exception as e:
                 await self._listener.onUploadError(str(e))
                 return False
-        elif self._listener.userTransmission:
+        elif (
+            self._listener.userTransmission
+            or self._listener.session == "user"
+        ):
             self._sent_msg = await user.get_messages(
                 chat_id=self._listener.message.chat.id, message_ids=self._listener.mid
             )
@@ -254,9 +266,9 @@ class TgUploader:
 
     async def upload(self, o_files, m_size, size):
         await self._user_settings()
-        res = await self._msg_to_reply()
-        if not res:
-            return
+        # res = await self._msg_to_reply()
+        # if not res:
+        #     return
         if self._listener.user_dict.get("excluded_extensions", False):
             extension_filter = self._listener.user_dict["excluded_extensions"]
         elif "excluded_extensions" not in self._listener.user_dict:
@@ -274,6 +286,14 @@ class TgUploader:
                     continue
                 try:
                     f_size = await aiopath.getsize(self._up_path)
+                    # Force uploads below 2GB using Bot session and above 2GB using User session
+                    if f_size > 2147483648:
+                        self._listener.session = "user"
+                    else:
+                        self._listener.session = "bot"
+                    res = await self._msg_to_reply()
+                    if not res:
+                        return
                     if self._listener.seed and file_ in o_files and f_size in m_size:
                         continue
                     self._total_files += 1
@@ -301,6 +321,7 @@ class TgUploader:
                                         await self._send_media_group(subkey, key, msgs)
                     self._last_msg_in_group = False
                     self._last_uploaded = 0
+                    LOGGER.info(f"Leech Started: {self._listener.name} | Using: {self._listener.session.upper()} Session")
                     await self._upload_file(cap_mono, file_)
                     if self._is_cancelled:
                         return
