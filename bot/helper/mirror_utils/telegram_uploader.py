@@ -54,9 +54,9 @@ class TgUploader:
         self._last_msg_in_group = False
         self._up_path = ""
         self._lprefix = ""
-        self._forwardChatId = ""
-        self._forwardThreadId = ""
         self._media_group = False
+        self._forwardChatId = None
+        self._forwardThreadId = None
 
     async def _upload_progress(self, current, _):
         if self._is_cancelled:
@@ -77,33 +77,40 @@ class TgUploader:
             if "media_group" not in self._listener.user_dict
             else False
         )
+        
         self._lprefix = self._listener.user_dict.get("lprefix") or (
             config_dict["LEECH_FILENAME_PREFIX"]
             if "lprefix" not in self._listener.user_dict
             else ""
         )
+        
         self._forwardChatId = self._listener.user_dict.get("leech_dest")
-        if self._forwardChatId is None:
+        if not self._forwardChatId:
             self._forwardChatId = self._listener.message.chat.id
             self._forwardThreadId = (
                 self._listener.message.message_thread_id
                 if self._listener.message.chat.is_forum
                 else None
             )
+            
         if not isinstance(self._forwardChatId, int):
             if ":" in self._forwardChatId:
                 self.__forwardChatId = self._forwardChatId
                 self._forwardChatId = self.__forwardChatId.split(":")[0]
                 self._forwardThreadId = self.__forwardChatId.split(":")[1]
-            if self._forwardChatId.isdigit():
-                self._forwardChatId = int(self._forwardChatId)
+                
+        if (
+            self._forwardChatId
+            and self._forwardChatId.isdigit()
+        ):
+            self._forwardChatId = int(self._forwardChatId)
                 
         if (
             self._forwardThreadId
             and not isinstance(self._forwardThreadId, int)
+            and self._forwardThreadId.isdigit()
         ):
-            if self._forwardThreadId.isdigit():
-                self._forwardThreadId = int(self._forwardThreadId)
+            self._forwardThreadId = int(self._forwardThreadId)
         
         if not await aiopath.exists(self._thumb):
             self._thumb = None

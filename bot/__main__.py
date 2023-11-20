@@ -341,9 +341,20 @@ async def restart_notification():
                 if ":" in authorized_chat_id:
                     chat_id = authorized_chat_id.split(":")[0]
                     thread_id = authorized_chat_id.split(":")[1]
-                
-                if thread_id.isdigit():
-                    thread_id = int(thread_id)
+
+            if (
+                chat_id
+                and not isinstance(chat_id, int)
+                and chat_id.isdigit()
+            ):
+                chat_id = int(chat_id)
+
+            if (
+                thread_id
+                and not isinstance(thread_id, int)
+                and thread_id.isdigit()
+            ):
+                thread_id = int(thread_id)
 
     async def send_incompelete_task_message(cid, msg):
         try:

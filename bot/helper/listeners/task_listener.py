@@ -312,15 +312,30 @@ class TaskListener(TaskConfig):
             msg += f"\n\n<b>Oleh :</b> {self.tag}"
             await sendMessage(self.message, msg, button)
             # Log Chat
-            LOG_CHAT_ID = config_dict.get("LOG_CHAT_ID")
-            if LOG_CHAT_ID is not None:
-                LOG_CHAT_THREAD_ID = None
+            LOG_CHAT_ID = None
+            LOG_CHAT_THREAD_ID = None
+            if LOG_CHAT_ID := config_dict.get("LOG_CHAT_ID"):
                 if not isinstance(LOG_CHAT_ID, int):
                     if ":" in LOG_CHAT_ID:
-                        LOG_CHAT_THREAD_ID = int(LOG_CHAT_ID.split(":")[1])
+                        LOG_CHAT_THREAD_ID = LOG_CHAT_ID.split(":")[1]
                         LOG_CHAT_ID = LOG_CHAT_ID.split(":")[0]
-                    if LOG_CHAT_ID.isdigit() or LOG_CHAT_ID.startswith("-"):
-                        LOG_CHAT_ID = int(LOG_CHAT_ID)
+                        
+                if (
+                    LOG_CHAT_ID
+                    and (
+                        LOG_CHAT_ID.isdigit() 
+                        or LOG_CHAT_ID.startswith("-")
+                    )
+                ):
+                    LOG_CHAT_ID = int(LOG_CHAT_ID)
+
+                if (
+                    LOG_CHAT_THREAD_ID
+                    and not isinstance(LOG_CHAT_THREAD_ID, int)
+                    and LOG_CHAT_THREAD_ID.isdigit()
+                ):
+                    LOG_CHAT_THREAD_ID= int(LOG_CHAT_THREAD_ID)
+                        
                 try:
                     await bot.send_message(
                         chat_id=LOG_CHAT_ID,
