@@ -322,6 +322,7 @@ class TaskListener(TaskConfig):
                         
                 if (
                     LOG_CHAT_ID
+                    and not isinstance(LOG_CHAT_ID, int)
                     and (
                         LOG_CHAT_ID.isdigit() 
                         or LOG_CHAT_ID.startswith("-")

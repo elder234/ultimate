@@ -101,6 +101,7 @@ class TgUploader:
                 
         if (
             self._forwardChatId
+            and not isinstance(self._forwardChatId, int)
             and self._forwardChatId.isdigit()
         ):
             self._forwardChatId = int(self._forwardChatId)
