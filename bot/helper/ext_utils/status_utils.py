@@ -166,8 +166,8 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         else:
             msg += f"\n<b>├ Ukuran : </b> <code>{task.size()}</code>"
         if task.listener.isPrivateChat: 
-            msg += f"\n<b>├ ID :</b> <code>PRIVATE 🤓</code>"
-            msg += f"\n<b>├ User :</b> <code>PRIVATE 🤓</code>" 
+            msg += f"\n<b>├ ID :</b> <code>PRIVATE</code>"
+            msg += f"\n<b>├ User :</b> <code>PRIVATE</code>" 
         else:
             msg += f"\n<b>├ ID :</b> <code>{task.listener.user_id}</code>"
             msg += f"\n<b>├ User :</b> <code>{task.listener.user.first_name}</code>"
