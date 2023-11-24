@@ -2,6 +2,7 @@ from aiofiles.os import path as aiopath, remove as aioremove
 from asyncio import sleep, create_subprocess_exec
 from secrets import token_urlsafe
 from os import walk, path as ospath
+from pyrogram.enums import ChatType
 
 from bot import (
     DOWNLOAD_DIR,
@@ -100,7 +101,8 @@ class TaskConfig:
         self.suproc = None
         self.client = None
         self.thumb = None
-        self.isSuperChat = self.message.chat.type.name in ["SUPERGROUP", "CHANNEL"]
+        self.isSuperChat = bool(self.message.chat.type.name in ["SUPERGROUP", "CHANNEL"])
+        self.isPrivateChat = bool(self.message.chat.type == ChatType.PRIVATE)
 
     def getTokenPath(self, dest):
         if dest.startswith("mtp:"):

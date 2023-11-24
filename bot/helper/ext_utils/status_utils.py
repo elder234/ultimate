@@ -134,7 +134,10 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         tasks[start_position : STATUS_LIMIT + start_position], start=1
     ):
         tstatus = task.status()
-        msg += f"<blockquote><code>{escape(f'{task.name()}')}</code></blockquote>"
+        if task.listener.isPrivateChat: 
+            msg += f"<blockquote><code>PRIVATE 🤓</code></blockquote>"
+        else: 
+            msg += f"<blockquote><code>{escape(f'{task.name()}')}</code></blockquote>"
         msg += f"\n<b>┌┤{get_progress_bar_string(task.progress())} <code>{task.progress()}</code>├┐</b>"
         if task.listener.isSuperChat:
             msg += f"\n<b>├ Status :</b> <a href='{task.listener.message.link}'>{tstatus}</a>"
@@ -162,8 +165,12 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
             msg += f"\n<b>├ Kecepatan : </b> <code>{task.seed_speed()}</code>"
         else:
             msg += f"\n<b>├ Ukuran : </b> <code>{task.size()}</code>"
-        msg += f"\n<b>├ ID :</b> <code>{task.listener.message.from_user.id}</code>"
-        msg += f"\n<b>├ User :</b> <code>{task.listener.message.from_user.first_name}</code>"
+        if task.listener.isPrivateChat: 
+            msg += f"\n<b>├ ID :</b> <code>PRIVATE 🤓</code>"
+            msg += f"\n<b>├ User :</b> <code>PRIVATE 🤓</code>" 
+        else:
+            msg += f"\n<b>├ ID :</b> <code>{task.listener.user_id}</code>"
+            msg += f"\n<b>├ User :</b> <code>{task.listener.user.first_name}</code>"
         msg += f"\n<b>└</b> <code>/{BotCommands.CancelTaskCommand[0]} {task.gid()}</code>\n\n"
 
     if len(msg) == 0 and status == "All":
