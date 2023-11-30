@@ -24,7 +24,6 @@ from datetime import datetime
 
 from bot import (
     bot, 
-    user,
     botStartTime, 
     LOGGER, 
     Interval, 
@@ -33,15 +32,7 @@ from bot import (
     INCOMPLETE_TASK_NOTIFIER, 
     scheduler, 
     config_dict, 
-    arv, 
-    ffv, 
-    gav, 
-    msv, 
-    p7v, 
-    prv, 
-    rcv, 
-    qbv, 
-    ytv
+    Version
 )
 from .helper.ext_utils.files_utils import clean_all, exit_clean_up
 from .helper.ext_utils.bot_utils import cmd_exec, sync_to_async, initiate_help_messages
@@ -54,22 +45,22 @@ from .helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.listeners.aria2_listener import start_aria2_listener
 from .modules import (
     authorize, 
+    bot_settings, 
+    cancel_task, 
     clone, 
+    eval, 
     gd_count, 
     gd_delete, 
-    cancel_task, 
     gd_search, 
     mirror_leech, 
+    rss, 
+    shell, 
+    speedtest,
     status, 
     torrent_search, 
     torrent_select, 
-    ytdlp, 
-    rss, 
-    shell, 
-    eval, 
     users_settings, 
-    bot_settings, 
-    speedtest
+    ytdlp
 )
 
 def get_quotes():
@@ -185,15 +176,16 @@ async def stats(_, message):
 <b>Total Unggah :</b> <code>{sent}</code>
 
 <b>Versi</b>
-<b>Aria2c       :</b> <code>v{arv}</code>
-<b>FFMPEG       :</b> <code>v{ffv}</code>
-<b>Google Api   :</b> <code>v{gav}</code>
-<b>MegaSDK      :</b> <code>v{msv}</code>
-<b>P7Zip        :</b> <code>v{p7v}</code>
-<b>Pyro         :</b> <code>v{prv}</code>
-<b>Rclone       :</b> <code>{rcv}</code>
-<b>Qbittorrent  :</b> <code>{qbv}</code>
-<b>YT-DLP       :</b> <code>v{ytv}</code>
+<b>Aria2c       :</b> <code>v{Version.ar}</code>
+<b>FFMPEG       :</b> <code>v{Version.ff}</code>
+<b>Google Api   :</b> <code>v{Version.ga}</code>
+<b>MegaSDK      :</b> <code>v{Version.ms}</code>
+<b>P7Zip        :</b> <code>v{Version.p7}</code>
+<b>Pyro         :</b> <code>v{Version.pr}</code>
+<b>Python       :</b> <code>v{Version.py}</code>
+<b>Rclone       :</b> <code>{Version.rc}</code>
+<b>Qbittorrent  :</b> <code>{Version.qb}</code>
+<b>YT-DLP       :</b> <code>v{Version.yt}</code>
 
 <b>Lainnya</b>
 <b>Username     :</b> <code>@{bot.me.username}</code>
@@ -255,8 +247,6 @@ async def restart(_, message):
             intvl.cancel()
     await clean_all()
     proc1 = await create_subprocess_exec("pkill", "-9", "-f", "gunicorn|chrome|firefox|opera|edge")
-    if user:
-        await user.stop()
     proc2 = await create_subprocess_exec("python3", "update.py")
     await gather(proc1.wait(), proc2.wait())
     async with aiopen(".restartmsg", "w") as f:
