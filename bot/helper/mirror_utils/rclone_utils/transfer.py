@@ -8,7 +8,7 @@ from configparser import ConfigParser
 from random import randrange
 from logging import getLogger
 
-from bot import config_dict, GLOBAL_EXTENSION_FILTER
+from bot import config_dict
 from bot.helper.ext_utils.bot_utils import cmd_exec, sync_to_async
 from bot.helper.ext_utils.files_utils import get_mime_type, count_files_and_folders
 
@@ -31,8 +31,6 @@ class RcloneTransferHelper:
         self._sa_count = 1
         self._sa_index = 0
         self._sa_number = 0
-        self.extension_filter = ["aria2", "!qB"]
-        self.user_settings()
 
     @property
     def transferred_size(self):
@@ -53,14 +51,6 @@ class RcloneTransferHelper:
     @property
     def size(self):
         return self._size
-
-    def user_settings(self):
-        if self._listener.user_dict.get("excluded_extensions", False):
-            self.extension_filter = self._listener.user_dict["excluded_extensions"]
-        elif "excluded_extensions" not in self._listener.user_dict:
-            self.extension_filter = GLOBAL_EXTENSION_FILTER
-        else:
-            self.extension_filter = ["aria2", "!qB"]
 
     async def _progress(self):
         while not (self._proc is None or self._is_cancelled):
@@ -116,7 +106,7 @@ class RcloneTransferHelper:
             await f.write(text)
         return sa_conf_file
 
-    async def _start_download(self, cmd, remote_type):
+    async def _start_download(self, cmd, remote_type, spath):
         self._proc = await create_subprocess_shell(cmd, stdout=PIPE, stderr=PIPE)
         _, return_code = await gather(self._progress(), self._proc.wait())
 
@@ -143,7 +133,7 @@ class RcloneTransferHelper:
             ):
                 if self._sa_count < self._sa_number:
                     remote = self._switchServiceAccount()
-                    cmd[6] = f"{remote}:{cmd[6].split(':', 1)[1]}"
+                    cmd.replace(spath, f"{remote}:{cmd[6].split(':', 1)[1]}")
                     if self._is_cancelled:
                         return
                     return await self._start_download(cmd, remote_type)
@@ -178,9 +168,8 @@ class RcloneTransferHelper:
                 remote = f"sa{self._sa_index:03}"
                 LOGGER.info(f"Download with service account {remote}")
 
-        cmd = self._getUpdatedCommand(
-            config_path, f"{remote}:{self._listener.link}", path, "copy"
-        )
+        spath = f"{remote}:{self._listener.link}"
+        cmd = self._getUpdatedCommand(config_path, spath, path, "copy")
 
         if (
             remote_type == "drive"
@@ -191,7 +180,7 @@ class RcloneTransferHelper:
         elif remote_type != "drive":
             cmd += " --retries-sleep 3s"
 
-        await self._start_download(cmd, remote_type)
+        await self._start_download(cmd, remote_type, spath)
 
     async def _get_gdrive_link(self, config_path, remote, rc_path, mime_type):
         if mime_type == "Folder":
@@ -225,7 +214,7 @@ class RcloneTransferHelper:
             link = ""
         return link, destination
 
-    async def _start_upload(self, cmd, remote_type):
+    async def _start_upload(self, cmd, remote_type, spath):
         self._proc = await create_subprocess_shell(cmd, stdout=PIPE, stderr=PIPE)
         _, return_code = await gather(self._progress(), self._proc.wait())
 
@@ -251,7 +240,7 @@ class RcloneTransferHelper:
             ):
                 if self._sa_count < self._sa_number:
                     remote = self._switchServiceAccount()
-                    cmd[7] = f"{remote}:{cmd[7].split(':', 1)[1]}"
+                    cmd.replace(spath, f"{remote}:{cmd[7].split(':', 1)[1]}")
                     return (
                         False
                         if self._is_cancelled
@@ -279,10 +268,12 @@ class RcloneTransferHelper:
 
         if await aiopath.isdir(path):
             mime_type = "Folder"
-            folders, files = await count_files_and_folders(path)
+            folders, files = await count_files_and_folders(
+                path, self._listener.extension_filter
+            )
             rc_path += f"/{self._listener.name}" if rc_path else self._listener.name
         else:
-            if path.lower().endswith(tuple(self.extension_filter)):
+            if path.lower().endswith(tuple(self._listener.extension_filter)):
                 await self._listener.onUploadError(
                     "Ekstensi file ini diblokir oleh bot!"
                 )
@@ -316,9 +307,8 @@ class RcloneTransferHelper:
                 LOGGER.info(f"Upload with service account {fremote}")
 
         method = "move" if not self._listener.seed or self._listener.newDir else "copy"
-        cmd = self._getUpdatedCommand(
-            fconfig_path, path, f"{fremote}:{rc_path}", method
-        )
+        spath = f"{fremote}:{rc_path}"
+        cmd = self._getUpdatedCommand(fconfig_path, path, spath, method)
         if (
             remote_type == "drive"
             and not config_dict["RCLONE_FLAGS"]
@@ -328,7 +318,7 @@ class RcloneTransferHelper:
         elif remote_type != "drive":
             cmd += " --retries-sleep 3s"
 
-        result = await self._start_upload(cmd, remote_type)
+        result = await self._start_upload(cmd, remote_type, spath)
         if not result:
             return
 
@@ -429,7 +419,7 @@ class RcloneTransferHelper:
                     return None, None
 
     def _getUpdatedCommand(self, config_path, source, destination, method):
-        ext = "*.{" + ",".join(self.extension_filter) + "}"
+        ext = "*.{" + ",".join(self._listener.extension_filter) + "}"
         cmd = f'edge {method} --fast-list --config {config_path} -P "{source}" "{destination}" --exclude "{ext}"'
         cmd += " --ignore-case --low-level-retries 1 -M --log-file rlog.txt --log-level DEBUG"
         if rcflags := self._listener.rcFlags or config_dict["RCLONE_FLAGS"]:
