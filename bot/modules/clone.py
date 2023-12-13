@@ -205,17 +205,8 @@ class Clone(TaskListener):
             remote, src_path = self.link.split(":", 1)
             src_path = src_path.strip("/")
 
-            cmd = [
-                "edge",
-                "lsjson",
-                "--fast-list",
-                "--stat",
-                "--no-modtime",
-                "--config",
-                config_path,
-                f"{remote}:{src_path}",
-            ]
-            res = await cmd_exec(cmd)
+            cmd = f'edge lsjson --fast-list --stat --no-modtime --config {config_path} "{remote}:{src_path}"'
+            res = await cmd_exec(cmd, shell=True)
             if res[2] != 0:
                 if res[2] != -9:
                     msg = f"<b>Gagal mendapatkan link path Rclone</b>\n<b>Path :</b> <code>{remote}:{src_path}</code>\n\n<b>Stderr :</b>\n<code>{res[1][:4000]}</code>"
@@ -249,37 +240,11 @@ class Clone(TaskListener):
             if not flink:
                 return
             LOGGER.info(f"Cloning Done: {self.name}")
-            cmd1 = [
-                "edge",
-                "lsf",
-                "--fast-list",
-                "-R",
-                "--files-only",
-                "--config",
-                config_path,
-                destination,
-            ]
-            cmd2 = [
-                "edge",
-                "lsf",
-                "--fast-list",
-                "-R",
-                "--dirs-only",
-                "--config",
-                config_path,
-                destination,
-            ]
-            cmd3 = [
-                "edge",
-                "size",
-                "--fast-list",
-                "--json",
-                "--config",
-                config_path,
-                destination,
-            ]
+            cmd1 = f'edge lsf --fast-list -R --files-only --config {config_path} "{destination}"'
+            cmd2 = f'edge lsf --fast-list -R --dirs-only --config {config_path} "{destination}"'
+            cmd3 = f'edge size --fast-list --json --config {config_path} "{destination}"'
             res1, res2, res3 = await gather(
-                cmd_exec(cmd1), cmd_exec(cmd2), cmd_exec(cmd3)
+                cmd_exec(cmd1, shell=True), cmd_exec(cmd2, shell=True), cmd_exec(cmd3, shell=True)
             )
             if res1[2] != res2[2] != res3[2] != 0:
                 if res1[2] == -9:

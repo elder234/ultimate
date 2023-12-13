@@ -1,5 +1,6 @@
 from aiofiles.os import path as aiopath, remove as aioremove
 from asyncio import sleep, create_subprocess_exec
+from asyncio.subprocess import PIPE
 from secrets import token_urlsafe
 from os import walk, path as ospath
 from pyrogram.enums import ChatType
@@ -152,6 +153,12 @@ class TaskConfig:
                 self.link = await gdriveList(self).get_target_id("gdd")
                 if not is_gdrive_id(self.link):
                     raise ValueError(self.link)
+                
+            self.userTransmission = IS_PREMIUM_USER and (
+                self.user_dict.get("user_transmission")
+                or config_dict["USER_TRANSMISSION"]
+                and "user_transmission" not in self.user_dict
+            )
 
         if not self.isLeech:
             self.stopDuplicate = (
@@ -260,11 +267,6 @@ class TaskConfig:
                 self.user_dict.get("equal_splits")
                 or config_dict["EQUAL_SPLITS"]
                 and "equal_splits" not in self.user_dict
-            )
-            self.userTransmission = IS_PREMIUM_USER and (
-                self.user_dict.get("user_transmission")
-                or config_dict["USER_TRANSMISSION"]
-                and "user_transmission" not in self.user_dict
             )
             self.maxSplitSize = MAX_SPLIT_SIZE if self.userTransmission else 2097152000
             self.splitSize = min(self.splitSize, self.maxSplitSize)
@@ -445,7 +447,9 @@ class TaskConfig:
                             async with subprocess_lock:
                                 if self.suproc == "cancelled":
                                     return False
-                                self.suproc = await create_subprocess_exec(*cmd)
+                                self.suproc = await create_subprocess_exec(
+                                    *cmd, stderr=PIPE
+                                )
                             _, stderr = await self.suproc.communicate()
                             code = self.suproc.returncode
                             if code == -9:
@@ -487,7 +491,7 @@ class TaskConfig:
                 async with subprocess_lock:
                     if self.suproc == "cancelled":
                         return False
-                    self.suproc = await create_subprocess_exec(*cmd)
+                    self.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
                 _, stderr = await self.suproc.communicate()
                 code = self.suproc.returncode
                 if code == -9:
@@ -553,7 +557,7 @@ class TaskConfig:
         async with subprocess_lock:
             if self.suproc == "cancelled":
                 return False
-            self.suproc = await create_subprocess_exec(*cmd)
+            self.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
         _, stderr = await self.suproc.communicate()
         code = self.suproc.returncode
         if code == -9:
