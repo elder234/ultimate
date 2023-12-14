@@ -249,9 +249,13 @@ class TaskConfig:
                     or not member.privileges.can_delete_messages
                 ):
                     raise ValueError("<b>Kamu tidak memiliki ijin pada chat ini!</b>")
-            elif self.userTransmission and not self.isSuperChat:
+            elif (
+                self.userTransmission 
+                and not self.isSuperChat
+                and len(config_dict["LEECH_CHAT_ID"]) == 0
+            ):
                 raise ValueError(
-                    "<b>Gunakan SuperGroup untuk mengupload menggunakan User Session!</b>"
+                    "<b>Gunakan Super Group/Dump Channel untuk mengupload menggunakan User Session pada Private Chat!</b>"
                 )
             if self.splitSize:
                 if self.splitSize.isdigit():

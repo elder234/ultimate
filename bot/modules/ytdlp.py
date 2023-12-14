@@ -428,8 +428,7 @@ class YtDlp(TaskListener):
         except Exception as e:
             error = str(e).replace("<", " ").replace(">", " ")
             await sendMessage(
-                self.message, 
-                f"<b>Hai {self.tag} !</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{error}</code>"
+                self.message, COMMAND_USAGE["yt"][0], COMMAND_USAGE["yt"][1]
             )
             self.removeFromSameDir()
             return
