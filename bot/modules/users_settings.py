@@ -696,7 +696,7 @@ async def send_users_settings(bot, message):
         #     ):
         #         msg += kmsg + vmsg
         no = 0
-        msg = "<b>Pengaturan User</b>"
+        msg = "<b>Pengaturan Users/Groups</b>"
         for item, value in (user_data or {}).items():
             no += 1
             try:
@@ -704,9 +704,9 @@ async def send_users_settings(bot, message):
             except IndexError:
                 user = None
             if user:
-                msg += f"\n<b>{no}. User :</b> [{user.first_name or ''} {(user.last_name or '')}](tg://user?id={item})"
+                msg += f"\n<b>{no}. User :</b> <a href='tg://user?id={item}'>{(user.first_name or '')} {(user.last_name or '')}</a>"
             else:
-                msg += f"\n<b>{no}. {item}"
+                msg += f"\n<b>{no}. Chat :</b> {item}"
             for iset, vset in (value or {}).items():
                 msg += f"\n   - <b>{iset}</b> : <code>{vset}</code>"
             msg += "\n"
