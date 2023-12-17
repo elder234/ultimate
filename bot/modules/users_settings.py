@@ -699,8 +699,14 @@ async def send_users_settings(bot, message):
         msg = "<b>Pengaturan User</b>"
         for item, value in (user_data or {}).items():
             no += 1
-            user = await bot.get_users(item)
-            msg += f"\n<b>{no}. User :</b> [{(user.first_name or '')} {(user.last_name or '')}](tg://user?id={item})"
+            try:
+                user = await bot.get_users(item)
+            except IndexError:
+                user = None
+            if user:
+                msg += f"\n<b>{no}. User :</b> [{user.first_name or ''} {(user.last_name or '')}](tg://user?id={item})"
+            else:
+                msg += f"\n<b>{no}. {item}"
             for iset, vset in (value or {}).items():
                 msg += f"\n   - <b>{iset}</b> : <code>{vset}</code>"
             msg += "\n"
