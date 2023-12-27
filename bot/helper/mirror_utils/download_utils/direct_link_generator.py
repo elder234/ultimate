@@ -1281,7 +1281,6 @@ def send_cm(url):
 
 def tmpsend(url):
     match = search(r"https://tmpsend.com/(\w+)$", url)
-
     if match:
         file_id = match.group(1)
         header = f"Referer: https://tmpsend.com/thank-you?d={file_id}"
