@@ -69,6 +69,8 @@ def direct_link_generator(link: str):
             return send_cm(link)
         else:
             return alldebrid(link)
+    elif "tmpsend.com" in domain:
+        return tmpsend(link)
     elif "easyupload.io" in domain:
         return easyupload(link)
     elif "streamvid.net" in domain:
@@ -1275,6 +1277,18 @@ def send_cm(url):
     if len(details["contents"]) == 1:
         return (details["contents"][0]["url"], details["header"])
     return details
+
+
+def tmpsend(url):
+    match = search(r"https://tmpsend.com/(\w+)$", url)
+
+    if match:
+        file_id = match.group(1)
+        header = f"Referer: https://tmpsend.com/thank-you?d={file_id}"
+        download_link = f"https://tmpsend.com/download?d={file_id}"
+        return download_link, header
+    else:
+        raise DirectDownloadLinkException("ERROR: Direct Link tidak ditemukan!")
 
 
 def doods(url: str):
