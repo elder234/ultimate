@@ -127,7 +127,7 @@ class TgUploader:
             try:
                 if (
                     self._listener.userTransmission
-                    or self._listener.session == "user"
+                    and self._listener.session == "user"
                 ):
                     self._sent_msg = await user.send_message(
                         chat_id=self._listener.upDest,
@@ -149,7 +149,7 @@ class TgUploader:
                 return False
         elif (
             self._listener.userTransmission
-            or self._listener.session == "user"
+            and self._listener.session == "user"
         ):
             self._sent_msg = await user.get_messages(
                 chat_id=self._listener.message.chat.id, message_ids=self._listener.mid
