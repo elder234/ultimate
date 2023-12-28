@@ -5,7 +5,7 @@ from hashlib import sha256
 from http.cookiejar import MozillaCookieJar
 from json import loads
 from os import path as ospath
-from re import findall, match, search
+from re import findall, match, search, sub
 from time import sleep
 from urllib.parse import parse_qs, urlparse
 from uuid import uuid4
@@ -21,6 +21,7 @@ from bot.helper.ext_utils.status_utils import speed_string_to_bytes, get_readabl
 from bot.helper.ext_utils.links_utils import is_share_link
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 from bot.helper.ext_utils.help_messages import PASSWORD_ERROR_MESSAGE
+from bot.helper.telegram_helper.bot_commands import BotCommands
 
 
 _caches = {}
@@ -32,13 +33,48 @@ def direct_link_generator(link: str):
     domain = urlparse(link).hostname
     if not domain:
         raise DirectDownloadLinkException("ERROR: URL Salah!")
-    if "youtube.com" in domain or "youtu.be" in domain:
+    if any(
+        x in domain
+        for x in [
+            "youtube.com",
+            "youtu.be",
+            "instagram.com",
+            "tiktok.com",
+            "facebook.com",
+        ]
+    ):
         raise DirectDownloadLinkException(
-            "ERROR: Gunakan perintah YT-DLP untuk mengunduh Youtube!")
+            f"ERROR: Gunakan perintah YT-DLP ({BotCommands.YtdlCommand} atau {BotCommands.YtdlLeechCommand}) untuk Unduh/Leech Link ini!"
+        )
+    elif any(
+        x in domain
+        for x in [
+            "mega.nz",
+            "mega.co.nz",
+        ]
+    ):
+        raise DirectDownloadLinkException(
+            f"ERROR: Gunakan perintah JDownloader ({BotCommands.JdMirrorCommand} atau {BotCommands.JdLeechCommand}) untuk Unduh/Leech Link ini!"
+        )
+    elif any(
+        x in domain
+        for x in [
+            "devuploads.com",
+            "get.pixelexperience.org",
+            "arrowos.net"
+        ]
+    ):
+        raise DirectDownloadLinkException(
+            "ERROR: Link ini tidak dapat Unduh/Leech menggunakan Bot!"
+        )
+    elif "drive.usercontent.google.com" in domain:
+        raise DirectDownloadLinkException(
+            "ERROR: Link ini tidak bersifat Publik. Gunakan Link drive.google.com!"
+        )
+    elif match(r"https?://(bigota|hugeota)\.d\.miui\.com/\S+", link):
+        return bigota(link)
     elif "mediafire.com" in domain:
         return mediafire(link)
-    elif "uptobox.com" in domain:
-        return uptobox(link)
     elif "osdn.net" in domain:
         return osdn(link)
     elif "github.com" in domain:
@@ -1843,7 +1879,6 @@ def romsget(url):
             raise DirectDownloadLinkException(f"ERROR: Link File tidak ditemukan!")
 
 
-
 def hexupload(url):
     with Session() as session:
         try:
@@ -1872,3 +1907,8 @@ def hexupload(url):
         except:
             session.close()
             raise DirectDownloadLinkException(f"ERROR: Link File tidak ditemukan!")
+        
+ 
+def bigota(url):
+    direct_link = sub(r"https?://(bigota|hugeota)\.d\.miui\.com", "https://ks3orig.bigota.d.miui.com", url)
+    return direct_link
