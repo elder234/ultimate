@@ -11,6 +11,7 @@ from myjdapi.exception import (
     MYJDEmailInvalidException,
     MYJDErrorEmailNotConfirmedException,
 )
+
 from bot import config_dict, LOGGER, jd_lock, Intervals
 from bot.helper.ext_utils.bot_utils import (
     cmd_exec,
@@ -18,13 +19,14 @@ from bot.helper.ext_utils.bot_utils import (
     sync_to_async,
 )
 
+
 class JDownloader:
     def __init__(self):
         self.myjd = Myjdapi()
         self._username = ""
         self._password = ""
         self._device_name = ""
-        self.error = "JDownloader Credentials not provided!"
+        self.error = "JDownloader Credentials tidak ditemukan!"
         self.device = None
         self.myjd.set_app_key("mltb")
 
@@ -42,7 +44,7 @@ class JDownloader:
 
     @new_task
     async def boot(self):
-        await cmd_exec(["pkill", "-9", "safari"])
+        await cmd_exec(["pkill", "-9", "java"])
         self.device = None
         if config_dict["JD_EMAIL"] and config_dict["JD_PASS"]:
             self.error = "Connecting... Try agin after couple of seconds"
@@ -98,13 +100,13 @@ class JDownloader:
             MYJDErrorEmailNotConfirmedException,
         ) as err:
             self.error = f"{err}".strip()
-            LOGGER.info(f"Failed to connect with JDownloader! ERROR: {self.error}".strip())
+            LOGGER.info(f"Failed to connect with JDownloader! ERROR: {self.error}")
             self.device = None
             return
         except MYJDException as e:
             self.error = f"{e}".strip()
             LOGGER.info(
-                f"Failed to connect with JDownloader! Retrying... ERROR: {self.error}".strip()
+                f"Failed to connect with JDownloader! Retrying... ERROR: {self.error}"
             )
             sleep(10)
             return self.connect()
@@ -120,5 +122,6 @@ class JDownloader:
                     await sync_to_async(self.device.action, "/device/ping")
                 except:
                     pass
+
 
 jdownloader = JDownloader()
