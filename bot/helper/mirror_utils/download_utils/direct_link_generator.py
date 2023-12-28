@@ -44,7 +44,7 @@ def direct_link_generator(link: str):
         ]
     ):
         raise DirectDownloadLinkException(
-            f"ERROR: Gunakan perintah YT-DLP ({BotCommands.YtdlCommand} atau {BotCommands.YtdlLeechCommand}) untuk Unduh/Leech Link ini!"
+            f"ERROR: Gunakan perintah YT-DLP ({BotCommands.YtdlCommand[0]} atau {BotCommands.YtdlLeechCommand[0]}) untuk Unduh/Leech Link ini!"
         )
     elif any(
         x in domain
@@ -54,7 +54,7 @@ def direct_link_generator(link: str):
         ]
     ):
         raise DirectDownloadLinkException(
-            f"ERROR: Gunakan perintah JDownloader ({BotCommands.JdMirrorCommand} atau {BotCommands.JdLeechCommand}) untuk Unduh/Leech Link ini!"
+            f"ERROR: Gunakan perintah JDownloader ({BotCommands.JdMirrorCommand[0]} atau {BotCommands.JdLeechCommand[0]}) untuk Unduh/Leech Link ini!"
         )
     elif any(
         x in domain
