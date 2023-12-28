@@ -264,6 +264,7 @@ class YtDlp(TaskListener):
         message,
         _=None,
         isLeech=False,
+        __=None,
         sameDir=None,
         bulk=None,
         multiTag=None,
@@ -404,15 +405,18 @@ class YtDlp(TaskListener):
 
         options = {"usenetrc": True, "cookiefile": "cookies.txt"}
         if opt:
-            yt_opt = opt.split("|")
-            for ytopt in yt_opt:
+            yt_opts = opt.split("|")
+            for ytopt in yt_opts:
                 key, value = map(str.strip, ytopt.split(":", 1))
+                if key == "postprocessors":
+                    continue
                 if key == "format":
-                    if self.select:
-                        qual = ""
-                    elif value.startswith("ba/b-"):
-                        qual = value
-                        continue
+                    if not self.select:
+                        if value.startswith("ba/b-"):
+                            qual = value
+                            continue
+                        else:
+                            qual = value
                 if value.startswith("^"):
                     if "." in value or value == "^inf":
                         value = float(value.split("^")[1])
@@ -427,13 +431,13 @@ class YtDlp(TaskListener):
                 ):
                     value = eval(value)
                 options[key] = value
-
         options["playlist_items"] = "0"
 
         try:
             result = await sync_to_async(extract_info, self.link, options)
         except Exception as e:
             error = str(e).replace("<", " ").replace(">", " ")
+            LOGGER.error(error)
             await sendMessage(
                 self.message, COMMAND_USAGE["yt"][0], COMMAND_USAGE["yt"][1]
             )
@@ -441,9 +445,6 @@ class YtDlp(TaskListener):
             return
         finally:
             self.run_multi(input_list, folder_name, YtDlp)
-
-        if not self.select and (not qual and "format" in options):
-            qual = options["format"]
 
         if not qual:
             qual = await YtSelection(self).get_quality(result)
@@ -455,7 +456,6 @@ class YtDlp(TaskListener):
         playlist = "entries" in result
         ydl = YoutubeDLHelper(self)
         await ydl.add_download(path, qual, playlist, opt)
-        self.removeFromSameDir()
 
 
 async def ytdl(client, message):

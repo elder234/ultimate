@@ -1,15 +1,32 @@
-from pyrogram.handlers import MessageHandler
-from pyrogram.filters import command
+from asyncio import sleep
 from base64 import b64encode
 from re import match as re_match
 from aiofiles.os import path as aiopath
-from asyncio import sleep
+from myjdapi.exception import MYJDException
+from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler
 
 from bot import bot, DOWNLOAD_DIR, LOGGER
+from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
+from bot.helper.mirror_utils.download_utils.direct_downloader import add_direct_download
+from bot.helper.mirror_utils.download_utils.aria2_download import add_aria2c_download
+from bot.helper.mirror_utils.download_utils.gd_download import add_gd_download
+from bot.helper.mirror_utils.download_utils.qbit_download import add_qb_torrent
+from bot.helper.mirror_utils.download_utils.rclone_download import add_rclone_download
+from bot.helper.mirror_utils.download_utils.jd_download import add_jd_download
+from bot.helper.telegram_helper.bot_commands import BotCommands
+from bot.helper.telegram_helper.filters import CustomFilters
+from bot.helper.telegram_helper.message_utils import editMessage, deleteMessage, sendMessage, get_tg_link_message
+from bot.helper.listeners.task_listener import TaskListener
+from bot.helper.mirror_utils.download_utils.telegram_download import (
+    TelegramDownloadHelper,
+)
+from bot.helper.mirror_utils.download_utils.direct_link_generator import (
+    direct_link_generator,
+)
 from bot.helper.ext_utils.links_utils import (
     is_url,
     is_magnet,
-    is_mega_link,
     is_gdrive_link,
     is_rclone_path,
     is_telegram_link,
@@ -22,28 +39,6 @@ from bot.helper.ext_utils.bot_utils import (
     arg_parser,
     COMMAND_USAGE,
 )
-from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
-from bot.helper.mirror_utils.download_utils.direct_downloader import add_direct_download
-from bot.helper.mirror_utils.download_utils.aria2_download import add_aria2c_download
-from bot.helper.mirror_utils.download_utils.gd_download import add_gd_download
-from bot.helper.mirror_utils.download_utils.qbit_download import add_qb_torrent
-from bot.helper.mirror_utils.download_utils.mega_download import add_mega_download
-from bot.helper.mirror_utils.download_utils.rclone_download import add_rclone_download
-from bot.helper.mirror_utils.download_utils.direct_link_generator import (
-    direct_link_generator,
-)
-from bot.helper.mirror_utils.download_utils.telegram_download import (
-    TelegramDownloadHelper,
-)
-from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import (
-    sendMessage,
-    editMessage,
-    deleteMessage,
-    get_tg_link_message
-)
-from bot.helper.listeners.task_listener import TaskListener
 
 
 class Mirror(TaskListener):
@@ -53,6 +48,7 @@ class Mirror(TaskListener):
         message,
         isQbit=False,
         isLeech=False,
+        isJd=False,
         sameDir=None,
         bulk=None,
         multiTag=None,
@@ -71,6 +67,7 @@ class Mirror(TaskListener):
         super().__init__()
         self.isQbit = isQbit
         self.isLeech = isLeech
+        self.isJd = isJd
 
     @new_task
     async def newEvent(self):
@@ -300,7 +297,7 @@ class Mirror(TaskListener):
             return
 
         if (
-            not is_mega_link(self.link)
+            not self.isJd
             and not self.isQbit
             and not is_magnet(self.link)
             and not is_rclone_path(self.link)
@@ -345,12 +342,17 @@ class Mirror(TaskListener):
             await TelegramDownloadHelper(self).add_download(reply_to, f"{path}/")
         elif isinstance(self.link, dict):
             await add_direct_download(self, path)
+        elif self.isJd:
+            try:
+                await add_jd_download(self, path)
+            except (Exception, MYJDException) as e:
+                await sendMessage(f"{e}".strip())
+                self.removeFromSameDir()
+                return
         elif is_rclone_path(self.link):
             await add_rclone_download(self, f"{path}/")
         elif is_gdrive_link(self.link) or is_gdrive_id(self.link):
             await add_gd_download(self, path)
-        elif is_mega_link(self.link):
-            await add_mega_download(self, f"{path}/")
         elif self.isQbit:
             await add_qb_torrent(self, path, ratio, seed_time)
         else:
@@ -362,8 +364,6 @@ class Mirror(TaskListener):
                     f" authorization: Basic {b64encode(auth.encode()).decode('ascii')}"
                 )
             await add_aria2c_download(self, path, headers, ratio, seed_time)
-
-        self.removeFromSameDir()
 
 
 async def mirror(client, message):
@@ -380,6 +380,14 @@ async def leech(client, message):
 
 async def qb_leech(client, message):
     Mirror(client, message, isQbit=True, isLeech=True).newEvent()
+
+
+async def jd_mirror(client, message):
+    Mirror(client, message, isJd=True).newEvent()
+
+
+async def jd_leech(client, message):
+    Mirror(client, message, isLeech=True, isJd=True).newEvent()
 
 
 bot.add_handler(
@@ -411,6 +419,22 @@ bot.add_handler(
         qb_leech, 
         filters=command(
             BotCommands.QbLeechCommand
+        ) & CustomFilters.authorized
+    )
+)
+bot.add_handler(
+    MessageHandler(
+        jd_mirror,
+        filters=command(
+            BotCommands.JdMirrorCommand
+        ) & CustomFilters.authorized,
+    )
+)
+bot.add_handler(
+    MessageHandler(
+        jd_leech, 
+        filters=command(
+            BotCommands.JdLeechCommand
         ) & CustomFilters.authorized
     )
 )
