@@ -32,7 +32,7 @@ def direct_link_generator(link: str):
     """ direct links generator """
     domain = urlparse(link).hostname
     if not domain:
-        raise DirectDownloadLinkException("ERROR: URL Salah!")
+        raise DirectDownloadLinkException("ERROR: Link salah!")
     if any(
         x in domain
         for x in [
@@ -44,7 +44,7 @@ def direct_link_generator(link: str):
         ]
     ):
         raise DirectDownloadLinkException(
-            f"ERROR: Gunakan perintah YT-DLP ({BotCommands.YtdlCommand[0]} atau {BotCommands.YtdlLeechCommand[0]}) untuk Unduh/Leech Link ini!"
+            f"ERROR: Gunakan perintah <b>YT-DLP</b> (<code>/{BotCommands.YtdlCommand[0]}</code> atau <code>/{BotCommands.YtdlLeechCommand[0]}</code>) untuk Unduh/Leech Link ini!"
         )
     elif any(
         x in domain
@@ -54,7 +54,7 @@ def direct_link_generator(link: str):
         ]
     ):
         raise DirectDownloadLinkException(
-            f"ERROR: Gunakan perintah JDownloader ({BotCommands.JdMirrorCommand[0]} atau {BotCommands.JdLeechCommand[0]}) untuk Unduh/Leech Link ini!"
+            f"ERROR: Gunakan perintah <b>JDownloader</b> (<code>/{BotCommands.JdMirrorCommand[0]}</code> atau <code>/{BotCommands.JdLeechCommand[0]}</code>) untuk Unduh/Leech Link ini!"
         )
     elif any(
         x in domain
