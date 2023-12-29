@@ -277,7 +277,7 @@ async def log(_, message):
 
 help_string = f"""
 <b>Daftar Perintah</b> <code>@{bot.me.username}</code>
-<code>/{BotCommands.StartCommand[0]}</code> : Mulai Bot.
+<code>/{BotCommands.StartCommand}</code> : Mulai Bot.
 <code>/{BotCommands.HelpCommand[0]}</code> atau <code>/{BotCommands.HelpCommand[1]}</code> : Cek semua perintah Bot.
 <code>/{BotCommands.MirrorCommand[0]}</code> atau <code>/{BotCommands.MirrorCommand[1]}</code> : Mirror ke Google Drive/Cloud menggunakan Aria2.
 <code>/{BotCommands.QbMirrorCommand[0]}</code> atau <code>/{BotCommands.QbMirrorCommand[1]}</code> : Mirror ke Google Drive/Cloud menggunakan qBittorrent.
