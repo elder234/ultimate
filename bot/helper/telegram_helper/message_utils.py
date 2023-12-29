@@ -45,6 +45,49 @@ async def editMessage(message, text, buttons=None, block=True):
         return str(e)
 
 
+async def copyMessage(chat_id:int, from_chat_id:int, message_id=int, message_thread_id=None, is_media_group=False):
+    try:
+        if is_media_group:
+            await bot.copy_media_group(
+                chat_id=chat_id, 
+                from_chat_id=from_chat_id, 
+                message_id=message_id, 
+                message_thread_id=message_thread_id
+            )
+        else:
+            await bot.copy_message(
+                chat_id=chat_id, 
+                from_chat_id=from_chat_id, 
+                message_id=message_id, 
+                message_thread_id=message_thread_id
+            )
+    except FloodWait as f:
+        LOGGER.warning(str(f))
+        await sleep(f.value * 1.2)
+        return await copyMessage(chat_id, from_chat_id, message_id, message_thread_id, is_media_group)
+    except Exception as e:
+        LOGGER.error(str(e))
+        return str(e)
+
+
+async def forwardMessage(chat_id:int, from_chat_id:int, message_id=int, message_thread_id=None, unquote=True):
+    try:
+        await bot.forward_messages(
+                chat_id=chat_id, 
+                from_chat_id=from_chat_id, 
+                message_id=message_id, 
+                message_thread_id=message_thread_id,
+                drop_author=unquote
+            )
+    except FloodWait as f:
+        LOGGER.warning(str(f))
+        await sleep(f.value * 1.2)
+        return await forwardMessage(chat_id, from_chat_id, message_id, message_thread_id, unquote)
+    except Exception as e:
+        LOGGER.error(str(e))
+        return str(e)
+
+
 async def sendFile(message, file, caption=None):
     try:
         return await message.reply_document(

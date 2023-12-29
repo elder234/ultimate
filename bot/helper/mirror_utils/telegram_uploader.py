@@ -25,8 +25,8 @@ from tenacity import (
 from bot import config_dict, bot, user
 from bot.helper.ext_utils.files_utils import clean_unwanted, is_archive, get_base_name
 from bot.helper.ext_utils.bot_utils import sync_to_async
-from bot.helper.telegram_helper.message_utils import deleteMessage
-from bot.helper.ext_utils.media_utils import (
+from bot.helper.telegram_helper.message_utils import deleteMessage, copyMessage, forwardMessage
+from bot.helper.ext_utils.media_utils import (  
     get_media_info,
     get_document_type,
     create_thumbnail,
@@ -540,7 +540,7 @@ class TgUploader:
             ):
                 try:
                     if self._forwardChatId != "":
-                        await bot.copy_message(
+                        await copyMessage(
                             chat_id=self._forwardChatId, 
                             from_chat_id=self._sent_msg.chat.id, 
                             message_id=self._sent_msg.id, 
