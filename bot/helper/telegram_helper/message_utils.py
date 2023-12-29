@@ -45,6 +45,25 @@ async def editMessage(message, text, buttons=None, block=True):
         return str(e)
 
 
+async def customSendMessage(client, chat_id:int, text:str, message_thread_id=None, buttons=None):
+    try:
+        return await client.send_message(
+            chat_id=chat_id,
+            text=text,
+            disable_web_page_preview=True,
+            disable_notification=True,
+            message_thread_id=message_thread_id,
+            reply_markup=buttons
+        )
+    except FloodWait as f:
+        LOGGER.warning(str(f))
+        await sleep(f.value * 1.2)
+        return await customSendMessage(client, chat_id, text, message_thread_id, buttons)
+    except Exception as e:
+        LOGGER.error(str(e))
+        raise Exception(e)
+    
+
 async def copyMessage(chat_id:int, from_chat_id:int, message_id=int, message_thread_id=None, is_media_group=False):
     try:
         if is_media_group:
@@ -67,7 +86,7 @@ async def copyMessage(chat_id:int, from_chat_id:int, message_id=int, message_thr
         return await copyMessage(chat_id, from_chat_id, message_id, message_thread_id, is_media_group)
     except Exception as e:
         LOGGER.error(str(e))
-        return str(e)
+        raise Exception(e)
 
 
 async def forwardMessage(chat_id:int, from_chat_id:int, message_id=int, message_thread_id=None, unquote=True):
@@ -85,7 +104,7 @@ async def forwardMessage(chat_id:int, from_chat_id:int, message_id=int, message_
         return await forwardMessage(chat_id, from_chat_id, message_id, message_thread_id, unquote)
     except Exception as e:
         LOGGER.error(str(e))
-        return str(e)
+        raise Exception(e)
 
 
 async def sendFile(message, file, caption=None):

@@ -25,7 +25,7 @@ from tenacity import (
 from bot import config_dict, bot, user
 from bot.helper.ext_utils.files_utils import clean_unwanted, is_archive, get_base_name
 from bot.helper.ext_utils.bot_utils import sync_to_async
-from bot.helper.telegram_helper.message_utils import deleteMessage, copyMessage, forwardMessage
+from bot.helper.telegram_helper.message_utils import deleteMessage, customSendMessage, copyMessage
 from bot.helper.ext_utils.media_utils import (  
     get_media_info,
     get_document_type,
@@ -129,21 +129,16 @@ class TgUploader:
                     self._listener.userTransmission
                     and self._listener.session == "user"
                 ):
-                    self._sent_msg = await user.send_message(
-                        chat_id=self._listener.upDest,
-                        text=msg,
-                        disable_web_page_preview=True,
-                        disable_notification=True,
-                        message_thread_id=self._listener.threadId
-                    )
+                    client = user
                 else:
-                    self._sent_msg = await self._listener.client.send_message(
-                        chat_id=self._listener.upDest,
-                        text=msg,
-                        disable_web_page_preview=True,
-                        disable_notification=True,
-                        message_thread_id=self._listener.threadId
-                    )
+                    client = self._listener.client
+                    
+                self._sent_msg = await customSendMessage(
+                    client=client,
+                    chat_id=self._listener.upDest,
+                    text=msg,
+                    message_thread_id=self._listener.threadId                    
+                )
             except Exception as e:
                 await self._listener.onUploadError(str(e))
                 return False

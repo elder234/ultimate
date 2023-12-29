@@ -28,6 +28,7 @@ from bot.helper.telegram_helper.message_utils import (
     sendMessage,
     delete_status,
     update_status_message,
+    customSendMessage
 )
 from bot import (
     bot,
@@ -338,13 +339,12 @@ class TaskListener(TaskConfig):
                     LOG_CHAT_THREAD_ID= int(LOG_CHAT_THREAD_ID)
                         
                 try:
-                    await bot.send_message(
+                    await customSendMessage(
+                        client=bot,
                         chat_id=LOG_CHAT_ID,
                         text=msg,
-                        disable_web_page_preview=True,
-                        disable_notification=True,
                         message_thread_id=LOG_CHAT_THREAD_ID,
-                        reply_markup=button
+                        buttons=button
                     )
                 except Exception as e:
                     LOGGER.error(f"Failed when forward message => {e}")
