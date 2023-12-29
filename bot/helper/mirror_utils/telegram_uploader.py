@@ -25,7 +25,15 @@ from tenacity import (
 from bot import config_dict, bot, user
 from bot.helper.ext_utils.files_utils import clean_unwanted, is_archive, get_base_name
 from bot.helper.ext_utils.bot_utils import sync_to_async
-from bot.helper.telegram_helper.message_utils import deleteMessage, customSendMessage, copyMessage
+from bot.helper.telegram_helper.message_utils import (
+    deleteMessage, 
+    copyMessage, 
+    customSendMessage, 
+    customSendDocument, 
+    customSendVideo, 
+    customSendAudio, 
+    customSendPhoto
+)
 from bot.helper.ext_utils.media_utils import (  
     get_media_info,
     get_document_type,
@@ -422,15 +430,25 @@ class TgUploader:
 
                 if self._is_cancelled:
                     return
-                self._sent_msg = await self._sent_msg.reply_document(
+                
+                # self._sent_msg = await self._sent_msg.reply_document(
+                #     document=self._up_path,
+                #     quote=True,
+                #     thumb=thumb,
+                #     caption=cap_mono,
+                #     force_document=True,
+                #     disable_notification=True,
+                #     progress=self._upload_progress,
+                # )
+                
+                self._sent_msg = await customSendDocument(
+                    client=self._sent_msg,
                     document=self._up_path,
-                    quote=True,
                     thumb=thumb,
                     caption=cap_mono,
-                    force_document=True,
-                    disable_notification=True,
-                    progress=self._upload_progress,
+                    progress=self._upload_progress
                 )
+                
             elif is_video:
                 if self._listener.screenShots:
                     await self._send_screenshots()
@@ -461,46 +479,83 @@ class TgUploader:
                         new_path = f"{ospath.splitext(self._up_path)[0]}.mp4"
                         await rename(self._up_path, new_path)
                         self._up_path = new_path
+                        
                 if self._is_cancelled:
                     return
-                self._sent_msg = await self._sent_msg.reply_video(
+                
+                # self._sent_msg = await self._sent_msg.reply_video(
+                #     video=self._up_path,
+                #     quote=True,
+                #     caption=cap_mono,
+                #     duration=duration,
+                #     width=width,
+                #     height=height,
+                #     thumb=thumb,
+                #     supports_streaming=True,
+                #     disable_notification=True,
+                #     progress=self._upload_progress,
+                # )
+                
+                self._sent_msg = await customSendVideo(
+                    client=self._sent_msg,
                     video=self._up_path,
-                    quote=True,
                     caption=cap_mono,
                     duration=duration,
                     width=width,
                     height=height,
                     thumb=thumb,
-                    supports_streaming=True,
-                    disable_notification=True,
-                    progress=self._upload_progress,
+                    progress=self._upload_progress
                 )
+                
             elif is_audio:
                 key = "audios"
                 duration, artist, title = await get_media_info(self._up_path)
+                
                 if self._is_cancelled:
                     return
-                self._sent_msg = await self._sent_msg.reply_audio(
+                
+                # self._sent_msg = await self._sent_msg.reply_audio(
+                #     audio=self._up_path,
+                #     quote=True,
+                #     caption=cap_mono,
+                #     duration=duration,
+                #     performer=artist,
+                #     title=title,
+                #     thumb=thumb,
+                #     disable_notification=True,
+                #     progress=self._upload_progress,
+                # )
+
+                self._sent_msg = await customSendAudio(
+                    client=self._sent_msg,
                     audio=self._up_path,
-                    quote=True,
                     caption=cap_mono,
                     duration=duration,
                     performer=artist,
                     title=title,
                     thumb=thumb,
-                    disable_notification=True,
-                    progress=self._upload_progress,
+                    progress=self._upload_progress
                 )
+
             else:
                 key = "photos"
+                
                 if self._is_cancelled:
                     return
-                self._sent_msg = await self._sent_msg.reply_photo(
+                
+                # self._sent_msg = await self._sent_msg.reply_photo(
+                #     photo=self._up_path,
+                #     quote=True,
+                #     caption=cap_mono,
+                #     disable_notification=True,
+                #     progress=self._upload_progress,
+                # )
+
+                self._sent_msg = await customSendPhoto(
+                    client=self._sent_msg,
                     photo=self._up_path,
-                    quote=True,
                     caption=cap_mono,
-                    disable_notification=True,
-                    progress=self._upload_progress,
+                    progress=self._upload_progress
                 )
 
             if (

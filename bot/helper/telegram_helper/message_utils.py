@@ -43,26 +43,7 @@ async def editMessage(message, text, buttons=None, block=True):
     except Exception as e:
         LOGGER.error(str(e))
         return str(e)
-
-
-async def customSendMessage(client, chat_id:int, text:str, message_thread_id=None, buttons=None):
-    try:
-        return await client.send_message(
-            chat_id=chat_id,
-            text=text,
-            disable_web_page_preview=True,
-            disable_notification=True,
-            message_thread_id=message_thread_id,
-            reply_markup=buttons
-        )
-    except FloodWait as f:
-        LOGGER.warning(str(f))
-        await sleep(f.value * 1.2)
-        return await customSendMessage(client, chat_id, text, message_thread_id, buttons)
-    except Exception as e:
-        LOGGER.error(str(e))
-        raise Exception(e)
-    
+   
 
 async def copyMessage(chat_id:int, from_chat_id:int, message_id=int, message_thread_id=None, is_media_group=False):
     try:
@@ -350,3 +331,106 @@ async def sendStatusMessage(msg, user_id=0):
         Intervals["status"][sid] = setInterval(
             config_dict["STATUS_UPDATE_INTERVAL"], update_status_message, sid
         )
+
+
+# NOTE: Custom by Me, if You dont need it, just ignore or delete from this line ^^
+async def customSendMessage(client, chat_id:int, text:str, message_thread_id=None, buttons=None):
+    try:
+        return await client.send_message(
+            chat_id=chat_id,
+            text=text,
+            disable_web_page_preview=True,
+            disable_notification=True,
+            message_thread_id=message_thread_id,
+            reply_markup=buttons
+        )
+    except FloodWait as f:
+        LOGGER.warning(str(f))
+        await sleep(f.value * 1.2)
+        return await customSendMessage(client, chat_id, text, message_thread_id, buttons)
+    except Exception as e:
+        LOGGER.error(str(e))
+        raise Exception(e)
+
+
+async def customSendDocument(client, document, thumb, caption, progress):
+    try:
+        return await client.reply_document(
+            document=document,
+            quote=True,
+            thumb=thumb,
+            caption=caption,
+            force_document=True,
+            disable_notification=True,
+            progress=progress
+        )
+    except FloodWait as f:
+        LOGGER.warning(str(f))
+        await sleep(f.value * 1.2)
+        return await customSendDocument(client, document, thumb, caption, progress)
+    except Exception as e:
+        LOGGER.error(str(e))
+        raise Exception(e)
+
+
+async def customSendVideo(client, video, caption, duration, width, height, thumb, progress):
+    try:
+        return await client.reply_video(
+            video=video,
+            quote=True,
+            caption=caption,
+            duration=duration,
+            width=width,
+            height=height,
+            thumb=thumb,
+            supports_streaming=True,
+            disable_notification=True,
+            progress=progress
+        )
+    except FloodWait as f:
+        LOGGER.warning(str(f))
+        await sleep(f.value * 1.2)
+        return await customSendVideo(client, video, caption, duration, width, height, thumb, progress)
+    except Exception as e:
+        LOGGER.error(str(e))
+        raise Exception(e)
+
+
+async def customSendAudio(client, audio, caption, duration, performer, title, thumb, progress):
+    try:
+        return await client.reply_audio(
+            audio=audio,
+            quote=True,
+            caption=caption,
+            duration=duration,
+            performer=performer,
+            title=title,
+            thumb=thumb,
+            disable_notification=True,
+            progress=progress
+        )
+    except FloodWait as f:
+        LOGGER.warning(str(f))
+        await sleep(f.value * 1.2)
+        return await customSendAudio(client, audio, caption, duration, performer, title, thumb, progress)
+    except Exception as e:
+        LOGGER.error(str(e))
+        raise Exception(e)
+
+
+async def customSendPhoto(client, photo, caption, progress):
+    try:
+        return await client.reply_photo(
+            photo=photo,
+            quote=True,
+            caption=caption,
+            disable_notification=True,
+            progress=progress
+        )
+    except FloodWait as f:
+        LOGGER.warning(str(f))
+        await sleep(f.value * 1.2)
+        return await customSendPhoto(client, photo, caption, progress)
+    except Exception as e:
+        LOGGER.error(str(e))
+        raise Exception(e)
