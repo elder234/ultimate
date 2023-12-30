@@ -92,7 +92,7 @@ try:
     Version.ga = check_output(["pip show google-api-python-client | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
     Version.jd = check_output(["pip show myjdapi | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
     Version.jv = check_output(["safari --version"], shell=True).decode().split(" ", 1)[1].split("\n", 1)[0]
-    Version.p7 = check_output(["7z | grep Version"], shell=True).decode().split(" ")[2]
+    Version.p7 = check_output(["7z | grep 7-Zip"], shell=True).decode().split(" ")[2]
     Version.pr = __version__
     Version.py = check_output(["python --version"], shell=True).decode().split()[-1]
     Version.rc = check_output(["edge --version"], shell=True).decode().split("\n")[0].split(" ")[1]
