@@ -558,8 +558,10 @@ def get_client():
     return qbClient(
         host="localhost", 
         port=8090, 
-        FORCE_SCHEME_FROM_HOST=True, 
-        # VERIFY_WEBUI_CERTIFICATE=False, 
+        username="admin",
+        password="adminadmin",
+        FORCE_SCHEME_FROM_HOST=False, 
+        VERIFY_WEBUI_CERTIFICATE=False, 
         REQUESTS_ARGS={"timeout": (30, 60)}
     )
 
