@@ -556,7 +556,7 @@ Popen(["python3", "alive.py"])
 
 def get_client():
     return qbClient(
-        host="localhost", 
+        host="http://localhost", 
         port=8090, 
         username="admin",
         password="adminadmin",
