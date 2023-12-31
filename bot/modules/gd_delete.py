@@ -47,6 +47,6 @@ bot.add_handler(
         deletefile,
         filters=command(
             BotCommands.DeleteCommand
-        ) & CustomFilters.authorized,
+        ) & CustomFilters.sudo
     )
 )
