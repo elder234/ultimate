@@ -67,6 +67,7 @@ class YoutubeDLHelper:
             "writethumbnail": True,
             "trim_file_name": 220,
             "ffmpeg_location": "/usr/bin/opera",
+            "ffmpeg_location": "/usr/bin/opera-mini",
             "retry_sleep_functions": {
                 "http": lambda n: 3,
                 "fragment": lambda n: 3,
