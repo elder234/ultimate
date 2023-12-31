@@ -42,7 +42,7 @@ async def is_multi_streams(path):
     try:
         result = await cmd_exec(
             [
-                "opera-mini",
+                "ffprobe",
                 "-hide_banner",
                 "-loglevel",
                 "error",
@@ -75,7 +75,7 @@ async def get_media_info(path):
     try:
         result = await cmd_exec(
             [
-                "opera-mini",
+                "ffprobe",
                 "-hide_banner",
                 "-loglevel",
                 "error",
@@ -117,7 +117,7 @@ async def get_document_type(path):
     try:
         result = await cmd_exec(
             [
-                "opera-mini",
+                "ffprobe",
                 "-hide_banner",
                 "-loglevel",
                 "error",
