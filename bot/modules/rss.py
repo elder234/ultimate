@@ -14,9 +14,9 @@ from bot import scheduler, rss_dict, LOGGER, DATABASE_URL, config_dict, bot
 from bot.helper.telegram_helper.message_utils import (
     sendMessage,
     editMessage,
-    sendRss,
     sendFile,
     deleteMessage,
+    customSendRss
 )
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
@@ -728,7 +728,7 @@ async def rssMonitor():
                             feed_msg += f"<b>Tanggal Dipublish :</b>\n<code>{pub_date}</code>\n\n"
                         # feed_msg += f"<b>Tag :</b> {data['tag']} <code>{user}</code>\n\n"
                         feed_msg += f"#{title}"
-                    await sendRss(feed_msg)
+                    await customSendRss(feed_msg)
                     feed_count += 1
                 async with rss_dict_lock:
                     if user not in rss_dict or not rss_dict[user].get(title, False):

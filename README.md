@@ -5,16 +5,25 @@ This Telegram Bot, based on [python-aria-mirror-bot](https://github.com/lzzy12/p
 ## Docker Images
 
 - arakurumi/mltb:heroku
-  Small, Lightweight and Minimalist
-  Based on Alpine Edge with Heroku Bypass
+
+```
+Small, Lightweight and Minimalist
+Based on Alpine Edge with Heroku Bypass
+```
 
 - arakurumi/mltb:alpine
-  Based on Alpine Edge with Heroku Bypass
-  Include some cool apps like Bento4, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager
+
+```
+Based on Alpine Edge with Heroku Bypass
+Include some cool apps like Bento4, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager
+```
 
 - arakurumi/mltb:ubuntu
-  Based on Ubuntu 22.04 with Heroku Bypass
-  Include some cool apps like AniDL, Bento4, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager
+
+```
+Based on Ubuntu 22.04 with Heroku Bypass
+Include some cool apps like AniDL, Bento4, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager
+```
 
 ## qBittorrent
 
@@ -268,8 +277,8 @@ Fill up rest of the fields. Meaning of each field is discussed below. **NOTE**: 
 ### RSS
 
 - `RSS_DELAY`: Time in seconds for rss refresh interval. Recommended `600` second at least. Default is `600` in sec. `Int`
-- `RSS_CHAT`: Chat ID/USERNAME where rss links will be sent. If you want message to be sent to the channel then add channel id. Add `-100` before channel id. `Int`|`Str`
-  - **RSS NOTES**: `RSS_CHAT` is required, otherwise monitor will not work. You must use `USER_STRING_SESSION` --OR-- _CHANNEL_. If using channel then bot should be added in both channel and group(linked to channel) and `RSS_CHAT` is the channel id, so messages sent by the bot to channel will be forwarded to group. Otherwise with `USER_STRING_SESSION` add group id for `RSS_CHAT`. If `DATABASE_URL` not added you will miss the feeds while bot offline.
+- `RSS_CHAT_ID`: Chat ID/USERNAME where rss links will be sent. If you want message to be sent to the channel then add channel id. Add `-100` before channel id. `Int`|`Str`
+  - **RSS NOTES**: `RSS_CHAT_ID` is required, otherwise monitor will not work. You must use `USER_STRING_SESSION` --OR-- _CHANNEL_. If using channel then bot should be added in both channel and group(linked to channel) and `RSS_CHAT_ID` is the channel id, so messages sent by the bot to channel will be forwarded to group. Otherwise with `USER_STRING_SESSION` add group id for `RSS_CHAT_ID`. If `DATABASE_URL` not added you will miss the feeds while bot offline.
 
 ### Queue System
 

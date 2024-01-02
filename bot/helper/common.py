@@ -287,9 +287,8 @@ class TaskConfig:
                     self.upDest = self.upDest.lstrip("u:")
                     self.userTransmission = IS_PREMIUM_USER
                 if ":" in self.upDest:
-                    self._upDest = self.upDest
-                    self.upDest = self._upDest.split(":")[0]
-                    self.threadId = self._upDest.split(":")[1]
+                    self.threadId = self.upDest.split(":")[1]
+                    self.upDest = self.upDest.split(":")[0]
                 if (
                     self.upDest.isdigit() 
                     or self.upDest.startswith("-")
