@@ -702,6 +702,7 @@ async def rssMonitor():
                         
                         if "-" in item_title:
                             p2p_group = re_findall(r"(\-\w+)", item_title)[-1]
+                            
                         # Add Your Custom Here
                         
                         if "nyaa" in url.lower():
