@@ -701,7 +701,11 @@ async def rssMonitor():
                         item_title = item_title.replace('>', '').replace('<', '')
                         
                         if "-" in item_title:
-                            p2p_group = item_title.split("-")[-1]     
+                            if "WEB" in item_title:
+                                p2p_name = item_title.replace("WEB-DL", "WEB_DL")
+                                p2p_group = p2p_name.split("-")[-1]
+                                if " " in p2p_group:
+                                    p2p_group = p2p_group.split(" ")[0]  
                                                
                         # Add Your Custom Here
                         
@@ -736,8 +740,6 @@ async def rssMonitor():
                                 size = description.split("Size: ")[-1].split("Uploaded: ")[0]
                                 description = f"""
 <b>Seed :</b> <code>{description.split("Seed: ")[-1].split(" |")[0]}</code> | <b>Leech :</b> <code>{description.split("Leech: ")[-1].split(" |")[0]}</code> | <b>Completed :</b> <code>{description.split("Completed: ")[-1].split("Uploader: ")[0]}</code>
-
-<b>Rip Type :</b> <code>{description.split("Rip Type: ")[-1].split("Video Quality: ")[0]}</code>
 
 <b>Oleh :</b> <code>{description.split("Uploader: ")[-1].split("Rip Type: ")[0]}</code>"""
 
