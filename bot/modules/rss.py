@@ -695,6 +695,7 @@ async def rssMonitor():
                         if not feed_msg.startswith("/"):
                             feed_msg = f"/{feed_msg}"
                     else:
+                        p2p_name = None
                         p2p_group = None
                         private_tracker = False
                         
