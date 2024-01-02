@@ -145,7 +145,7 @@ class TgUploader:
                     client=client,
                     chat_id=self._listener.upDest,
                     text=msg,
-                    message_thread_id=self._listener.threadId                    
+                    message_thread_id=self._listener.threadId
                 )
             except Exception as e:
                 await self._listener.onUploadError(str(e))
@@ -155,7 +155,8 @@ class TgUploader:
             and self._listener.session == "user"
         ):
             self._sent_msg = await user.get_messages(
-                chat_id=self._listener.message.chat.id, message_ids=self._listener.mid
+                chat_id=self._listener.message.chat.id, 
+                message_ids=self._listener.mid
             )
             if self._sent_msg is None:
                 self._sent_msg = await bot.send_message(
@@ -302,10 +303,10 @@ class TgUploader:
                 try:
                     f_size = await aiopath.getsize(self._up_path)
                     # Force uploads below 2GB using Bot session and above 2GB using User session
-                    if f_size > 2097152000:
-                        self._listener.session = "user"
-                    else:
+                    if f_size < 2097152000:
                         self._listener.session = "bot"
+                    else:
+                        self._listener.session = "user"
                     res = await self._msg_to_reply()
                     if not res:
                         return
