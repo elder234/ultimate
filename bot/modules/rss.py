@@ -770,7 +770,7 @@ async def rssMonitor():
 <b>Link :</b>
 <a href='{view}'>Lihat</a> {f'| <a href="{url}">Unduh</a>' if not private_tracker else ''}
 
-#{title} #{p2p_group if p2p_group else ''} {'#InternalRelease' if 'KQRM' in p2p_group else ''}
+#{title}{f' #{p2p_group}' if p2p_group else ''}{' #InternalRelease' if 'KQRM' in item_title else ''}
 """
                     if private_tracker:
                         reply_markup = InlineKeyboardMarkup(
