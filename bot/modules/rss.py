@@ -701,7 +701,7 @@ async def rssMonitor():
                         item_title = item_title.replace('>', '').replace('<', '')
                         
                         if "-" in item_title:
-                            p2p_group = re_findall(r"(\-\w+)", item_title)[-1]
+                            p2p_group = re_findall(r"(\-[a-zA-Z]+)", item_title)[-1].replace("-", "")
                             
                         # Add Your Custom Here
                         
