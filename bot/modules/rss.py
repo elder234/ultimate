@@ -5,7 +5,7 @@ from time import time
 from functools import partial
 from aiohttp import ClientSession
 from apscheduler.triggers.interval import IntervalTrigger
-from re import split as re_split, sub as re_sub
+from re import split as re_split, sub as re_sub, findall as re_findall
 from io import BytesIO
 
 from pyrogram.filters import command, regex, create
@@ -695,19 +695,13 @@ async def rssMonitor():
                         if not feed_msg.startswith("/"):
                             feed_msg = f"/{feed_msg}"
                     else:
-                        p2p_name = None
                         p2p_group = None
                         private_tracker = False
                         
                         item_title = item_title.replace('>', '').replace('<', '')
                         
                         if "-" in item_title:
-                            if "WEB" in item_title:
-                                p2p_name = item_title.replace("WEB-DL", "WEB_DL")
-                                p2p_group = p2p_name.split("-")[-1]
-                                if " " in p2p_group:
-                                    p2p_group = p2p_group.split(" ")[0]  
-                                               
+                            p2p_group = re_findall(r"(\-\w+)", item_title)[-1]
                         # Add Your Custom Here
                         
                         if "nyaa" in url.lower():
