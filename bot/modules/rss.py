@@ -695,10 +695,14 @@ async def rssMonitor():
                         if not feed_msg.startswith("/"):
                             feed_msg = f"/{feed_msg}"
                     else:
+                        p2p_group = None
                         private_tracker = False
                         
                         item_title = item_title.replace('>', '').replace('<', '')
                         
+                        if "-" in item_title:
+                            p2p_group = item_title.split("-")[-1]     
+                                               
                         # Add Your Custom Here
                         
                         if "nyaa" in url.lower():
@@ -768,7 +772,7 @@ async def rssMonitor():
 <b>Link :</b>
 <a href='{view}'>Lihat</a> {f'| <a href="{url}">Unduh</a>' if not private_tracker else ''}
 
-#{title} {'#InternalRelease' if 'KQRM' in item_title else ''}
+#{title} #{p2p_group if p2p_group else ''} {'#InternalRelease' if 'KQRM' in p2p_group else ''}
 """
                     if private_tracker:
                         reply_markup = InlineKeyboardMarkup(
@@ -776,11 +780,11 @@ async def rssMonitor():
                                 [
                                     InlineKeyboardButton(
                                         text="🚀 Login",
-                                        url= url
+                                        url=url
                                     ),
                                     InlineKeyboardButton(
                                         text="✈️ Lihat",
-                                        url= view
+                                        url=view
                                     ),
                                 ],
                             ),
