@@ -376,7 +376,6 @@ async def customSendRss(text, image=None, reply_markup=None):
                 chat_id=chat_id,
                 photo=image,
                 caption=text,
-                disable_web_page_preview=True,
                 disable_notification=True,
                 message_thread_id=message_thread_id,
                 reply_markup=reply_markup
