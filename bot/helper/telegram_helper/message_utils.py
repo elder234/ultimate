@@ -353,7 +353,7 @@ async def customSendMessage(client, chat_id:int, text:str, message_thread_id=Non
         raise Exception(e)
 
 
-async def customSendRss(text, reply_markup):
+async def customSendRss(text, image=None, reply_markup=None):
     chat_id = None
     message_thread_id = None
     if chat_id := config_dict.get("RSS_CHAT_ID"):
@@ -371,14 +371,26 @@ async def customSendRss(text, reply_markup):
         return "RSS_CHAT_ID tidak ditemukan!"
         
     try:
-        return await bot.send_message(
-            chat_id=chat_id,
-            text=text,
-            disable_web_page_preview=True,
-            disable_notification=True,
-            message_thread_id=message_thread_id,
-            reply_markup=reply_markup
-        )
+        if image:
+            return await bot.send_photo(
+                chat_id=chat_id,
+                photo=image,
+                caption=text,
+                disable_web_page_preview=True,
+                disable_notification=True,
+                message_thread_id=message_thread_id,
+                reply_markup=reply_markup
+                
+            )
+        else:
+            return await bot.send_message(
+                chat_id=chat_id,
+                text=text,
+                disable_web_page_preview=True,
+                disable_notification=True,
+                message_thread_id=message_thread_id,
+                reply_markup=reply_markup
+            )
     except FloodWait as f:
         LOGGER.warning(str(f))
         await sleep(f.value * 1.2)

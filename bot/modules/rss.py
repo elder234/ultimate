@@ -695,23 +695,33 @@ async def rssMonitor():
                         if not feed_msg.startswith("/"):
                             feed_msg = f"/{feed_msg}"
                     else:
+                        image = None
                         p2p_group = None
+                        not_tracker = False
                         private_tracker = False
                         
                         item_title = item_title.replace('>', '').replace('<', '')
                         
                         if "-" in item_title:
-                            p2p_group = re_findall(r"(\-[a-zA-Z]+)", item_title)
+                            p2p_group = re_findall(r"(\-[0-9a-zA-Z]+)", item_title)
                             if len(p2p_group) != 0:
-                                p2p_group = p2p_group[-1].replace("-", "")                            
+                                p2p_group = p2p_group[-1].replace("-", "")
+                                if (
+                                    isinstance(p2p_group, str)
+                                    and not p2p_group.isdigit()
+                                    and len(p2p_group) <= 1
+                                    # BlackListed p2p_group / p2p_name
+                                    and p2p_group.lower() not in ["dl", "hd", "audio", "subs", "subtitle", "raws", "raw", "chan", "compilation"]
+                                ):
+                                    p2p_group = p2p_group
+                                    
                         # Add Your Custom Here
                         
                         if "nyaa" in url.lower():
                             view = rss_d.entries[feed_count].get("id")
                             size = rss_d.entries[feed_count].get("nyaa_size")
                             category = rss_d.entries[feed_count].get("nyaa_category")
-                            description = f"""                            
-<b>Remake :</b> <code>{rss_d.entries[feed_count].get('nyaa_remake')}</code> | <b>Trusted :</b> <code>{rss_d.entries[feed_count].get('nyaa_trusted')}</code>
+                            description = f"""<b>Remake :</b> <code>{rss_d.entries[feed_count].get('nyaa_remake')}</code> | <b>Trusted :</b> <code>{rss_d.entries[feed_count].get('nyaa_trusted')}</code>
 
 <b>Seed :</b> <code>{rss_d.entries[feed_count].get('nyaa_seeders')}</code> | <b>Leech :</b> <code>{rss_d.entries[feed_count].get('nyaa_leechers')}</code> | <b>Completed :</b> <code>{rss_d.entries[feed_count].get('nyaa_downloads')}</code>
 
@@ -726,7 +736,12 @@ async def rssMonitor():
                             
                         elif "yts" in url.lower():
                             view = rss_d.entries[feed_count].get('guid')
-                            description = None
+                            if description:
+                                image = re_findall(r"\bhttps?://\S+?\.(?:png|jpe?g)\b", description)[0]
+                                description = re_sub(r"<.*?>", "", description)
+                                size = description.split("Size: ")[-1].split("Runtime: ")[0]
+                                category = description.split("Genre: ")[-1].split("Size: ")[0].replace(" /", ",")
+                                description = rss_d.entries[feed_count].get("description").split("<br />")[-1]
                             
                         elif "avistaz" in url.lower():
                             private_tracker = True
@@ -735,8 +750,7 @@ async def rssMonitor():
                             if description:
                                 description = re_sub(r"<.*?>", "", description)
                                 size = description.split("Size: ")[-1].split("Uploaded: ")[0]
-                                description = f"""
-<b>Seed :</b> <code>{description.split("Seed: ")[-1].split(" |")[0]}</code> | <b>Leech :</b> <code>{description.split("Leech: ")[-1].split(" |")[0]}</code> | <b>Completed :</b> <code>{description.split("Completed: ")[-1].split("Uploader: ")[0]}</code>
+                                description = f"""<b>Seed :</b> <code>{description.split("Seed: ")[-1].split(" |")[0]}</code> | <b>Leech :</b> <code>{description.split("Leech: ")[-1].split(" |")[0]}</code> | <b>Completed :</b> <code>{description.split("Completed: ")[-1].split("Uploader: ")[0]}</code>
 
 <b>Oleh :</b> <code>{description.split("Uploader: ")[-1].split("Rip Type: ")[0]}</code>"""
 
@@ -744,9 +758,19 @@ async def rssMonitor():
                             private_tracker = True
                             url = "https://www.torrentleech.org/"
                             view = rss_d.entries[feed_count].get("guid")
-                            description = f"""
-<b>Seed :</b> <code>{description.split('Seeders: ', 1)[-1].split(' ')[0]}</code> | <b>Leech :</b> <code>{description.split('Leechers: ', 1)[-1].split(' ')[0]}</code>"""
-
+                            description = f"""<b>Seed :</b> <code>{description.split('Seeders: ', 1)[-1].split(' ')[0]}</code> | <b>Leech :</b> <code>{description.split('Leechers: ', 1)[-1].split(' ')[0]}</code>"""
+                        
+                        elif "psa" in url.lower():
+                            not_tracker = True
+                            category = ", ".join(x["term"] for x in rss_d.entries[feed_count].get("tags"))
+                            if description:
+                                image = re_findall(r"\bhttps?://\S+?\.(?:png|jpe?g)\b", description)[0]
+                                description = re_sub(r"<.*?>", "", description)
+                            
+                        elif "pahe" in url.lower():
+                            not_tracker = True
+                            category = ", ".join(x["term"] for x in rss_d.entries[feed_count].get("tags"))
+                            
                         if published_date:
                             date = datetime.strptime(published_date, "%a, %d %b %Y %H:%M:%S %z")
                             date_time_jkt = date.astimezone(timezone(timedelta(hours=7)))
@@ -763,7 +787,7 @@ async def rssMonitor():
 <code>{category if category else '-'}</code>
 
 <b>Deskripsi :</b> 
-{description if description else '-'}
+{description if description else '<code>-</code>'}
 
 <b>Tanggal Dipublish :</b> 
 <code>{published_date if published_date else '-'}</code>
@@ -773,7 +797,18 @@ async def rssMonitor():
 
 #{title}{f' #{p2p_group}' if p2p_group else ''}{' #InternalRelease' if 'KQRM' in item_title else ''}
 """
-                    if private_tracker:
+                    if not_tracker:
+                        reply_markup = InlineKeyboardMarkup(
+                            inline_keyboard=(
+                                [
+                                    InlineKeyboardButton(
+                                        text="🚀 Lihat",
+                                        url=view
+                                    ),
+                                ],
+                            ),
+                        )   
+                    elif private_tracker:
                         reply_markup = InlineKeyboardMarkup(
                             inline_keyboard=(
                                 [
@@ -803,8 +838,7 @@ async def rssMonitor():
                                 ],
                             ),
                         )
-
-                    await customSendRss(feed_msg, reply_markup)
+                    await customSendRss(feed_msg, image, reply_markup)
                     feed_count += 1
                 async with rss_dict_lock:
                     if user not in rss_dict or not rss_dict[user].get(title, False):
