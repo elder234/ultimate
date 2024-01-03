@@ -766,6 +766,7 @@ async def rssMonitor():
                         
                         elif "psa" in url.lower():
                             not_tracker = True
+                            view = url
                             category = ", ".join(x["term"] for x in rss_d.entries[feed_count].get("tags"))
                             if description:
                                 image = re_findall(r"\bhttps?://\S+?\.(?:png|jpe?g)\b", description)[0]
@@ -773,6 +774,7 @@ async def rssMonitor():
                             
                         elif "pahe" in url.lower():
                             not_tracker = True
+                            view = url
                             category = ", ".join(x["term"] for x in rss_d.entries[feed_count].get("tags"))
                             
                         if published_date:
