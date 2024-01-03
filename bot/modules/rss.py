@@ -708,10 +708,10 @@ async def rssMonitor():
                                 p2p_group = p2p_group[-1].replace("-", "")
                                 if (
                                     isinstance(p2p_group, str)
-                                    and not p2p_group.isdigit()
-                                    and len(p2p_group) > 1
+                                    and (not p2p_group.isdigit())
+                                    and (len(p2p_group) > 1)
                                     # BlackListed p2p_group / p2p_name
-                                    and p2p_group.lower() not in ["dl", "hd", "audio", "subs", "subtitle", "res", "raws", "raw", "chan", "compilation"]
+                                    and (p2p_group.lower() not in ["dl", "hd", "audio", "subs", "subtitle", "res", "raws", "raw", "chan", "compilation"])
                                 ):
                                     p2p_group = p2p_group
                                     
