@@ -372,15 +372,32 @@ async def customSendRss(text, image=None, reply_markup=None):
         
     try:
         if image:
-            return await bot.send_photo(
-                chat_id=chat_id,
-                photo=image,
-                caption=text,
-                disable_notification=True,
-                message_thread_id=message_thread_id,
-                reply_markup=reply_markup
-                
-            )
+            if len(text) > 1024:
+                reply_photo = await bot.send_photo(
+                    chat_id=chat_id,
+                    photo=image,
+                    disable_notification=True,
+                    message_thread_id=message_thread_id,
+                    reply_markup=reply_markup
+                )
+                return await bot.send_message(
+                    chat_id=chat_id,
+                    text=text,
+                    disable_web_page_preview=True,
+                    disable_notification=True,
+                    message_thread_id=message_thread_id,
+                    reply_to_message_id=reply_photo.id,
+                    reply_markup=reply_markup
+                )
+            else:
+                return await bot.send_photo(
+                    chat_id=chat_id,
+                    photo=image,
+                    caption=text,
+                    disable_notification=True,
+                    message_thread_id=message_thread_id,
+                    reply_markup=reply_markup
+                )
         else:
             return await bot.send_message(
                 chat_id=chat_id,
