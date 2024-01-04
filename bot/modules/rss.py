@@ -779,6 +779,7 @@ async def rssMonitor():
                             
                         elif "hdencode" in url.lower():
                             not_tracker = True
+                            view = url
                             category = title.split("_")[-1].replace("_", " ")
                             size = item_title.split(" – ")[-1]
                             item_title = item_title.split(" – ")[0]
