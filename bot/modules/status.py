@@ -153,7 +153,7 @@ Kec. Unggah : {get_readable_file_size(up_speed)}/s
 
 @{bot.me.username}
 """
-        await query.answer(msg, show_alert=True)
+        await query.answer(msg, show_alert=True, cache_time=30)
 
 
 bot.add_handler(

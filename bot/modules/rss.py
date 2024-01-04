@@ -711,7 +711,7 @@ async def rssMonitor():
                                     and (not p2p_group.isdigit())
                                     and len(p2p_group) > 1
                                     # BlackListed p2p_group / p2p_name
-                                    and p2p_group.lower() not in ["audio", "chan", "compilation", "dl", "hd", "pot", "raw", "raws", "ray", "res", "subs", "subtitle"]
+                                    and p2p_group.lower() not in ["ass", "audio", "audios", "chan", "compilation", "dl", "dlrip", "empire", "en", "hd", "id", "in", "kun", "pot", "raw", "raws", "ray", "rayrip", "res", "rip", "sama", "srt", "sub", "subs", "subtitle"]
                                 ):
                                     p2p_group = p2p_group
                                 else:
@@ -777,6 +777,13 @@ async def rssMonitor():
                             view = url
                             category = ", ".join(x["term"] for x in rss_d.entries[feed_count].get("tags"))
                             
+                        elif "hdencode" in url.lower():
+                            not_tracker = True
+                            category = title.split("_")[-1].replace("_", " ")
+                            size = item_title.split(" – ")[-1]
+                            item_title = item_title.split(" – ")[0]
+                            description = None
+                            
                         if published_date:
                             date = datetime.strptime(published_date, "%a, %d %b %Y %H:%M:%S %z")
                             date_time_jkt = date.astimezone(timezone(timedelta(hours=7)))
@@ -799,7 +806,7 @@ async def rssMonitor():
 <code>{published_date if published_date else '-'}</code>
 
 <b>Link :</b>
-<a href='{view}'>Lihat</a> {f'| <a href="{url}">Unduh</a>' if not private_tracker else ''}
+<a href='{view}'>Lihat</a> {f'| <a href="{url}">Unduh</a>' if not (not_tracker or private_tracker) else ''}
 
 #{title}{f' #{p2p_group}' if p2p_group else ''}{' #InternalRelease' if 'KQRM' in item_title else ''}
 """
@@ -808,7 +815,7 @@ async def rssMonitor():
                             inline_keyboard=(
                                 [
                                     InlineKeyboardButton(
-                                        text="🚀 Lihat",
+                                        text="👀 Lihat",
                                         url=view
                                     ),
                                 ],
@@ -819,11 +826,11 @@ async def rssMonitor():
                             inline_keyboard=(
                                 [
                                     InlineKeyboardButton(
-                                        text="🚀 Login",
+                                        text="☠️ Login",
                                         url=url
                                     ),
                                     InlineKeyboardButton(
-                                        text="✈️ Lihat",
+                                        text="👀 Lihat",
                                         url=view
                                     ),
                                 ],
@@ -838,7 +845,7 @@ async def rssMonitor():
                                         switch_inline_query=f"/{BotCommands.MirrorCommand[0]} {url}"
                                     ),
                                     InlineKeyboardButton(
-                                        text="✈️ Leech",
+                                        text="👀 Leech",
                                         switch_inline_query=f"/{BotCommands.LeechCommand[0]} {url}"
                                     ),
                                 ],
