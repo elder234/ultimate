@@ -696,6 +696,8 @@ async def rssMonitor():
                             feed_msg = f"/{feed_msg}"
                     else:
                         image = None
+                        image_caption = None
+                        
                         p2p_group = None
                         not_tracker = False
                         private_tracker = False
@@ -746,6 +748,8 @@ async def rssMonitor():
                                 size = description.split("Size: ")[-1].split("Runtime: ")[0]
                                 category = description.split("Genre: ")[-1].split("Size: ")[0].replace(" /", ",")
                                 description = rss_d.entries[feed_count].get("description").split("<br />")[-1]
+                            if image:
+                                image_caption = item_title
                             
                         elif "avistaz" in url.lower():
                             private_tracker = True
@@ -771,6 +775,8 @@ async def rssMonitor():
                             if description:
                                 image = re_findall(r"\bhttps?://\S+?\.(?:png|jpe?g)\b", description)[0]
                                 description = re_sub(r"<.*?>", "", description)
+                            if image:
+                                image_caption = item_title
                             
                         elif "pahe" in url.lower():
                             not_tracker = True
@@ -853,7 +859,7 @@ async def rssMonitor():
                                 ],
                             ),
                         )
-                    await customSendRss(feed_msg, image, reply_markup)
+                    await customSendRss(feed_msg, image, image_caption, reply_markup)
                     feed_count += 1
                 async with rss_dict_lock:
                     if user not in rss_dict or not rss_dict[user].get(title, False):
