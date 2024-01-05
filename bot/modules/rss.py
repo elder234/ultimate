@@ -270,7 +270,7 @@ async def rssList(query, start, all_users=False):
                     list_feed += f"<b>Inf:</b> <code>{data['inf']}</code>\n"
                     list_feed += f"<b>Exf:</b> <code>{data['exf']}</code>\n"
                     list_feed += f"<b>Paused:</b> <code>{data['paused']}</code>\n"
-                    list_feed += f"<b>User:</b> {data['tag'].lstrip('@')}"
+                    list_feed += f"<b>User:</b> {data['tag'].replace('@', '', 1)}"
                     index += 1
                     if index == 5:
                         break
@@ -713,7 +713,7 @@ async def rssMonitor():
                                     and (not p2p_group.isdigit())
                                     and len(p2p_group) > 1
                                     # BlackListed p2p_group / p2p_name
-                                    and p2p_group.lower() not in ["ass", "audio", "audios", "chan", "compilation", "dl", "dlrip", "empire", "en", "hd", "id", "in", "kun", "pot", "raw", "raws", "ray", "rayrip", "res", "rip", "sama", "srt", "sub", "subs", "subtitle"]
+                                    and p2p_group.lower() not in ["ass", "audio", "audios", "chan", "compilation", "dl", "dlrip", "empire", "en", "hd", "id", "in", "jap", "kun", "off", "pot", "raw", "raws", "ray", "rayrip", "res", "rip", "sama", "srt", "sub", "subs", "subtitle"]
                                 ):
                                     p2p_group = p2p_group
                                 else:
