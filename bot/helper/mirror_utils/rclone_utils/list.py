@@ -218,7 +218,17 @@ class RcloneList:
             self.item_type == itype
         elif self.list_status == "rcu":
             self.item_type == "--dirs-only"
-        cmd = ["edge",  "lsjson", self.item_type, "--fast-list", "--no-mimetype", "--no-modtime", "--config", self.config_path, f"{self.remote}{self.path}"]
+        cmd = [
+            "edge",
+            "lsjson",
+            self.item_type,
+            "--fast-list",
+            "--no-mimetype",
+            "--no-modtime",
+            "--config",
+            self.config_path,
+            f"{self.remote}{self.path}",
+        ]
         if self.is_cancelled:
             return
         res, err, code = await cmd_exec(cmd)
