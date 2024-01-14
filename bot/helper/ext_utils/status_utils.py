@@ -93,8 +93,9 @@ def speed_string_to_bytes(size_text: str):
     return size
 
 
-def get_progress_bar_string(pct):
-    pct = float(pct.strip("%"))
+def get_progress_bar_string(pct) -> str:
+    if not isinstance(pct, float):
+        pct = float(pct.strip("%"))
     p = min(max(pct, 0), 100)
     cFull = int(p // 8)
     p_str = "■" * cFull

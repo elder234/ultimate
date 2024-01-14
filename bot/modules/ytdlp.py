@@ -439,12 +439,9 @@ class YtDlp(TaskListener):
             LOGGER.error(error)
             await sendMessage(
                 self.message,
-                f"<b>ERROR:</b>\n<code>{error[:4000]}</code>\n\n<b>Bantuan :</b>",
+                f"<b>Terjadi kesalahan!</b>\n<code>{error[:4000]}</code>\n\n<b>Bantuan :</b>",
                 COMMAND_USAGE["yt"][1]
             )
-            # await sendMessage(
-            #     self.message, COMMAND_USAGE["yt"][0], COMMAND_USAGE["yt"][1]
-            # )
             self.removeFromSameDir()
             return
         finally:
