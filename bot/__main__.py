@@ -68,7 +68,7 @@ from .modules import (
 def get_quotes():
     try:
         quotez = str(Quote.print_series_quote())
-        quote = quotez.split(": ")[1]
+        quote = quotez.split(": ")[1].replace('"', '')
         oleh = quotez.split(":")[0]
         quotes = f"{quote}\n- {oleh}"
     except:
@@ -94,7 +94,7 @@ async def stats(_, message):
         commit_message = "-"
         
     stats = f"""
-<pre languange='bash'><code>{neofetch.split}</code>
+<pre languange='bash'><code>{neofetch}</code>
 
 <b>CPU</b>
 <b>Cores        :</b> <code>{cpu_count(logical=False)}</code>
