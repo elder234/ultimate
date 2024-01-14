@@ -180,11 +180,11 @@ Gabung Grup/Channel untuk menggunakan Bot!
 Jika Group ini mengaktifkan Topik, Kirim perintah di Topik yang diizinkan!
 """
 
-        await sendMessage(
-            message, 
-            start_string, 
-            reply_markup
-        )
+    await sendMessage(
+        message, 
+        start_string, 
+        reply_markup
+    )
 
 
 async def restart(_, message):
@@ -226,7 +226,9 @@ async def ping(_, message):
 async def log(_, message):
     await sendFile(message, "log.txt")
 
-help_string = f"""
+
+async def bot_help(_, message):
+    help_string = f"""
 <b>Daftar Perintah</b> <code>@{bot.me.username}</code>
 <code>/{BotCommands.StartCommand}</code> : Mulai Bot.
 <code>/{BotCommands.HelpCommand[0]}</code> atau <code>/{BotCommands.HelpCommand[1]}</code> : Cek semua perintah Bot.
@@ -267,9 +269,6 @@ help_string = f"""
 
 <b>NOTE :</b> Kirim perintah tanpa argument untuk melihat perintah secara detail!
 """
-
-
-async def bot_help(_, message):
     await sendMessage(
         message, 
         help_string
