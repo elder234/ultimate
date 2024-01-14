@@ -2,7 +2,7 @@ from aiofiles import open as aiopen
 from aiofiles.os import path as aiopath, remove
 from asyncio import gather, create_subprocess_exec
 from datetime import datetime
-from os import execl as osexecl
+from os import execl as osexecl, getpid
 from psutil import (
     boot_time, 
     cpu_count, 
@@ -18,7 +18,6 @@ from pyrogram.handlers import MessageHandler
 from pytz import timezone
 from quoters import Quote
 from signal import signal, SIGINT
-from subprocess import check_output
 from sys import executable
 from time import time
 from bot import (
@@ -71,7 +70,7 @@ def get_quotes():
         quotez = str(Quote.print_series_quote())
         quote = quotez.split(": ")[1]
         oleh = quotez.split(":")[0]
-        quotes = f"{quote}\n=> {oleh}"
+        quotes = f"{quote}\n- {oleh}"
     except:
         quotes = "Ngga ada Quote bijak buatmu wahai Tuan yang bijaksana :D"
     return quotes
@@ -85,10 +84,10 @@ async def stats(_, message):
     bot_uptime = get_readable_time(time() - botStartTime)
     machine_uptime = get_readable_time(time() - boot_time())
     total, used, free, disk = disk_usage(config_dict['DOWNLOAD_DIR'])
-    neofetch = check_output(["neofetch --shell_version off --stdout"], shell=True).decode().split("\n", 1)[0]
+    neofetch, _, _ = await cmd_exec("neofetch --shell_version off --stdout", shell=True)
     
     if await aiopath.exists(".git"):
-        commit_time, _, _ = await cmd_exec("git log -1 --pretty=format:'%cD (%cr)'", shell=True)
+        commit_time, _, _ = await cmd_exec("git log -1 --pretty=format:'%cr'", shell=True)
         commit_message, _, _ = await cmd_exec("git log -1 --pretty=format:'%s'", shell=True)
     else:
         commit_time = "UPSTREAM_REPO tidak ditemukan!"
@@ -101,19 +100,22 @@ async def stats(_, message):
 <b>Cores        :</b> <code>{cpu_count(logical=False)}</code>
 <b>Logical      :</b> <code>{cpu_count(logical=True)}</code>
 <b>Frequency    :</b> <code>{round(cpu.current)}</code>
-<code>{get_progress_bar_string(cpu_percent(interval=0.5))} {cpu_percent(interval=0.5)}%</code>
+<code>{get_progress_bar_string(cpu_percent(interval=0.5))} - {cpu_percent(interval=0.5)}%</code>
 
 <b>RAM</b> 
 <b>Terpakai     :</b> <code>{get_readable_file_size(memory.used)}</code>
 <b>Tersedia     :</b> <code>{get_readable_file_size(memory.available)}</code>
 <b>Total        :</b> <code>{get_readable_file_size(memory.total)}</code>
-<code>[{get_progress_bar_string(memory.percent)}] {memory.percent}%</code>
+<code>{get_progress_bar_string(memory.percent)} - {memory.percent}%</code>
+
+<b>Pemakaian RAM</b>
+<b>Python       :</b> <code>{get_readable_file_size(Process(getpid()).memory_info().rss)}</code>
 
 <b>Penyimpanan</b> 
 <b>Terpakai     :</b> <code>{get_readable_file_size(used)}</code>
 <b>Tersedia     :</b> <code>{get_readable_file_size(free)}</code>
 <b>Total        :</b> <code>{get_readable_file_size(total)}</code>
-<code>[{get_progress_bar_string(disk)}] {disk}%</code>
+<code>{get_progress_bar_string(disk)} - {disk}%</code>
 
 <b>Jaringan</b>
 <b>Total Unduh  :</b> <code>{get_readable_file_size(network.bytes_recv)}</code>
@@ -160,24 +162,27 @@ async def start(client, message):
     reply_markup = buttons.build_menu(2)
     if await CustomFilters.authorized(client, message):
         start_string = f"""
-<b>Mirror Tautan Lambat menjadi Tautan Cepat!</b>
+<b>Unduh/Unggah dari Tautan Lambat menjadi Tautan Cepat!</b>
 
 <b>Note :</b>
-Selalu backup File setelah Mirror untuk menghindari Drive terhapus!
+Selalu backup File setelah Tugas Unduh/Unggah selesai untuk menghindari Cloud terhapus!
 
 Ketik <code>/{BotCommands.HelpCommand[0]}</code> untuk mendapatkan list perintah yang tersedia!
 
 Enjoy :D
 """
+    else:
+        start_string = """
+<b>Tidak ada izin!</b>
+
+<b>Note :</b>
+Gabung Grup/Channel untuk menggunakan Bot!
+Jika Group ini mengaktifkan Topik, Kirim perintah di Topik yang diizinkan!
+"""
+
         await sendMessage(
             message, 
             start_string, 
-            reply_markup
-        )
-    else:
-        await sendMessage(
-            message, 
-            "<b>Tidak ada izin!</b>\nGabung Grup/Channel untuk menggunakan Bot!\n\n<b>Note :</b>\nJika Group ini mengaktifkan Topik, Kirim perintah di Topik yang diizinkan!", 
             reply_markup
         )
 
