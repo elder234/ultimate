@@ -1,12 +1,12 @@
-from pyrogram.handlers import MessageHandler, CallbackQueryHandler
-from pyrogram.filters import command, regex, create
 from aiofiles.os import remove, path as aiopath, makedirs
-from os import getcwd
-from time import time
+from asyncio import sleep
 from functools import partial
 from html import escape
 from io import BytesIO
-from asyncio import sleep
+from os import getcwd
+from pyrogram.filters import command, regex, create
+from pyrogram.handlers import MessageHandler, CallbackQueryHandler
+from time import time
 
 from bot import (
     bot,
@@ -17,18 +17,19 @@ from bot import (
     MAX_SPLIT_SIZE,
     GLOBAL_EXTENSION_FILTER,
 )
+from bot.helper.ext_utils.bot_utils import update_user_ldata, new_thread
+from bot.helper.ext_utils.db_handler import DbManager
+from bot.helper.ext_utils.media_utils import createThumb, getSplitSizeBytes
+from bot.helper.telegram_helper.bot_commands import BotCommands
+from bot.helper.telegram_helper.button_build import ButtonMaker
+from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.message_utils import (
     sendMessage,
     editMessage,
     sendFile,
     deleteMessage,
 )
-from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.telegram_helper.button_build import ButtonMaker
-from bot.helper.ext_utils.db_handler import DbManger
-from bot.helper.ext_utils.bot_utils import update_user_ldata, new_thread
-from bot.helper.ext_utils.media_utils import createThumb, getSplitSizeBytes
+
 
 handler_dict = {}
 
@@ -200,7 +201,7 @@ async def set_thumb(_, message, pre_event):
     await deleteMessage(message)
     await update_user_settings(pre_event)
     if DATABASE_URL:
-        await DbManger().update_user_doc(user_id, "thumb", des_dir)
+        await DbManager().update_user_doc(user_id, "thumb", des_dir)
 
 
 async def add_rclone(_, message, pre_event):
@@ -214,7 +215,7 @@ async def add_rclone(_, message, pre_event):
     await deleteMessage(message)
     await update_user_settings(pre_event)
     if DATABASE_URL:
-        await DbManger().update_user_doc(user_id, "rclone_config", des_dir)
+        await DbManager().update_user_doc(user_id, "rclone_config", des_dir)
 
 
 async def add_token_pickle(_, message, pre_event):
@@ -228,7 +229,7 @@ async def add_token_pickle(_, message, pre_event):
     await deleteMessage(message)
     await update_user_settings(pre_event)
     if DATABASE_URL:
-        await DbManger().update_user_doc(user_id, "token_pickle", des_dir)
+        await DbManager().update_user_doc(user_id, "token_pickle", des_dir)
 
 
 async def set_option(_, message, pre_event, option):
@@ -252,7 +253,7 @@ async def set_option(_, message, pre_event, option):
     await deleteMessage(message)
     await update_user_settings(pre_event)
     if DATABASE_URL:
-        await DbManger().update_user_data(user_id)
+        await DbManager().update_user_data(user_id)
 
 
 async def event_handler(client, query, pfunc, photo=False, document=False):
@@ -309,7 +310,7 @@ async def edit_user_settings(client, query):
         await query.answer()
         await update_user_settings(query)
         if DATABASE_URL:
-            await DbManger().update_user_data(user_id)
+            await DbManager().update_user_data(user_id)
     elif data[2] in ["thumb", "rclone_config", "token_pickle"]:
         if data[2] == "thumb":
             fpath = thumb_path
@@ -323,7 +324,7 @@ async def edit_user_settings(client, query):
             update_user_ldata(user_id, data[2], "")
             await update_user_settings(query)
             if DATABASE_URL:
-                await DbManger().update_user_doc(user_id, data[2])
+                await DbManager().update_user_doc(user_id, data[2])
         else:
             await query.answer("Old Settings", show_alert=True)
             await update_user_settings(query)
@@ -332,14 +333,14 @@ async def edit_user_settings(client, query):
         update_user_ldata(user_id, data[2], "")
         await update_user_settings(query)
         if DATABASE_URL:
-            await DbManger().update_user_data(user_id)
+            await DbManager().update_user_data(user_id)
     elif data[2] in ["split_size", "leech_dest", "rclone_path", "gdrive_id"]:
         await query.answer()
         if data[2] in user_data.get(user_id, {}):
             del user_data[user_id][data[2]]
             await update_user_settings(query)
             if DATABASE_URL:
-                await DbManger().update_user_data(user_id)
+                await DbManager().update_user_data(user_id)
     elif data[2] == "leech":
         await query.answer()
         thumbpath = f"Thumbnails/{user_id}.jpg"
@@ -665,7 +666,7 @@ Check all yt-dlp api options from this <a href='https://github.com/yt-dlp/yt-dlp
         update_user_ldata(user_id, "default_upload", du)
         await update_user_settings(query)
         if DATABASE_URL:
-            await DbManger().update_user_data(user_id)
+            await DbManager().update_user_data(user_id)
     elif data[2] == "reset":
         await query.answer()
         if ud := user_data.get(user_id, {}):
@@ -677,7 +678,7 @@ Check all yt-dlp api options from this <a href='https://github.com/yt-dlp/yt-dlp
                 user_data[user_id].clear()
         await update_user_settings(query)
         if DATABASE_URL:
-            await DbManger().update_user_data(user_id)
+            await DbManager().update_user_data(user_id)
         for fpath in [thumb_path, rclone_conf, token_pickle]:
             if await aiopath.exists(fpath):
                 await remove(fpath)

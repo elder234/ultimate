@@ -28,7 +28,8 @@ as the name is changed.
 The “Corresponding Source” for a work in object code form means all the source code needed to generate, install, and
 (for an executable work) run the object code and to modify the work, including scripts to control those activities.
 
-The Corresponding Source need not include anything that users can regenerate automatically from other parts of the Corresponding Source.
+The Corresponding Source need not include anything that users can regenerate automatically from other parts of the
+Corresponding Source.
 The Corresponding Source for a work in source code form is that same work.
 
 5. "The author" refers to "author" of the code, which is the one that made the particular code which exists inside of

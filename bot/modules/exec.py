@@ -1,17 +1,17 @@
-from pyrogram.handlers import MessageHandler
-from pyrogram.filters import command
-from os import path as ospath, getcwd, chdir
-from traceback import format_exc
-from textwrap import indent
-from io import StringIO, BytesIO
-from contextlib import redirect_stdout
 from aiofiles import open as aiopen
+from contextlib import redirect_stdout
+from io import StringIO, BytesIO
+from os import path as ospath, getcwd, chdir
+from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler
+from textwrap import indent
+from traceback import format_exc
 
 from bot import LOGGER, bot
-from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.telegram_helper.message_utils import sendFile, sendMessage
 from bot.helper.ext_utils.bot_utils import sync_to_async, new_task
+from bot.helper.telegram_helper.bot_commands import BotCommands
+from bot.helper.telegram_helper.filters import CustomFilters
+from bot.helper.telegram_helper.message_utils import sendFile, sendMessage
 
 
 namespaces = {}
@@ -19,11 +19,12 @@ namespaces = {}
 def namespace_of(message):
     if message.chat.id not in namespaces:
         namespaces[message.chat.id] = {
-            '__builtins__': globals()['__builtins__'],
-            'bot': bot,
-            'message': message,
-            'user': message.from_user or message.sender_chat,
-            'chat': message.chat}
+            "__builtins__": globals()["__builtins__"],
+            "bot": bot,
+            "message": message,
+            "user": message.from_user or message.sender_chat,
+            "chat": message.chat
+        }
 
     return namespaces[message.chat.id]
 

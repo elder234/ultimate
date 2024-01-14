@@ -1,12 +1,12 @@
-from pyrogram.handlers import MessageHandler
 from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler
 
 from bot import user_data, DATABASE_URL, bot
-from bot.helper.telegram_helper.message_utils import sendMessage
-from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.ext_utils.db_handler import DbManger
 from bot.helper.ext_utils.bot_utils import update_user_ldata
+from bot.helper.ext_utils.db_handler import DbManager
+from bot.helper.telegram_helper.bot_commands import BotCommands
+from bot.helper.telegram_helper.filters import CustomFilters
+from bot.helper.telegram_helper.message_utils import sendMessage
 
 
 async def authorize(_, message):
@@ -22,7 +22,7 @@ async def authorize(_, message):
     else:
         update_user_ldata(id_, "is_auth", True)
         if DATABASE_URL:
-            await DbManger().update_user_data(id_)
+            await DbManager().update_user_data(id_)
         msg = "😉 <b>Berhasil diautorisasi!</b>"
     await sendMessage(message, msg)
 
@@ -38,7 +38,7 @@ async def unauthorize(_, message):
     if id_ not in user_data or user_data[id_].get("is_auth"):
         update_user_ldata(id_, "is_auth", False)
         if DATABASE_URL:
-            await DbManger().update_user_data(id_)
+            await DbManager().update_user_data(id_)
         msg = "😉 <b>Berhasil diunautorisasi!</b>"
     else:
         msg = "🙃 <b>Sudah diunautorisasi!</b>"
@@ -58,7 +58,7 @@ async def addSudo(_, message):
         else:
             update_user_ldata(id_, "is_sudo", True)
             if DATABASE_URL:
-                await DbManger().update_user_data(id_)
+                await DbManager().update_user_data(id_)
             msg = "😉 <b>Berhasil dinaikan menjadi sudo user!</b>"
     else:
         msg = "<b>Berikan ID atau balas pesan dari User yang ingin dinaikan menjadi Sudo User!</b>"
@@ -75,7 +75,7 @@ async def removeSudo(_, message):
     if id_ and id_ not in user_data or user_data[id_].get("is_sudo"):
         update_user_ldata(id_, "is_sudo", False)
         if DATABASE_URL:
-            await DbManger().update_user_data(id_)
+            await DbManager().update_user_data(id_)
         msg = "😉 <b>Berhasil diturunkan dari Sudo User!</b>"
     else:
         msg = "<b>Berikan ID atau balas pesan dari User yang ingin diturunkan dari Sudo User!</b>"

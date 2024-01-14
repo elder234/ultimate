@@ -1,15 +1,15 @@
-from os import walk, path as ospath, makedirs
 from aiofiles.os import remove, path as aiopath, listdir, rmdir
 from aioshutil import rmtree as aiormtree
 from magic import Magic
+from os import walk, path as ospath, makedirs
 from re import split as re_split, I, search as re_search, escape
+from shutil import rmtree
 from subprocess import run as srun
 from sys import exit as sexit
-from shutil import rmtree
 
-from .exceptions import NotSupportedExtractionArchive
 from bot import aria2, LOGGER, DOWNLOAD_DIR, get_client
 from bot.helper.ext_utils.bot_utils import sync_to_async, cmd_exec
+from .exceptions import NotSupportedExtractionArchive
 
 ARCH_EXT = [
     ".tar.bz2",

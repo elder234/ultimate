@@ -1,27 +1,27 @@
-from asyncio import wait_for, Event, wrap_future, gather
-from aiofiles.os import path as aiopath
 from aiofiles import open as aiopen
+from aiofiles.os import path as aiopath
+from asyncio import wait_for, Event, wrap_future, gather
 from configparser import ConfigParser
-from pyrogram.handlers import CallbackQueryHandler
-from pyrogram.filters import regex, user
 from functools import partial
 from json import loads
+from pyrogram.filters import regex, user
+from pyrogram.handlers import CallbackQueryHandler
 from time import time
 
 from bot import LOGGER, config_dict
-from bot.helper.ext_utils.db_handler import DbManger
+from bot.helper.ext_utils.bot_utils import (
+    cmd_exec,
+    new_thread,
+    new_task,
+    update_user_ldata,
+)
+from bot.helper.ext_utils.db_handler import DbManager
 from bot.helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.telegram_helper.message_utils import (
     sendMessage,
     editMessage,
     deleteMessage,
-)
-from bot.helper.ext_utils.bot_utils import (
-    cmd_exec,
-    new_thread,
-    new_task,
-    update_user_ldata,
 )
 
 
@@ -95,7 +95,7 @@ async def path_updates(_, query, obj):
             update_user_ldata(obj.listener.user_id, "rclone_path", path)
             await obj.get_path_buttons()
             if config_dict["DATABASE_URL"]:
-                await DbManger().update_user_data(obj.listener.user_id)
+                await DbManager().update_user_data(obj.listener.user_id)
     elif data[1] == "owner":
         obj.config_path = "rclone.conf"
         obj.path = ""

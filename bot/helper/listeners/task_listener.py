@@ -1,35 +1,9 @@
-from requests import utils as rutils
 from aiofiles.os import path as aiopath, listdir, makedirs
-from html import escape
 from aioshutil import move
 from asyncio import sleep, Event, gather
+from html import escape
+from requests import utils as rutils
 
-from bot.helper.ext_utils.status_utils import get_readable_file_size
-from bot.helper.ext_utils.bot_utils import sync_to_async
-from bot.helper.ext_utils.links_utils import is_gdrive_id
-from bot.helper.ext_utils.task_manager import start_from_queued
-from bot.helper.mirror_utils.status_utils.gdrive_status import GdriveStatus
-from bot.helper.mirror_utils.status_utils.telegram_status import TelegramStatus
-from bot.helper.mirror_utils.status_utils.rclone_status import RcloneStatus
-from bot.helper.mirror_utils.status_utils.queue_status import QueueStatus
-from bot.helper.mirror_utils.gdrive_utils.upload import gdUpload
-from bot.helper.mirror_utils.telegram_uploader import TgUploader
-from bot.helper.mirror_utils.rclone_utils.transfer import RcloneTransferHelper
-from bot.helper.telegram_helper.button_build import ButtonMaker
-from bot.helper.ext_utils.db_handler import DbManger
-from bot.helper.common import TaskConfig
-from bot.helper.ext_utils.files_utils import (
-    get_path_size,
-    clean_download,
-    clean_target,
-    join_files,
-)
-from bot.helper.telegram_helper.message_utils import (
-    sendMessage,
-    delete_status,
-    update_status_message,
-    customSendMessage
-)
 from bot import (
     bot,
     Intervals,
@@ -45,6 +19,32 @@ from bot import (
     queued_up,
     queued_dl,
     queue_dict_lock,
+)
+from bot.helper.common import TaskConfig
+from bot.helper.ext_utils.bot_utils import sync_to_async
+from bot.helper.ext_utils.db_handler import DbManager
+from bot.helper.ext_utils.files_utils import (
+    get_path_size,
+    clean_download,
+    clean_target,
+    join_files,
+)
+from bot.helper.ext_utils.links_utils import is_gdrive_id
+from bot.helper.ext_utils.status_utils import get_readable_file_size
+from bot.helper.ext_utils.task_manager import start_from_queued
+from bot.helper.mirror_utils.gdrive_utils.upload import gdUpload
+from bot.helper.mirror_utils.rclone_utils.transfer import RcloneTransferHelper
+from bot.helper.mirror_utils.status_utils.gdrive_status import GdriveStatus
+from bot.helper.mirror_utils.status_utils.queue_status import QueueStatus
+from bot.helper.mirror_utils.status_utils.rclone_status import RcloneStatus
+from bot.helper.mirror_utils.status_utils.telegram_status import TelegramStatus
+from bot.helper.mirror_utils.telegram_uploader import TgUploader
+from bot.helper.telegram_helper.button_build import ButtonMaker
+from bot.helper.telegram_helper.message_utils import (
+    sendMessage,
+    delete_status,
+    update_status_message,
+    customSendMessage,
 )
 
 
@@ -73,7 +73,7 @@ class TaskListener(TaskConfig):
             and config_dict["INCOMPLETE_TASK_NOTIFIER"]
             and DATABASE_URL
         ):
-            await DbManger().add_incomplete_task(
+            await DbManager().add_incomplete_task(
                 self.message.chat.id, self.message.link, self.tag
             )
 
@@ -237,7 +237,7 @@ class TaskListener(TaskConfig):
             and config_dict["INCOMPLETE_TASK_NOTIFIER"]
             and DATABASE_URL
         ):
-            await DbManger().rm_complete_task(self.message.link)
+            await DbManager().rm_complete_task(self.message.link)
         msg = f"<b>Nama :</b> <code>{escape(self.name)}</code>"
         msg += f"\n\n<b>Ukuran :</b> <code>{get_readable_file_size(size)}</code>"
         LOGGER.info(f"Task Done: {self.name}")
@@ -396,7 +396,7 @@ class TaskListener(TaskConfig):
             and config_dict["INCOMPLETE_TASK_NOTIFIER"]
             and DATABASE_URL
         ):
-            await DbManger().rm_complete_task(self.message.link)
+            await DbManager().rm_complete_task(self.message.link)
 
         async with queue_dict_lock:
             if self.mid in queued_dl:
@@ -433,7 +433,7 @@ class TaskListener(TaskConfig):
             and config_dict["INCOMPLETE_TASK_NOTIFIER"]
             and DATABASE_URL
         ):
-            await DbManger().rm_complete_task(self.message.link)
+            await DbManager().rm_complete_task(self.message.link)
 
         async with queue_dict_lock:
             if self.mid in queued_dl:

@@ -1,4 +1,3 @@
-from time import time
 from html import escape
 from psutil import (
     cpu_percent, 
@@ -6,6 +5,7 @@ from psutil import (
     net_io_counters,
     virtual_memory
 )
+from time import time
 
 from bot import task_dict, task_dict_lock, botStartTime, config_dict
 from bot.helper.telegram_helper.bot_commands import BotCommands
@@ -130,8 +130,8 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         page_no = pages - (abs(page_no) % pages)
     start_position = (page_no - 1) * STATUS_LIMIT
 
-    for index, task in enumerate(
-        tasks[start_position : STATUS_LIMIT + start_position], start=1
+    for _, task in enumerate(
+        tasks[start_position: STATUS_LIMIT + start_position], start=1
     ):
         tstatus = task.status()
         if task.listener.isPrivateChat: 

@@ -1,13 +1,12 @@
-#!/usr/bin/env python3
-from pyrogram.handlers import MessageHandler, EditedMessageHandler
-from pyrogram.filters import command
 from io import BytesIO
+from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler, EditedMessageHandler
 
 from bot import bot, LOGGER 
-from bot.helper.telegram_helper.message_utils import sendMessage, sendFile
 from bot.helper.ext_utils.bot_utils import cmd_exec, new_task
-from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
+from bot.helper.telegram_helper.filters import CustomFilters
+from bot.helper.telegram_helper.message_utils import sendMessage, sendFile
 
 
 @new_task

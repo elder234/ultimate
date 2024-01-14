@@ -1,18 +1,12 @@
-from pyrogram.handlers import MessageHandler, CallbackQueryHandler
-from pyrogram.filters import command, regex, user
-from asyncio import wait_for, Event, wrap_future
 from aiohttp import ClientSession
-from yt_dlp import YoutubeDL
+from asyncio import wait_for, Event, wrap_future
 from functools import partial
+from pyrogram.filters import command, regex, user
+from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from time import time
+from yt_dlp import YoutubeDL
 
 from bot import DOWNLOAD_DIR, bot, config_dict, LOGGER
-from bot.helper.telegram_helper.message_utils import (
-    sendMessage,
-    editMessage,
-    deleteMessage,
-)
-from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.bot_utils import (
     new_task,
     sync_to_async,
@@ -20,12 +14,18 @@ from bot.helper.ext_utils.bot_utils import (
     arg_parser,
     COMMAND_USAGE,
 )
+from bot.helper.ext_utils.links_utils import is_url
+from bot.helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
+from bot.helper.listeners.task_listener import TaskListener
 from bot.helper.mirror_utils.download_utils.yt_dlp_download import YoutubeDLHelper
 from bot.helper.telegram_helper.bot_commands import BotCommands
+from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.listeners.task_listener import TaskListener
-from bot.helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
-from bot.helper.ext_utils.links_utils import is_url
+from bot.helper.telegram_helper.message_utils import (
+    sendMessage,
+    editMessage,
+    deleteMessage,
+)
 
 
 @new_task
@@ -116,7 +116,7 @@ class YtSelection:
             buttons.ibutton("Audios Terbaik", "ytq ba/b")
             buttons.ibutton("Batalkan", "ytq cancel", "footer")
             self._main_buttons = buttons.build_menu(3)
-            msg = f"<b>Pilih kualitas video playlist :</b>\n<b>Waktu Habis :</b> <code>{get_readable_time(self._timeout-(time()-self._time))}</code>"
+            msg = f"<b>Pilih kualitas Video Playlist :</b>\n<b>Waktu Habis :</b> <code>{get_readable_time(self._timeout - (time() - self._time))}</code>"
         else:
             format_dict = result.get("formats")
             if format_dict is not None:
@@ -169,7 +169,7 @@ class YtSelection:
             buttons.ibutton("Audio Terbaik", "ytq ba/b")
             buttons.ibutton("Batalkan", "ytq cancel", "footer")
             self._main_buttons = buttons.build_menu(2)
-            msg = f"<b>Pilih kualitas video :</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout-(time()-self._time))}</code>"
+            msg = f"<b>Pilih kualitas Video :</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout - (time() - self._time))}</code>"
         self._reply_to = await sendMessage(
             self._listener.message, msg, self._main_buttons
         )
@@ -180,9 +180,9 @@ class YtSelection:
 
     async def back_to_main(self):
         if self._is_playlist:
-            msg = f"<b>Pilih kualitas video playlist :</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout-(time()-self._time))}</code>"
+            msg = f"<b>Pilih kualitas Video Playlist :</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout - (time() - self._time))}</code>"
         else:
-            msg = f"<b>Pilih kualitas video :</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout-(time()-self._time))}</code>"
+            msg = f"<b>Pilih kualitas Video :</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout - (time() - self._time))}</code>"
         await editMessage(self._reply_to, msg, self._main_buttons)
 
     async def qual_subbuttons(self, b_name):
@@ -194,7 +194,7 @@ class YtSelection:
         buttons.ibutton("Kembali", "ytq back", "footer")
         buttons.ibutton("Batalkan", "ytq cancel", "footer")
         subbuttons = buttons.build_menu(2)
-        msg = f"<b>Pilih video bitrate untuk</b> <code>{b_name}</code> <b>:</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout-(time()-self._time))}</code>"
+        msg = f"<b>Pilih Bitrate Video untuk</b> <code>{b_name}</code> <b>:</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout - (time() - self._time))}</code>"
         await editMessage(self._reply_to, msg, subbuttons)
 
     async def mp3_subbuttons(self):
@@ -207,7 +207,7 @@ class YtSelection:
         buttons.ibutton("Kembali", "ytq back")
         buttons.ibutton("Batalkan", "ytq cancel")
         subbuttons = buttons.build_menu(3)
-        msg = f"<b>Pilih audio{i} bitrate :</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout-(time()-self._time))}</code>"
+        msg = f"<b>Pilih Bitrate Audio{i} :</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout - (time() - self._time))}</code>"
         await editMessage(self._reply_to, msg, subbuttons)
 
     async def audio_format(self):
@@ -219,7 +219,7 @@ class YtSelection:
         buttons.ibutton("Kembali", "ytq back", "footer")
         buttons.ibutton("Batalkan", "ytq cancel", "footer")
         subbuttons = buttons.build_menu(3)
-        msg = f"<b>Pilih format audio{i} :</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout-(time()-self._time))}</code>"
+        msg = f"<b>Pilih Format Audio{i} :</b>\n<b>Waktu habis :</b> <code>{get_readable_time(self._timeout - (time() - self._time))}</code>"
         await editMessage(self._reply_to, msg, subbuttons)
 
     async def audio_quality(self, format):
@@ -239,7 +239,7 @@ def extract_info(link, options):
     with YoutubeDL(options) as ydl:
         result = ydl.extract_info(link, download=False)
         if result is None:
-            raise ValueError("Info result is None")
+            raise ValueError("Info tidak ditemukan!")
         return result
 
 
@@ -438,8 +438,13 @@ class YtDlp(TaskListener):
             error = str(e).replace("<", " ").replace(">", " ")
             LOGGER.error(error)
             await sendMessage(
-                self.message, COMMAND_USAGE["yt"][0], COMMAND_USAGE["yt"][1]
+                self.message,
+                f"<b>ERROR:</b>\n<code>{error[:4000]}</code>\n\n<b>Bantuan :</b>",
+                COMMAND_USAGE["yt"][1]
             )
+            # await sendMessage(
+            #     self.message, COMMAND_USAGE["yt"][0], COMMAND_USAGE["yt"][1]
+            # )
             self.removeFromSameDir()
             return
         finally:

@@ -1,7 +1,6 @@
-from logging import getLogger
-from time import time
-from os import path as ospath
 from googleapiclient.errors import HttpError
+from logging import getLogger
+from os import path as ospath
 from tenacity import (
     retry,
     wait_exponential,
@@ -9,6 +8,7 @@ from tenacity import (
     retry_if_exception_type,
     RetryError,
 )
+from time import time
 
 from bot.helper.ext_utils.bot_utils import async_to_sync
 from bot.helper.mirror_utils.gdrive_utils.helper import GoogleDriveHelper

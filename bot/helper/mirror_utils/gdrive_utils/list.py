@@ -1,16 +1,16 @@
-from logging import getLogger
-from asyncio import wait_for, Event, wrap_future, gather
 from aiofiles.os import path as aiopath
-from pyrogram.handlers import CallbackQueryHandler
-from pyrogram.filters import regex, user
+from asyncio import wait_for, Event, wrap_future, gather
 from functools import partial
-from time import time
-from tenacity import RetryError
+from logging import getLogger
 from natsort import natsorted
+from pyrogram.filters import regex, user
+from pyrogram.handlers import CallbackQueryHandler
+from tenacity import RetryError
+from time import time
 
 from bot import config_dict
-from bot.helper.ext_utils.db_handler import DbManger
 from bot.helper.ext_utils.bot_utils import new_thread, new_task, update_user_ldata
+from bot.helper.ext_utils.db_handler import DbManager
 from bot.helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
 from bot.helper.mirror_utils.gdrive_utils.helper import GoogleDriveHelper
 from bot.helper.telegram_helper.button_build import ButtonMaker
@@ -88,7 +88,7 @@ async def id_updates(_, query, obj):
             update_user_ldata(obj.listener.user_id, "gdrive_id", id_)
             await obj.get_items_buttons()
             if config_dict["DATABASE_URL"]:
-                await DbManger().update_user_data(obj.listener.user_id)
+                await DbManager().update_user_data(obj.listener.user_id)
     elif data[1] == "owner":
         obj.token_path = "token.pickle"
         obj.use_sa = False
