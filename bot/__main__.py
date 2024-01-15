@@ -27,6 +27,7 @@ from bot import (
     DATABASE_URL, 
     INCOMPLETE_TASK_NOTIFIER, 
     Intervals, 
+    IS_PREMIUM_USER,
     LOGGER, 
     scheduler, 
     user,
@@ -138,7 +139,7 @@ async def stats(_, message):
 <b>Bot ID       :</b> <code>{bot.me.id}</code>
 <b>Bot Name     :</b> <code>{bot.me.first_name}</code>
 <b>Bot Username :</b> <code>@{bot.me.username}</code>
-<b>User Status  :</b> <code>{'PREMIUM' if user.me.is_premium else 'FREE'}</code>
+<b>User Status  :</b> <code>{'PREMIUM' if IS_PREMIUM_USER else 'FREE'}</code>
 <b>Uptime Bot   :</b> <code>{bot_uptime}</code>
 <b>Uptime Mesin :</b> <code>{machine_uptime}</code>
 <b>Diperbarui   :</b> <code>{commit_time}</code>
