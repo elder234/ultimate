@@ -278,7 +278,9 @@ class gdriveList(GoogleDriveHelper):
                 else "\nTransfer Type: <i>Upload</i>"
             )
             msg += f"\nToken Path: {self.token_path}"
-            msg += f"\nTimeout: {get_readable_time(self._timeout-(time()-self._time))}"
+            msg += (
+                f"\nTimeout: {get_readable_time(self._timeout-(time()-self._time))}"
+            )
             buttons = ButtonMaker()
             self.drives.clear()
             self.parents.clear()
@@ -308,7 +310,9 @@ class gdriveList(GoogleDriveHelper):
                 if self.list_status == "gdd"
                 else "\nTransfer Type: Upload"
             )
-            msg += f"\nTimeout: {get_readable_time(self._timeout-(time()-self._time))}"
+            msg += (
+                f"\nTimeout: {get_readable_time(self._timeout-(time()-self._time))}"
+            )
             buttons = ButtonMaker()
             if self._token_owner:
                 buttons.ibutton("Owner Token", "gdq owner")

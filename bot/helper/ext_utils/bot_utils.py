@@ -118,10 +118,23 @@ def arg_parser(items, arg_base):
     return arg_base
 
 
+def getSizeBytes(size):
+    size = size.lower()
+    if size.endswith("mb"):
+        size = size.split("mb")[0]
+        size = int(float(size) * 1048576)
+    elif size.endswith("gb"):
+        size = size.split("gb")[0]
+        size = int(float(size) * 1073741824)
+    else:
+        size = 0
+    return size
+
+
 async def get_content_type(url):
     try:
-        async with ClientSession(trust_env=True) as session:
-            async with session.get(url, verify_ssl=False) as response:
+        async with ClientSession() as session:
+            async with session.get(url, allow_redirects=True, ssl=False) as response:
                 return response.headers.get("Content-Type")
     except:
         return None
@@ -136,7 +149,7 @@ async def retry_function(func, *args, **kwargs):
     try:
         return await sync_to_async(func, *args, **kwargs)
     except:
-        await sleep(0.5)
+        await sleep(0.3)
         return await retry_function(func, *args, **kwargs)
 
 

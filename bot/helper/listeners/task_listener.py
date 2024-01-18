@@ -1,6 +1,6 @@
 from aiofiles.os import path as aiopath, listdir, makedirs
 from aioshutil import move
-from asyncio import sleep, Event, gather
+from asyncio import sleep, gather
 from html import escape
 from requests import utils as rutils
 
@@ -31,7 +31,7 @@ from bot.helper.ext_utils.files_utils import (
 )
 from bot.helper.ext_utils.links_utils import is_gdrive_id
 from bot.helper.ext_utils.status_utils import get_readable_file_size
-from bot.helper.ext_utils.task_manager import start_from_queued
+from bot.helper.ext_utils.task_manager import start_from_queued, check_running_tasks
 from bot.helper.mirror_utils.gdrive_utils.upload import gdUpload
 from bot.helper.mirror_utils.rclone_utils.transfer import RcloneTransferHelper
 from bot.helper.mirror_utils.status_utils.gdrive_status import GdriveStatus
@@ -170,22 +170,10 @@ class TaskListener(TaskConfig):
                 if not result:
                     return
 
-        up_limit = config_dict["QUEUE_UPLOAD"]
-        all_limit = config_dict["QUEUE_ALL"]
-        add_to_queue = False
-        async with queue_dict_lock:
-            if self.mid in non_queued_dl:
-                non_queued_dl.remove(self.mid)
-            dl = len(non_queued_dl)
-            up = len(non_queued_up)
-            if (
-                all_limit and dl + up >= all_limit and (not up_limit or up >= up_limit)
-            ) or (up_limit and up >= up_limit):
-                add_to_queue = True
-                LOGGER.info(f"Added to Queue/Upload: {self.name}")
-                event = Event()
-                queued_up[self.mid] = event
+        add_to_queue, event = await check_running_tasks(self.mid, "up")
+        await start_from_queued()
         if add_to_queue:
+            LOGGER.info(f"Added to Queue/Upload: {self.name}")
             async with task_dict_lock:
                 task_dict[self.mid] = QueueStatus(self, size, gid, "Up")
             await event.wait()

@@ -19,7 +19,7 @@ from bot import (
     cpu_eater_lock,
     subprocess_lock,
 )
-from bot.helper.ext_utils.bot_utils import new_task, sync_to_async
+from bot.helper.ext_utils.bot_utils import new_task, sync_to_async, getSizeBytes
 from bot.helper.ext_utils.bulk_links import extractBulkLinks
 from bot.helper.ext_utils.exceptions import NotSupportedExtractionArchive
 from bot.helper.ext_utils.files_utils import (
@@ -38,7 +38,6 @@ from bot.helper.ext_utils.links_utils import (
 )
 from bot.helper.ext_utils.media_utils import (
     createThumb,
-    getSplitSizeBytes,
     createSampleVideo,
 )
 from bot.helper.ext_utils.media_utils import split_file, get_document_type
@@ -247,7 +246,7 @@ class TaskConfig:
                 if self.splitSize.isdigit():
                     self.splitSize = int(self.splitSize)
                 else:
-                    self.splitSize = getSplitSizeBytes(self.splitSize)
+                    self.splitSize = getSizeBytes(self.splitSize)
             self.splitSize = (
                 self.splitSize
                 or self.user_dict.get("split_size")

@@ -13,19 +13,6 @@ from bot.helper.ext_utils.bot_utils import sync_to_async
 from bot.helper.ext_utils.files_utils import ARCH_EXT, get_mime_type
 
 
-def getSplitSizeBytes(size):
-    size = size.lower()
-    if size.endswith("mb"):
-        size = size.split("mb")[0]
-        size = int(float(size) * 1048576)
-    elif size.endswith("gb"):
-        size = size.split("gb")[0]
-        size = int(float(size) * 1073741824)
-    else:
-        size = 0
-    return size
-
-
 async def createThumb(msg, _id=""):
     if not _id:
         _id = msg.id
