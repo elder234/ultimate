@@ -82,7 +82,7 @@ class YtSelection:
         pfunc = partial(select_format, obj=self)
         handler = self._listener.client.add_handler(
             CallbackQueryHandler(
-                pfunc, filters=regex("^ytq") & user(self._listener.user_id)
+                pfunc, filters=regex("^ytq") & user(self._listener.userId)
             ),
             group=-1,
         )
@@ -300,6 +300,9 @@ class YtDlp(TaskListener):
             "-z": False,
             "-sv": False,
             "-ss": False,
+            "-f": False,
+            "-fd": False,
+            "-fu": False,
             "-i": 0,
             "-sp": 0,
             "link": "",
@@ -309,6 +312,8 @@ class YtDlp(TaskListener):
             "-up": "",
             "-rcf": "",
             "-t": "",
+            "-ca": "",
+            "-cv": "",
         }
 
         args = arg_parser(input_list[1:], arg_base)
@@ -328,6 +333,11 @@ class YtDlp(TaskListener):
         self.splitSize = args["-sp"]
         self.sampleVideo = args["-sv"]
         self.screenShots = args["-ss"]
+        self.forceRun = args["-f"]
+        self.forceDownload = args["-fd"]
+        self.forceUpload = args["-fu"]
+        self.convertAudio = args["-ca"]
+        self.convertVideo = args["-cv"]
 
         isBulk = args["-b"]
         folder_name = args["-m"]
@@ -367,7 +377,7 @@ class YtDlp(TaskListener):
 
         await self.getTag(text)
 
-        opt = opt or self.user_dict.get("yt_opt") or config_dict["YT_DLP_OPTIONS"]
+        opt = opt or self.userDict.get("yt_opt") or config_dict["YT_DLP_OPTIONS"]
 
         if not self.link and (reply_to := self.message.reply_to_message):
             if reply_text := reply_to.text:

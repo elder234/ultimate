@@ -346,6 +346,8 @@ async def rssGet(_, message, pre_event):
             except Exception as e:
                 LOGGER.error(str(e))
                 await editMessage(msg, str(e))
+        else:
+            await sendMessage(message, "<b>Judul tidak ditemukan!</b>")
     except Exception as e:
         LOGGER.error(str(e))
         await sendMessage(message, f"<b>Tambahkan nilai valid!</b>\n<code>{e}</code>")
@@ -642,9 +644,18 @@ async def rssMonitor():
             try:
                 if data["paused"]:
                     continue
-                async with ClientSession() as session:
-                    async with session.get(data["link"], ssl=False) as res:
-                        html = await res.text()
+                tries = 0
+                while True:
+                    try:
+                        async with ClientSession() as session:
+                            async with session.get(data["link"], ssl=False) as res:
+                                html = await res.text()
+                        break
+                    except:
+                        tries += 1
+                        if tries > 3:
+                            raise
+                        continue
                 rss_d = feedparse(html)
                 try:
                     last_link = rss_d.entries[0]["links"][1]["href"]

@@ -38,13 +38,13 @@ async def cancel_task(_, message):
     elif len(msg) == 1:
         msg = (
         "<b>Balas ke pesan perintah saat digunakan untuk memulai Tugas</b>" \
-        f" <b>atau kirim</b> <code>/{BotCommands.CancelTaskCommand[0]} atau /{BotCommands.CancelTaskCommand[1]} GID</code> <b>untuk membatalkan Tugas!</b>"
+        f" <b>atau kirim</b> <code>/{BotCommands.CancelTaskCommand[0]} atau /{BotCommands.CancelTaskCommand[1]} [GID]</code> <b>untuk membatalkan Tugas!</b>"
         )
         await sendMessage(message, msg)
         return
     if (
         OWNER_ID != user_id
-        and task.listener.user_id != user_id
+        and task.listener.userId != user_id
         and (user_id not in user_data or not user_data[user_id].get("is_sudo"))
     ):
         await sendMessage(message, "<b>Bukan Tugas darimu!</b>")
@@ -101,7 +101,7 @@ async def cancell_all_buttons(_, message):
     async with task_dict_lock:
         count = len(task_dict)
     if count == 0:
-        await sendMessage(message, "<b>Tidak ada tugas aktif!</b>")
+        await sendMessage(message, "<b>Tidak ada Tugas Aktif!</b>")
         return
     button = create_cancel_buttons()
     can_msg = await sendMessage(message, "<b>Pilih jenis Tugas yang ingin dibatalkan :</b>", button)

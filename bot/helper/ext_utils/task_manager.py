@@ -47,7 +47,7 @@ async def stop_duplicate_check(listener):
             gdSearch(stopDup=True, noMulti=listener.isClone).drive_list,
             name,
             listener.upDest,
-            listener.user_id,
+            listener.userId,
         )
         if telegraph_content:
             msg = f"File/Folder ini sudah ada di Google Drive!\n{contents_no} hasil pencarian :"

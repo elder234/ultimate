@@ -26,20 +26,20 @@ class MirrorStatus:
     STATUS_SEEDING = "Seed"
     STATUS_SPLITTING = "Bagi"
     STATUS_CHECKING = "Cek"
-    STATUS_SAMVID = "SampleVideo"
+    STATUS_SAMVID = "SampelVideo"
+    STATUS_CONVERTING = "Konversi"
      
-STATUS_VALUES = [
-    ("ALL", "All"),
-    ("DL", MirrorStatus.STATUS_DOWNLOADING),
-    ("UP", MirrorStatus.STATUS_UPLOADING),
-    ("QD", MirrorStatus.STATUS_QUEUEDL),
-    ("QU", MirrorStatus.STATUS_QUEUEUP),
-    ("AR", MirrorStatus.STATUS_ARCHIVING),
-    ("EX", MirrorStatus.STATUS_EXTRACTING),
-    ("CL", MirrorStatus.STATUS_CLONING),
-    ("SD", MirrorStatus.STATUS_SEEDING),
-    ("SV", MirrorStatus.STATUS_SAMVID)
-]
+STATUS_DICT = {
+    "ALL": "All",
+    "DL": MirrorStatus.STATUS_DOWNLOADING,
+    "UP": MirrorStatus.STATUS_UPLOADING,
+    "QD": MirrorStatus.STATUS_QUEUEDL,
+    "QU": MirrorStatus.STATUS_QUEUEUP,
+    "AR": MirrorStatus.STATUS_ARCHIVING,
+    "EX": MirrorStatus.STATUS_EXTRACTING,
+    "CL": MirrorStatus.STATUS_CLONING,
+    "SD": MirrorStatus.STATUS_SEEDING,
+}
 
 
 async def getTaskByGid(gid: str):
@@ -51,7 +51,13 @@ async def getAllTasks(req_status: str):
     async with task_dict_lock:
         if req_status == "all":
             return list(task_dict.values())
-        return [tk for tk in task_dict.values() if tk.status() == req_status]
+        return [
+            tk
+            for tk in task_dict.values()
+            if tk.status() == req_status
+            or req_status == MirrorStatus.STATUS_DOWNLOADING
+            and tk.status() not in STATUS_DICT.values()
+        ]
 
 
 def get_readable_file_size(size_in_bytes: int):
@@ -109,7 +115,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
 
     if status == "All":
         tasks = (
-            [tk for tk in task_dict.values() if tk.listener.user_id == sid]
+            [tk for tk in task_dict.values() if tk.listener.userId == sid]
             if is_user
             else list(task_dict.values())
         )
@@ -117,7 +123,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         tasks = [
             tk
             for tk in task_dict.values()
-            if tk.status() == status and tk.listener.user_id == sid
+            if tk.status() == status and tk.listener.userId == sid
         ]
     else:
         tasks = [tk for tk in task_dict.values() if tk.status() == status]
@@ -148,6 +154,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
             MirrorStatus.STATUS_SPLITTING,
             MirrorStatus.STATUS_SEEDING,
             MirrorStatus.STATUS_SAMVID,
+            MirrorStatus.STATUS_CONVERTING,
         ]:
             msg += f"\n<b>├ Proses :</b> <code>{task.processed_bytes()}</code> dari <code>{task.size()}</code>"
             msg += f"\n<b>├ Perkiraan :</b> <code>{task.eta()}</code>"
@@ -170,9 +177,9 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
             msg += f"\n<b>├ ID :</b> <code>PRIVATE</code>"
             msg += f"\n<b>├ User :</b> <code>PRIVATE</code>" 
         else:
-            msg += f"\n<b>├ ID :</b> <code>{task.listener.user_id}</code>"
+            msg += f"\n<b>├ ID :</b> <code>{task.listener.userId}</code>"
             msg += f"\n<b>├ User :</b> <code>{task.listener.user.first_name}</code>"
-        msg += f"\n<b>└</b> <code>/{BotCommands.CancelTaskCommand[0]} {task.gid()}</code>\n\n"
+        msg += f"\n<b>└ GID :</b> <code>{task.gid()}</code>\n\n"
 
     if len(msg) == 0 and status == "All":
         return None, None
@@ -191,7 +198,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
             for i in [1, 2, 4, 6, 8, 10, 15, 20]:
                 buttons.ibutton(i, f"status {sid} ps {i}", position="footer")
     if status != "All" or tasks_no > 20:
-        for label, status_value in STATUS_VALUES:
+        for label, status_value in STATUS_DICT.items():
             if status_value != status:
                 buttons.ibutton(label, f"status {sid} st {status_value}")
     buttons.ibutton("♻️", f"status {sid} ref", position="header")

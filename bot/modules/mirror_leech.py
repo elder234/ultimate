@@ -87,6 +87,9 @@ class Mirror(TaskListener):
             "-z": False,
             "-sv": False,
             "-ss": False,
+            "-f": False,
+            "-fd": False,
+            "-fu": False,
             "-i": 0,
             "-sp": 0,
             "link": "",
@@ -98,6 +101,8 @@ class Mirror(TaskListener):
             "-ap": "",
             "-h": "",
             "-t": "",
+            "-ca": "",
+            "-cv": "",
         }
 
         args = arg_parser(input_list[1:], arg_base)
@@ -115,6 +120,11 @@ class Mirror(TaskListener):
         self.splitSize = args["-sp"]
         self.sampleVideo = args["-sv"]
         self.screenShots = args["-ss"]
+        self.forceRun = args["-f"]
+        self.forceDownload = args["-fd"]
+        self.forceUpload = args["-fu"]
+        self.convertAudio = args["-ca"]
+        self.convertVideo = args["-cv"]
 
         headers = args["-h"]
         isBulk = args["-b"]
