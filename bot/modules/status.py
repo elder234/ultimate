@@ -40,23 +40,13 @@ async def mirror_status(_, message):
     async with task_dict_lock:
         count = len(task_dict)
     if count == 0:
-        currentTime = get_readable_time(time() - botStartTime)
-        free = get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)
-        try:
-            sent = get_readable_file_size(net_io_counters().bytes_sent)
-        except:
-            sent = "NaN"
-        try:
-            recv = get_readable_file_size(net_io_counters().bytes_recv)
-        except:
-            recv = "NaN"
         msg = "<b>Tidak ada Tugas AKTIF!</b>"
-        msg += f"\n<b>Note :</b> Setiap User dapat menampilkan Tugasnya dengan menambahkan <code>me</code> atau <code>user_id</code> setelah perintah <code>/{BotCommands.StatusCommand[0]}</code>!"
+        msg += f"\n<b>Tambahkan</b> <code>me/userId</code> <b>setelah perintah untuk menampilkan Tugas secara spesifik!</b>"
         msg += "\n\n___________________________"
         msg += (
-            f"\n<b>CPU :</b> <code>{cpu_percent()}%</code> | <b>FREE :</b> <code>{free}</code>" \
-            f"\n<b>RAM :</b> <code>{virtual_memory().percent}%</code> | <b>UPTIME :</b> <code>{currentTime}</code>" \
-            f"\n<b>T.Unduh :</b> <code>{sent}</code> | <b>T.Unggah :</b> <code>{recv}</code>" 
+            f"\n<b>CPU :</b> <code>{cpu_percent()}%</code> | <b>FREE :</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code>" \
+            f"\n<b>RAM :</b> <code>{virtual_memory().percent}%</code> | <b>UPTIME :</b> <code>{get_readable_time(time() - botStartTime)}</code>" \
+            f"\n<b>T.Unduh :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code> | <b>T.Unggah :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code>" 
         )
         reply_message = await sendMessage(message, msg)
         await auto_delete_message(message, reply_message)

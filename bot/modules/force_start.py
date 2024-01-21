@@ -26,7 +26,7 @@ async def remove_from_queue(_, message):
         gid = msg[2] if status else msg[1]
         task = await getTaskByGid(gid)
         if task is None:
-            await sendMessage(message, f"<b>Tugas dengan ID</b> <code>{gid}</code> <b>tidak ditemukan!</b>")
+            await sendMessage(message, f"<b>Tugas dengan GID</b> <code>{gid}</code> <b>tidak ditemukan!</b>")
             return
     elif reply_to_id := message.reply_to_message_id:
         async with task_dict_lock:
@@ -38,7 +38,7 @@ async def remove_from_queue(_, message):
         msg = (
             "<b>Balas ke pesan perintah saat digunakan untuk memulai Tugas</b>" \
             f" <b>atau kirim</b> <code>/{BotCommands.ForceStartCommand[0]} atau /{BotCommands.ForceStartCommand[1]} [GID]</code> <b>untuk memulai Tugas secara paksa!</b>" \
-            f"\n<b>Kamu dapat menambahkan</b> <code>fd/fu</code> <b>setelah perintah untuk memulai Tugas secara paksa untuk Unduh/Unggah!</b>"
+            f" <b>Kamu dapat menambahkan</b> <code>fd/fu</code> <b>setelah perintah untuk memulai Tugas secara paksa untuk Unduh/Unggah!</b>"
         )
         await sendMessage(message, msg)
         return

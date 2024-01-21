@@ -242,14 +242,14 @@ async def bot_help(_, message):
 <code>/{BotCommands.QbLeechCommand[0]}</code> atau <code>/{BotCommands.QbLeechCommand[1]}</code> : Leech ke Telegram menggunakan qBittorrent.
 <code>/{BotCommands.JdLeechCommand[0]}</code> atau <code>/{BotCommands.JdLeechCommand[1]}</code> : Leech ke Telegram menggunakan JDownloader.
 <code>/{BotCommands.YtdlLeechCommand[0]}</code> atau <code>/{BotCommands.YtdlLeechCommand[1]}</code> : Leech ke Telegram menggunakan YT-DLP.
-<code>/{BotCommands.CloneCommand[0]}</code> atau <code>/{BotCommands.CloneCommand[1]}</code> [gdrive_url] : Menggandakan file/folder Google Drive.
-<code>/{BotCommands.CountCommand[0]}</code> atau <code>/{BotCommands.CountCommand[1]}</code> [gdrive_url] : Menghitung file/folder Google Drive.
-<code>/{BotCommands.DeleteCommand[0]}</code> atau <code>/{BotCommands.DeleteCommand[1]}</code> [gdrive_url] : Menghapus file/folder Google Drive (Hanya Owner & Sudo).
+<code>/{BotCommands.CloneCommand[0]}</code> atau <code>/{BotCommands.CloneCommand[1]}</code> [gdriveUrl] : Menggandakan file/folder Google Drive.
+<code>/{BotCommands.CountCommand[0]}</code> atau <code>/{BotCommands.CountCommand[1]}</code> [gdriveUrl] : Menghitung file/folder Google Drive.
+<code>/{BotCommands.DeleteCommand[0]}</code> atau <code>/{BotCommands.DeleteCommand[1]}</code> [gdriveUrl] : Menghapus file/folder Google Drive (Hanya Owner & Sudo).
 <code>/{BotCommands.UserSetCommand[0]}</code> atau <code>/{BotCommands.UserSetCommand[1]}</code> : Pengaturan User.
 <code>/{BotCommands.BotSetCommand[0]}</code> atau <code>/{BotCommands.BotSetCommand[1]}</code> : Pengaturan Bot (Hanya Owner & Sudo).
 <code>/{BotCommands.BtSelectCommand[0]}</code> atau <code>/{BotCommands.BtSelectCommand[1]}</code> : Memilih file dari torrent.
-<code>/{BotCommands.CancelTaskCommand[0]}</code> atau <code>/{BotCommands.CancelTaskCommand[1]}</code> [gid] : Membatalkan Tugas.
-<code>/{BotCommands.ForceStartCommand[0]}</code> atau <code>/{BotCommands.ForceStartCommand[1]}</code> [gid] : Memulai Tugas secara paksa.
+<code>/{BotCommands.CancelTaskCommand[0]}</code> atau <code>/{BotCommands.CancelTaskCommand[1]}</code> [GID] : Membatalkan Tugas.
+<code>/{BotCommands.ForceStartCommand[0]}</code> atau <code>/{BotCommands.ForceStartCommand[1]}</code> [GID] : Memulai Tugas secara paksa.
 <code>/{BotCommands.CancelAllCommand[0]}</code> atau <code>/{BotCommands.CancelAllCommand[1]}</code> : Membatalkan semua Tugas (Hanya Owner & Sudo).
 <code>/{BotCommands.ListCommand[0]}</code> atau <code>/{BotCommands.ListCommand[1]}</code> [query] : Mencari file/folder di Google Drive.
 <code>/{BotCommands.SearchCommand[0]}</code> atau <code>/{BotCommands.SearchCommand[1]}</code> [query] : Mencari torrent menggunakan API.

@@ -46,7 +46,7 @@ async def speedtest(_, message):
 <b>Nama         :</b> <code>{result['server']['name']}</code>
 <b>Sponsor      :</b> <code>{result['server']['sponsor']}</code>
 <b>Latency      :</b> <code>{result['server']['latency']}</code>
-<b>Negara       :</b> <code>{result['server']['country']}, {result['server']['cc']}</code>
+<b>Negara       :</b> <code>{result['server']['country']} ({result['server']['cc']})</code>
 <b>Latitude     :</b> <code>{result['server']['lat']}</code>
 <b>Longitude    :</b> <code>{result['server']['lon']}</code>
 </pre>

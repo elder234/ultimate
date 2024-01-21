@@ -27,7 +27,7 @@ async def cancel_task(_, message):
         else:
             task = await getTaskByGid(gid)
             if task is None:
-                await sendMessage(message, f"<b>Tugas dengan ID</b> <code>{gid}</code> <b>tidak ditemukan!</b>")
+                await sendMessage(message, f"<b>Tugas dengan GID</b> <code>{gid}</code> <b>tidak ditemukan!</b>")
                 return
     elif reply_to_id := message.reply_to_message_id:
         async with task_dict_lock:
