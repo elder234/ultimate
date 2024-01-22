@@ -296,14 +296,14 @@ async def restart_notification():
                     thread_id = authorized_chat_id.split(":")[1]
 
             if (
-                chat_id
+                chat_id is not None
                 and not isinstance(chat_id, int)
                 and chat_id.isdigit()
             ):
                 chat_id = int(chat_id)
 
             if (
-                thread_id
+                thread_id is not None
                 and not isinstance(thread_id, int)
                 and thread_id.isdigit()
             ):

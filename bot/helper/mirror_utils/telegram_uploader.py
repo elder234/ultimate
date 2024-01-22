@@ -108,14 +108,14 @@ class TgUploader:
                 self._forwardChatId = self._forwardChatId.split(":")[0]
                 
         if (
-            self._forwardChatId
+            self._forwardChatId is not None
             and not isinstance(self._forwardChatId, int)
             and self._forwardChatId.isdigit()
         ):
             self._forwardChatId = int(self._forwardChatId)
                 
         if (
-            self._forwardThreadId
+            self._forwardThreadId is not None
             and not isinstance(self._forwardThreadId, int)
             and self._forwardThreadId.isdigit()
         ):

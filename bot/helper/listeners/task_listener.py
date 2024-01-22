@@ -317,7 +317,7 @@ class TaskListener(TaskConfig):
                         LOG_CHAT_ID = LOG_CHAT_ID.split(":")[0]
                         
                 if (
-                    LOG_CHAT_ID
+                    LOG_CHAT_ID is not None
                     and not isinstance(LOG_CHAT_ID, int)
                     and (
                         LOG_CHAT_ID.isdigit() 
@@ -327,7 +327,7 @@ class TaskListener(TaskConfig):
                     LOG_CHAT_ID = int(LOG_CHAT_ID)
 
                 if (
-                    LOG_CHAT_THREAD_ID
+                    LOG_CHAT_THREAD_ID is not None
                     and not isinstance(LOG_CHAT_THREAD_ID, int)
                     and LOG_CHAT_THREAD_ID.isdigit()
                 ):
