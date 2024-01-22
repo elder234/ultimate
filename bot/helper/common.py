@@ -664,8 +664,9 @@ class TaskConfig:
                 else:
                     vstatus = ""
                 fvext.extend(f".{ext}" for ext in vdata[2:])
+            else:
+                vstatus = ""
         else:
-            vdata = ""
             vext = ""
             vstatus = ""
 
@@ -681,8 +682,9 @@ class TaskConfig:
                 else:
                     astatus = ""
                 faext.extend(f".{ext}" for ext in adata[2:])
+            else:
+                astatus = ""
         else:
-            adata = ""
             aext = ""
             astatus = ""
 

@@ -51,32 +51,30 @@ async def remove_from_queue(_, message):
         return
     obj = task.task()
     listener = obj.listener
-    if status == "fu":
-        listener.forceUpload = True
-        if listener.mid in queued_up:
-            async with queue_dict_lock:
+    msg = ""
+    async with queue_dict_lock:
+        if status == "fu":
+            listener.forceUpload = True
+            if listener.mid in queued_up:
                 await start_up_from_queued(listener.mid)
-            await sendMessage(message, "<b>Tugas berhasil dimulai secara paksa!</b>")
-    elif status == "fd":
-        listener.forceDownload = True
-        if listener.mid in queued_dl:
-            async with queue_dict_lock:
+                msg = "<b>Tugas berhasil dimulai secara paksa untuk Unggah!</b>"
+        elif status == "fd":
+            listener.forceDownload = True
+            if listener.mid in queued_dl:
                 await start_dl_from_queued(listener.mid)
-        await sendMessage(message, "<b>Tugas berhasil dimulai secara paksa untuk Unduh!</b>")
-    else:
-        listener.forceDownload = True
-        listener.forceUpload = True
-        if listener.mid in queued_up:
-            async with queue_dict_lock:
+                msg = "<b>Tugas berhasil dimulai secara paksa untuk Unduh!</b>"
+        else:
+            listener.forceDownload = True
+            listener.forceUpload = True
+            if listener.mid in queued_up:
                 await start_up_from_queued(listener.mid)
-            await sendMessage(message, "<b>Tugas berhasil dimulai secara paksa untuk Unggah!</b>")
-        elif listener.mid in queued_dl:
-            async with queue_dict_lock:
+                msg = "<b>Tugas berhasil dimulai secara paksa untuk Unggah!</b>"
+            elif listener.mid in queued_dl:
                 await start_dl_from_queued(listener.mid)
-            await sendMessage(
-                message,
-                "<b>Tugas berhasil dimulai paksa untuk Unduh dan akan Unggah setelah proses Unduh selesai!</b>"
-            )
+                msg = "<b>Tugas berhasil dimulai paksa untuk Unduh dan akan Unggah setelah proses Unduh selesai!</b>"
+    if msg:
+        await sendMessage(message, msg)
+
         
 
 
