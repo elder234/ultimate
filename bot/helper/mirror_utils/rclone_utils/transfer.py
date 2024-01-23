@@ -10,7 +10,11 @@ from re import findall as re_findall
 
 from bot import config_dict
 from bot.helper.ext_utils.bot_utils import cmd_exec, sync_to_async
-from bot.helper.ext_utils.files_utils import get_mime_type, count_files_and_folders
+from bot.helper.ext_utils.files_utils import (
+    get_mime_type,
+    count_files_and_folders,
+    clean_unwanted,
+)
 
 
 LOGGER = getLogger(__name__)
@@ -31,6 +35,7 @@ class RcloneTransferHelper:
         self._sa_count = 1
         self._sa_index = 0
         self._sa_number = 0
+        self._use_service_accounts = config_dict["USE_SERVICE_ACCOUNTS"]
 
     @property
     def transferred_size(self):
@@ -94,6 +99,7 @@ class RcloneTransferHelper:
         elif gd_id := remote_opts.get("root_folder_id"):
             option = "root_folder_id"
         else:
+            self._use_service_accounts = False
             return "rclone.conf"
 
         files = await listdir("accounts")
@@ -117,19 +123,17 @@ class RcloneTransferHelper:
             await self._listener.onDownloadComplete()
         elif return_code != -9:
             error = (await self._proc.stderr.read()).decode().strip()
-            if (
-                not error
-                and remote_type == "drive"
-                and config_dict["USE_SERVICE_ACCOUNTS"]
-            ):
+            if not error and remote_type == "drive" and self._use_service_accounts:
                 error = "Terjadi kesalahan, Kemungkinan karena SAccounts tidak mempunyai akses ke Cloud!"
+            elif not error:
+                error = "Kirim perintah <code>/shell cat rlog.txt</code> untuk melihat Informasi Error!"
             LOGGER.error(error)
 
             if (
                 self._sa_number != 0
                 and remote_type == "drive"
                 and "RATE_LIMIT_EXCEEDED" in error
-                and config_dict["USE_SERVICE_ACCOUNTS"]
+                and self._use_service_accounts
             ):
                 if self._sa_count < self._sa_number:
                     remote = self._switchServiceAccount()
@@ -156,6 +160,7 @@ class RcloneTransferHelper:
         if (
             remote_type == "drive"
             and config_dict["USE_SERVICE_ACCOUNTS"]
+            and self._use_service_accounts
             and config_path == "rclone.conf"
             and await aiopath.isdir("accounts")
             and not remote_opts.get("service_account_file")
@@ -216,6 +221,8 @@ class RcloneTransferHelper:
                 else f"https://drive.google.com/uc?id={fid}&export=download"
             )
         elif code != -9:
+            if not err:
+                err = "Kirim perintah <code>/shell cat rlog.txt</code> untuk melihat Informasi Error!"
             LOGGER.error(
                 f"while getting drive link. Path: {destination}. Stderr: {err}"
             )
@@ -233,12 +240,10 @@ class RcloneTransferHelper:
             return False
         elif return_code != 0:
             error = (await self._proc.stderr.read()).decode().strip()
-            if (
-                not error
-                and remote_type == "drive"
-                and config_dict["USE_SERVICE_ACCOUNTS"]
-            ):
-                error = "Terjadi kesalahan, Kemungkinan karena SAccounts tidak mempunyai akses ke Cloud!"
+            if not error and remote_type == "drive" and self._use_service_accounts:
+                error = "Terjadi kesalahan, Kemungkinan karena SAccounts tidak mempunyai akses ke Cloud atau RATE_LIMIT_EXCEEDED!"
+            elif not error:
+                error = "Kirim perintah <code>/shell cat rlog.txt</code> untuk melihat Informasi Error!"
             LOGGER.error(error)
             if (
                 self._sa_number != 0
@@ -263,7 +268,7 @@ class RcloneTransferHelper:
         else:
             return True
 
-    async def upload(self, path, unwanted_files):
+    async def upload(self, path, unwanted_files, ft_delete):
         self._is_upload = True
         rc_path = self._listener.upDest.strip("/")
         if rc_path.startswith("mrcc:"):
@@ -277,7 +282,7 @@ class RcloneTransferHelper:
         if await aiopath.isdir(path):
             mime_type = "Folder"
             folders, files = await count_files_and_folders(
-                path, self._listener.extensionFilter
+                path, self._listener.extensionFilter, unwanted_files
             )
             rc_path += f"/{self._listener.name}" if rc_path else self._listener.name
         else:
@@ -301,7 +306,6 @@ class RcloneTransferHelper:
         fconfig_path = oconfig_path
         if (
             remote_type == "drive"
-            and config_dict["USE_SERVICE_ACCOUNTS"]
             and fconfig_path == "rclone.conf"
             and await aiopath.isdir("accounts")
             and not remote_opts.get("service_account_file")
@@ -351,11 +355,15 @@ class RcloneTransferHelper:
             if code == 0:
                 link = res
             elif code != -9:
+                if not err:
+                    err = "Kirim perintah <code>/shell cat rlog.txt</code> untuk melihat Informasi Error!"
                 LOGGER.error(f"while getting link. Path: {destination} | Stderr: {err}")
                 link = ""
         if self._is_cancelled:
             return
         LOGGER.info(f"Upload Done. Path: {destination}")
+        if self._listener.seed and not self._listener.newDir:
+            await clean_unwanted(path, ft_delete)
         await self._listener.onUploadComplete(
             link, files, folders, mime_type, destination
         )
@@ -397,6 +405,8 @@ class RcloneTransferHelper:
             return None, None
         elif return_code != 0:
             error = (await self._proc.stderr.read()).decode().strip()
+            if not error:
+                error = "Kirim perintah <code>/shell cat rlog.txt</code> untuk melihat Informasi Error!"
             LOGGER.error(error)
             await self._listener.onUploadError(error[:4000])
             return None, None
@@ -421,6 +431,8 @@ class RcloneTransferHelper:
                 if code == 0:
                     return res, destination
                 elif code != -9:
+                    if not err:
+                        err = "Kirim perintah <code>/shell cat rlog.txt</code> untuk melihat Informasi Error!"
                     LOGGER.error(
                         f"while getting link. Path: {destination} | Stderr: {err}"
                     )
@@ -462,7 +474,7 @@ class RcloneTransferHelper:
                     cmd.append(flag.strip())
         if unwanted_files:
             for f in unwanted_files:
-                cmd.extend(("--exclude", f))
+                cmd.extend(("--exclude", f.rsplit("/", 1)[1]))
         return cmd
 
     @staticmethod
