@@ -67,10 +67,10 @@ def direct_link_generator(link: str):
         raise DirectDownloadLinkException(
             "ERROR: Link ini tidak dapat Unduh/Leech menggunakan Bot!"
         )
-    elif "drive.usercontent.google.com" in domain:
-        raise DirectDownloadLinkException(
-            "ERROR: Link ini tidak bersifat Publik. Gunakan Link drive.google.com!"
-        )
+    # elif "drive.usercontent.google.com" in domain:
+    #     raise DirectDownloadLinkException(
+    #         "ERROR: Link ini tidak bersifat Publik. Gunakan Link drive.google.com!"
+    #     )
     elif match(r"https?://(bigota|hugeota)\.d\.miui\.com/\S+", link):
         return bigota(link)
     elif "mediafire.com" in domain:
@@ -247,6 +247,10 @@ def direct_link_generator(link: str):
         return link if domain == "static.romsget.io" else romsget(link)
     elif "hexupload.net" in domain:
         return hexupload(link)
+    elif "disk.yandex" in domain or "yadi.sk" in domain:
+        return yandex_disk(link)
+    elif "sfile.mobi" in domain:
+        return sfile(link)
     # Add AllDebrid supported link here
     elif any(
         x in domain
@@ -1108,7 +1112,7 @@ def teltobx(url: str):
     details = {"contents": [], "title": "", "total_size": 0}
 
     def __fetch_links(session, _id=0, folderPath=""):
-        nonlocal details  # Tambahkan baris ini untuk mengakses variabel details dari luar fungsi
+        nonlocal details
         params = {
             "shareToken": shareToken,
             "pageSize": 1000,
@@ -1131,9 +1135,9 @@ def teltobx(url: str):
         for content in contents:
             if content["type"] == "dir" and "url" not in content:
                 if not folderPath:
-                    newFolderPath = path.join(details["title"], content["name"])
+                    newFolderPath = ospath.join(details["title"], content["name"])
                 else:
-                    newFolderPath = path.join(folderPath, content["name"])
+                    newFolderPath = ospath.join(folderPath, content["name"])
                 if not details["title"]:
                     details["title"] = content["name"]
                 __fetch_links(session, content["id"], newFolderPath)
@@ -1144,7 +1148,7 @@ def teltobx(url: str):
                 if (sub_type := content.get("sub_type")) and not filename.endswith(sub_type):
                     filename += f".{sub_type}"
                 item = {
-                    "path": path.join(folderPath),
+                    "path": ospath.join(folderPath),
                     "filename": filename,
                     "url": content["url"],
                 }
