@@ -73,11 +73,12 @@ class Clone(TaskListener):
         input_list = text[0].split(" ")
 
         arg_base = {
-            "link": "", 
-            "-i": 0, 
-            "-b": False, 
-            "-up": "", 
-            "-rcf": ""
+            "link": "",
+            "-i": 0,
+            "-b": False,
+            "-up": "",
+            "-rcf": "",
+            "-sync": False,
         }
 
         args = arg_parser(input_list[1:], arg_base)
@@ -92,6 +93,7 @@ class Clone(TaskListener):
         self.link = args["link"]
 
         isBulk = args["-b"]
+        sync = args["-sync"]
         bulk_start = 0
         bulk_end = 0
 
@@ -144,9 +146,9 @@ class Clone(TaskListener):
             await sendMessage(self.message, e)
             return
         
-        await self._proceedToClone()
+        await self._proceedToClone(sync)
 
-    async def _proceedToClone(self):
+    async def _proceedToClone(self, sync):
         if is_share_link(self.link):
             try:
                 self.link = await sync_to_async(direct_link_generator, self.link)
@@ -157,7 +159,7 @@ class Clone(TaskListener):
                     await sendMessage(self.message, str(e))
                     return
         if is_gdrive_link(self.link) or is_gdrive_id(self.link):
-            self.name, mime_type, size, files, _ = await sync_to_async(
+            self.name, mime_type, self.size, files, _ = await sync_to_async(
                 gdCount().count, self.link, self.userId
             )
             if mime_type is None:
@@ -178,19 +180,15 @@ class Clone(TaskListener):
                 msg = ""
                 gid = token_urlsafe(12)
                 async with task_dict_lock:
-                    task_dict[self.mid] = GdriveStatus(self, drive, size, gid, "cl")
+                    task_dict[self.mid] = GdriveStatus(self, drive, gid, "cl")
                 if self.multi <= 1:
                     await sendStatusMessage(self.message)
-            flink, size, mime_type, files, folders, dir_id = await sync_to_async(
-                drive.clone
-            )
+            flink, mime_type, files, folders, dir_id = await sync_to_async(drive.clone)
             if msg:
                 await deleteMessage(msg)
             if not flink:
                 return
-            await self.onUploadComplete(
-                flink, size, files, folders, mime_type, dir_id=dir_id
-            )
+            await self.onUploadComplete(flink, files, folders, mime_type, dir_id=dir_id)
             LOGGER.info(f"Cloning Done: {self.name}")
         elif is_rclone_path(self.link):
             if self.link.startswith("mrcc:"):
@@ -241,8 +239,13 @@ class Clone(TaskListener):
                 task_dict[self.mid] = RcloneStatus(self, RCTransfer, gid, "cl")
             if self.multi <= 1:
                 await sendStatusMessage(self.message)
+            method = "sync" if sync else "copy"
             flink, destination = await RCTransfer.clone(
-                config_path, remote, src_path, mime_type
+                config_path,
+                remote,
+                src_path,
+                mime_type,
+                method,
             )
             if not destination:
                 return
@@ -286,7 +289,7 @@ class Clone(TaskListener):
                     return
                 files = None
                 folders = None
-                size = 0
+                self.size = 0
                 LOGGER.error(
                     f"Error: While getting rclone stat. Path: {destination}. Stderr: {res1[1][:4000]}"
                 )
@@ -294,9 +297,9 @@ class Clone(TaskListener):
                 files = len(res1[0].split("\n"))
                 folders = len(res2[0].strip().split("\n")) if res2[0] else 0
                 rsize = loads(res3[0])
-                size = rsize["bytes"]
+                self.size = rsize["bytes"]
                 await self.onUploadComplete(
-                    flink, size, files, folders, mime_type, destination
+                    flink, files, folders, mime_type, destination
                 )
         else:
             await sendMessage(self.message, CLONE_HELP_MESSAGE)
