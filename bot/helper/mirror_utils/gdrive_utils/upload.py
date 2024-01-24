@@ -71,7 +71,7 @@ class gdUpload(GoogleDriveHelper):
                     ospath.basename(ospath.abspath(self.listener.name)),
                     self.listener.upDest,
                 )
-                result = self._upload_dir(self._path, dir_id, unwanted_files)
+                result = self._upload_dir(self._path, dir_id, unwanted_files, ft_delete)
                 if result is None:
                     raise Exception("Unggahan dibatalkan secara manual oleh Bot!")
                 link = self.G_DRIVE_DIR_BASE_DOWNLOAD_URL.format(dir_id)
