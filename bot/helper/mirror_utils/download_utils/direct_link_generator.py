@@ -26,7 +26,7 @@ from bot.helper.ext_utils.status_utils import speed_string_to_bytes, get_readabl
 
 _caches = {}
 
-user_agent  = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0"
+userAgent  = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0"
 
 def direct_link_generator(link: str):
     """ direct links generator """
@@ -713,7 +713,7 @@ def solidfiles(url):
     with create_scraper() as session:
         try:
             headers = {
-                "User-Agent": user_agent
+                "User-Agent": userAgent
             }
             pageSource = session.get(url, headers=headers).text
             mainOptions = str(
@@ -912,7 +912,7 @@ def sharer_scraper(url):
         url = cget("GET", url).url
         raw = urlparse(url)
         header = {
-            "User-Agent": user_agent}
+            "User-Agent": userAgent}
         res = cget("GET", url, headers=header)
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}") from e
@@ -927,7 +927,7 @@ def sharer_scraper(url):
     headers = {
         "Content-Type": f"multipart/form-data; boundary=----WebKitFormBoundary{boundary}",
         "x-token": raw.hostname,
-        "User-Agent": user_agent
+        "User-Agent": userAgent
     }
 
     data = f"------WebKitFormBoundary{boundary}\r\nContent-Disposition: form-data; name='action'\r\n\r\ndirect\r\n" \
@@ -1687,7 +1687,7 @@ def mp4upload(url: str):
                 url, 
                 data=data, 
                 headers={
-                    "User-Agent": user_agent, 
+                    "User-Agent": userAgent, 
                     "Referer": "https://www.mp4upload.com/"
                 }).text
             soup = BeautifulSoup(post, "lxml")
@@ -1790,7 +1790,7 @@ def androidfilehost(url):
             post = session.post(
                 "https://androidfilehost.com/libs/otf/mirrors.otf.php", 
                 headers={
-                    "User-Agent": user_agent,
+                    "User-Agent": userAgent,
                     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
                     "Referer": f"https://androidfilehost.com/?fid={file_id}",
                     "X-MOD-SBB-CTYPE": "xhr",
@@ -1826,7 +1826,7 @@ def tusfiles(url: str):
                 "https://tusfiles.com/",
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",
-                    "User-Agent": user_agent
+                    "User-Agent": userAgent
                 }, 
                 data={
                     "op": "download2", 
@@ -1853,7 +1853,7 @@ def pandafiles(url: str):
             post = session.post(
                 url, 
                 headers={
-                    "User-Agent": user_agent
+                    "User-Agent": userAgent
                 }, 
                 data={
                     "op": "download2", 
@@ -1877,7 +1877,7 @@ def uploadhaven(url: str):
             req = session.get(
                 url,
                 headers={
-                    "User-Agent": user_agent
+                    "User-Agent": userAgent
                 }).text
             soup = BeautifulSoup(req, "lxml")
             d = soup.find("div", {"class": "alert alert-danger col-md-12"})
@@ -1899,7 +1899,7 @@ def uploadhaven(url: str):
                         "type": "free",
                     },
                     headers={
-                        "User-Agent": user_agent
+                        "User-Agent": userAgent
                     }
                 ).text
                 soup = BeautifulSoup(post, "lxml")
@@ -1918,7 +1918,7 @@ def uploadrar(url: str):
             post = session.post(
                 url, 
                 headers={
-                    "User-Agent": user_agent,
+                    "User-Agent": userAgent,
                     "Referer": url
                 },
                 data={
@@ -1971,7 +1971,7 @@ def hexupload(url: str):
             post = session.post(
                 url, 
                 headers={
-                    "User-Agent": user_agent,
+                    "User-Agent": userAgent,
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                     "Accept-Language": "en-us,en;q=0.6",
                     "Sec-Fetch-Mode": "navigate",
@@ -2030,7 +2030,7 @@ def sfile(url):
                 download_link,
                 headers={
                     "Referer": url, 
-                    "User-Agent": user_agent,
+                    "User-Agent": userAgent,
                     "Cache-Control": "max-age=0", 
                     "Upgrade-Insecure-Requests": "1", 
                 }

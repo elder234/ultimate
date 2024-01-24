@@ -154,9 +154,11 @@ class Clone(TaskListener):
                 self.link = await sync_to_async(direct_link_generator, self.link)
                 LOGGER.info(f"Generated link: {self.link}")
             except DirectDownloadLinkException as e:
-                LOGGER.error(str(e))
-                if str(e).startswith("ERROR:"):
-                    await sendMessage(self.message, str(e))
+                e = str(e)
+                if "This link requires a password!" not in e:
+                    LOGGER.info(e)
+                if e.startswith("ERROR:"):
+                    await sendMessage(self.message, f"<b>ERROR :</b> <code>{e.replace('ERROR:', '')}</code>")
                     return
         if is_gdrive_link(self.link) or is_gdrive_id(self.link):
             self.name, mime_type, self.size, files, _ = await sync_to_async(

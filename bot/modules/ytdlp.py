@@ -441,6 +441,14 @@ class YtDlp(TaskListener):
                     value = eval(value)
                 options[key] = value
         options["playlist_items"] = "0"
+        
+        # Sometimes can't extract Playlist
+        if "extractor_args" not in options:
+            options["extractor_args"] = {
+                "youtubetab": {
+                    "skip": ["authcheck"]
+                }
+            }
 
         try:
             result = await sync_to_async(extract_info, self.link, options)
