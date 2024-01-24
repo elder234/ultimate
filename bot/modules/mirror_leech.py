@@ -346,7 +346,7 @@ class Mirror(TaskListener):
                     if "This link requires a password!" not in e:
                         LOGGER.info(e)
                     if e.startswith("ERROR:"):
-                        await sendMessage(self.message, f"<b>ERROR :</b> <code>{e.replace('ERROR:', '')}</code>")
+                        await sendMessage(self.message, f"<b>ERROR :</b> <code>{e.replace('ERROR: ', '')}</code>")
                         self.removeFromSameDir()
                         return
 

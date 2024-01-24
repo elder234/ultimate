@@ -158,7 +158,7 @@ class Clone(TaskListener):
                 if "This link requires a password!" not in e:
                     LOGGER.info(e)
                 if e.startswith("ERROR:"):
-                    await sendMessage(self.message, f"<b>ERROR :</b> <code>{e.replace('ERROR:', '')}</code>")
+                    await sendMessage(self.message, f"<b>ERROR :</b> <code>{e.replace('ERROR: ', '')}</code>")
                     return
         if is_gdrive_link(self.link) or is_gdrive_id(self.link):
             self.name, mime_type, self.size, files, _ = await sync_to_async(

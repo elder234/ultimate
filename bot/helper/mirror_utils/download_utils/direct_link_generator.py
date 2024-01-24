@@ -44,7 +44,7 @@ def direct_link_generator(link: str):
         ]
     ):
         raise DirectDownloadLinkException(
-            f"ERROR: Gunakan perintah <b>YT-DLP</b> (<code>/{BotCommands.YtdlCommand[0]}</code> atau <code>/{BotCommands.YtdlLeechCommand[0]}</code>) untuk Unduh/Leech Link ini!"
+            f"ERROR: Gunakan perintah <b>YT-DLP</b> ({BotCommands.YtdlCommand[0]} atau {BotCommands.YtdlLeechCommand[0]}) untuk Unduh/Leech Link ini!"
         )
     elif any(
         x in domain
@@ -56,7 +56,7 @@ def direct_link_generator(link: str):
         ]
     ):
         raise DirectDownloadLinkException(
-            f"ERROR: Gunakan perintah <b>JDownloader</b> (<code>/{BotCommands.JdMirrorCommand[0]}</code> atau <code>/{BotCommands.JdLeechCommand[0]}</code>) untuk Unduh/Leech Link ini!"
+            f"ERROR: Gunakan perintah <b>JDownloader</b> ({BotCommands.JdMirrorCommand[0]} atau /{BotCommands.JdLeechCommand[0]}) untuk Unduh/Leech Link ini!"
         )
     elif any(
         x in domain
@@ -1452,7 +1452,7 @@ def streamvid(url: str):
                 return directLink[0]
             raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
         elif (qualities_urls := html.xpath("//div[@id='dl_versions']/a/@href")) and (qualities := html.xpath("//div[@id='dl_versions']/a/text()[2]")):
-            error = "\nProvide a quality to download the video\nAvailable Quality:"
+            error = "<b>Pilih kualitas Video :</b>\n<b>Kualitas yang tersedia :</b>"
             for quality_url, quality in zip(qualities_urls, qualities):
                 error += f"\n{quality.strip()} <code>{quality_url}</code>"
             raise DirectDownloadLinkException(f"{error}")
@@ -1549,7 +1549,7 @@ def filelions_and_streamwish(url):
     result = _res["result"]
     if not result["versions"]:
         raise DirectDownloadLinkException("ERROR: Versi tidak ditemukan!")
-    error = "\n<b>Pilih kualitas Video :</b>\n<b>Kualitas yang tersedia :</b>"
+    error = "<b>Pilih kualitas Video :</b>\n<b>Kualitas yang tersedia :</b>"
     for version in result["versions"]:
         if quality == version["name"]:
             return version["url"]
