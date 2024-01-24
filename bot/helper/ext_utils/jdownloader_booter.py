@@ -110,6 +110,7 @@ class JDownloader(Myjdapi):
             except:
                 continue
             break
+        self.device.enable_direct_connection()
         self.error = ""
         LOGGER.info("JDownloader Device have been Connected!")
 
