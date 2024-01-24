@@ -63,8 +63,8 @@ class JDownloader(Myjdapi):
             sf.truncate(0)
             dump(jdata, sf)
         cmd = "safari -Dsun.jnu.encoding=UTF-8 -Dfile.encoding=UTF-8 -Djava.awt.headless=true -jar /JDownloader/JDownloader.jar"
-        _, __, code = await cmd_exec(cmd, shell=True)
-        if code != -9:
+        _, _, code = await cmd_exec(cmd, shell=True)
+        if code != 0:
             self.boot()
 
     def jdconnect(self):
