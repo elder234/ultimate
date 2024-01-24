@@ -181,8 +181,8 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
             msg += f"\n<b>├ User :</b> <code>{task.listener.user.first_name}</code>"
         tgid = task.gid()
         msg += f"\n<b>├ GID :</b> <code>{tgid}</code>"
-        msg += f"\n├<code>/{BotCommands.ForceStartCommand[1]} {tgid}</code>"
-        msg += f"\n└<code>/{BotCommands.CancelTaskCommand[1]} {tgid}</code>\n\n"
+        msg += f"\n├<code>/{BotCommands.CancelTaskCommand[1]} {tgid}</code>"
+        msg += f"\n└<code>/{BotCommands.ForceStartCommand[1]} {tgid}</code>\n\n"
 
     if len(msg) == 0 and status == "All":
         return None, None

@@ -38,7 +38,7 @@ async def cancel_task(_, message):
     elif len(msg) == 1:
         msg = (
         "<b>Balas ke pesan perintah saat digunakan untuk memulai Tugas</b>" \
-        f" <b>atau kirim</b> <code>/{BotCommands.CancelTaskCommand[0]} atau /{BotCommands.CancelTaskCommand[1]} [GID]</code> <b>untuk membatalkan Tugas!</b>"
+        f" <b>atau kirim</b> <code>/{BotCommands.CancelTaskCommand[0]} [GID]</code> <b>atau</b> <code>/{BotCommands.CancelTaskCommand[1]} [GID]</code> <b>untuk membatalkan Tugas!</b>"
         )
         await sendMessage(message, msg)
         return
