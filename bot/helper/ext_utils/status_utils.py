@@ -173,14 +173,17 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
             msg += f"\n<b>├ Kecepatan : </b> <code>{task.seed_speed()}</code>"
         else:
             msg += f"\n<b>├ Ukuran : </b> <code>{task.size()}</code>"
-        if task.listener.isPrivateChat: 
-            msg += f"\n<b>├ ID :</b> <code>PRIVATE</code>"
-            msg += f"\n<b>├ User :</b> <code>PRIVATE</code>" 
-        else:
-            msg += f"\n<b>├ ID :</b> <code>{task.listener.userId}</code>"
-            msg += f"\n<b>├ User :</b> <code>{task.listener.user.first_name}</code>"
+            
         tgid = task.gid()
         msg += f"\n<b>├ GID :</b> <code>{tgid}</code>"
+        
+        if task.listener.isPrivateChat: 
+            msg += f"\n<b>├ UID :</b> <code>PRIVATE</code>"
+            msg += f"\n<b>├ User :</b> <code>PRIVATE</code>" 
+        else:
+            msg += f"\n<b>├ UID :</b> <code>{task.listener.userId}</code>"
+            msg += f"\n<b>├ User :</b> <code>{task.listener.user.first_name} {(task.listener.user.last_name or '')}</code>"
+            
         msg += f"\n├<code>/{BotCommands.CancelTaskCommand[1]} {tgid}</code>"
         msg += f"\n└<code>/{BotCommands.ForceStartCommand[1]} {tgid}</code>\n\n"
 
