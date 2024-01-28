@@ -26,7 +26,7 @@ from bot.helper.ext_utils.status_utils import speed_string_to_bytes, get_readabl
 
 _caches = {}
 
-userAgent  = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0"
+userAgent  = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
 
 def direct_link_generator(link: str):
     """ direct links generator """
@@ -1996,7 +1996,7 @@ def hexupload(url: str):
             session.close()
             raise DirectDownloadLinkException(f"ERROR: Link File tidak ditemukan!")
         
- 
+
 def bigota(url):
     direct_link = sub(r"https?://(bigota|hugeota)\.d\.miui\.com", "https://cdn-ota.azureedge.net", url)
     return direct_link

@@ -23,7 +23,7 @@ basicConfig(
 LOGGER = getLogger("AutoAlive")
 
 headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
 }
 
 try:
@@ -57,6 +57,6 @@ try:
                 except:
                     pass
     else:
-        log_warning("Failed to Set Up Auto Alive")
+        log_warning("Auto Alive is not Set Up correctly! Don't forget to add HEROKU_APP_NAME or RENDER_APP_NAME to prevent the apps got shutdown!")
 except Exception as e:
     log_error(e)

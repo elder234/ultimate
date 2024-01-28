@@ -435,7 +435,7 @@ async def main():
             ) & CustomFilters.authorized
         )
     )
-    LOGGER.info(f"Bot Started! => @{bot.me.username}")
+    LOGGER.info(f"Bot Started! -> @{bot.me.username}")
     signal(SIGINT, exit_clean_up)
 
 bot.loop.run_until_complete(main())

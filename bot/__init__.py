@@ -92,7 +92,7 @@ try:
     Version.rc = check_output(["edge --version"], shell=True).decode().split("\n")[0].split(" ")[1]
     Version.yt = check_output(["yt-dlp --version"], shell=True).decode().split("\n")[0]
 except Exception as e:
-    LOGGER.warning(f"Failed when get apps version! : {e}")
+    LOGGER.warning(f"Failed to get Apps version! ERROR: {e}")
 
 try:
     if bool(environ.get("_____REMOVE_THIS_LINE_____")):
@@ -199,7 +199,6 @@ if len(TELEGRAM_HASH) == 0:
 
 # Using different TELEGRAM_API  & TELEGRAM_HASH for USER_SESSION_STRING
 TELEGRAM_API_PREMIUM = environ.get("TELEGRAM_API_PREMIUM", "")
-
 TELEGRAM_HASH_PREMIUM = environ.get("TELEGRAM_HASH_PREMIUM", "")
 
 GDRIVE_ID = environ.get("GDRIVE_ID", "")
@@ -414,10 +413,10 @@ if len(BASE_URL) == 0:
     RENDER_APP_NAME = environ.get("RENDER_APP_NAME", "")
     if not len(HEROKU_APP_NAME) == 0:
         log_info("Using HEROKU_APP_NAME as BASE_URL!")
-        BASE_URL = "https://{HEROKU_APP_NAME}.herokuapp.com"
+        BASE_URL = f"https://{HEROKU_APP_NAME}.herokuapp.com"
     elif not len(RENDER_APP_NAME) == 0:
         log_info("Using RENDER_APP_NAME as BASE_URL!")
-        BASE_URL = "https://{RENDER_APP_NAME}.onrender.com"     
+        BASE_URL = f"https://{RENDER_APP_NAME}.onrender.com"     
     else:
         log_warning("BASE_URL not provided!")
         BASE_URL = ""
