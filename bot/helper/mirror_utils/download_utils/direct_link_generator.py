@@ -1389,11 +1389,11 @@ def send_cm(url):
 
 def tmpsend(url):
     parsed_url = urlparse(url)
-    if any(x in parsed_url.path for x in ['thank-you','download']):
+    if any(x in parsed_url.path for x in ["thank-you", "download"]):
         query_params = parse_qs(parsed_url.query)
-        if file_id := query_params.get('d'):
+        if file_id := query_params.get("d"):
             file_id = file_id[0]
-    elif not (file_id := parsed_url.path.strip('/')):
+    elif not (file_id := parsed_url.path.strip("/")):
         raise DirectDownloadLinkException("ERROR: Direct Link tidak ditemukan!")
     referer_url = f"https://tmpsend.com/thank-you?d={file_id}"
     header = f"Referer: {referer_url}"
