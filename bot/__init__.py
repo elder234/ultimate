@@ -410,9 +410,9 @@ if not BASE_URL_PORT:
 BASE_URL = environ.get("BASE_URL", "").rstrip("/")
 IS_HEROKU = False
 IS_RENDER = False
+HEROKU_APP_NAME =  environ.get("HEROKU_APP_NAME", "")
+RENDER_APP_NAME = environ.get("RENDER_APP_NAME", "")
 if len(BASE_URL) == 0:
-    HEROKU_APP_NAME = environ.get("HEROKU_APP_NAME", "")
-    RENDER_APP_NAME = environ.get("RENDER_APP_NAME", "")
     if not len(HEROKU_APP_NAME) == 0:
         IS_HEROKU = True
         log_info("Using HEROKU_APP_NAME as BASE_URL!")
