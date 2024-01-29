@@ -410,20 +410,22 @@ if not BASE_URL_PORT:
 BASE_URL = environ.get("BASE_URL", "").rstrip("/")
 IS_HEROKU = False
 IS_RENDER = False
-HEROKU_APP_NAME =  environ.get("HEROKU_APP_NAME", "")
+HEROKU_APP_NAME = environ.get("HEROKU_APP_NAME", "")
 RENDER_APP_NAME = environ.get("RENDER_APP_NAME", "")
 if len(BASE_URL) == 0:
-    if not len(HEROKU_APP_NAME) == 0:
+    if len(HEROKU_APP_NAME) != 0:
         IS_HEROKU = True
-        log_info("Using HEROKU_APP_NAME as BASE_URL!")
         BASE_URL = f"https://{HEROKU_APP_NAME}.herokuapp.com"
-    elif not len(RENDER_APP_NAME) == 0:
+        log_info("Using HEROKU_APP_NAME as BASE_URL!")
+        
+    elif len(RENDER_APP_NAME) != 0:
         IS_RENDER = True
+        BASE_URL = f"https://{RENDER_APP_NAME}.onrender.com"   
         log_info("Using RENDER_APP_NAME as BASE_URL!")
-        BASE_URL = f"https://{RENDER_APP_NAME}.onrender.com"     
+        
     else:
-        log_warning("BASE_URL not provided!")
         BASE_URL = ""
+        log_warning("BASE_URL is not provided!")
 
 UPSTREAM_REPO = environ.get("UPSTREAM_REPO", "")
 if len(UPSTREAM_REPO) == 0:
