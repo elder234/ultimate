@@ -15,7 +15,7 @@ basicConfig(
     level=INFO,
 )
 
-LOGGER = getLogger("AutoAlive")
+LOGGER = getLogger("alive")
 
 def send_request(url: str) -> None:
     requests.get(
