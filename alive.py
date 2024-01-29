@@ -57,6 +57,6 @@ try:
                 except:
                     pass
     else:
-        log_warning("Auto Alive is not Set Up correctly! Don't forget to add HEROKU_APP_NAME or RENDER_APP_NAME to prevent the apps got shutdown!")
+        log_warning("Auto Alive is not Set Up correctly! Don't forget to add HEROKU_APP_NAME or RENDER_APP_NAME to prevent the Apps got shutdown!")
 except Exception as e:
     log_error(e)

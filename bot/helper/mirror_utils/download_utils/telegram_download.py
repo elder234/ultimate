@@ -100,7 +100,7 @@ class TelegramDownloadHelper:
             and self._listener.userTransmission
             and not self._listener.isPrivateChat
         ):
-            self.session.session = "user"
+            self.session = "user"
             message = await user.get_messages(
                 chat_id=message.chat.id, 
                 message_ids=message.id
