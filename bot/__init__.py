@@ -544,9 +544,6 @@ if not ospath.exists("accounts"):
     log_warning("Service Accounts not found!")
     config_dict["USE_SERVICE_ACCOUNTS"] = False
 
-log_info("Set up auto Alive...")
-Popen(["python3", "alive.py"])
-
 def get_qb_client():
     return qbClient(
         host="localhost", 
@@ -609,3 +606,6 @@ if not aria2_options:
 else:
     a2c_glo = {op: aria2_options[op] for op in aria2c_global if op in aria2_options}
     aria2.set_global_options(a2c_glo)
+    
+log_info("Set up auto Alive...")
+Popen(["python3", "alive.py"])
