@@ -18,14 +18,14 @@ Based on Alpine Edge with Heroku Bypass
 
 ```
 Based on Alpine Edge with Heroku Bypass
-Include some cool apps like Bento4, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager
+Include some cool apps like Bento4, Gallery-DL, MegaSDK, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager, VCSI
 ```
 
 - arakurumi/mltb:ubuntu
 
 ```
 Based on Ubuntu 22.04 with Heroku Bypass
-Include some cool apps like AniDL, Bento4, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager
+Include some cool apps like AniDL, Bento4, Gallery-DL, MegaSDK, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager, VCSI
 ```
 
 ## qBittorrent
