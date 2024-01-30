@@ -414,10 +414,14 @@ MEDIA_GROUP = MEDIA_GROUP.lower() == "true"
 USER_TRANSMISSION = environ.get("USER_TRANSMISSION", "")
 USER_TRANSMISSION = USER_TRANSMISSION.lower() == "true" and IS_PREMIUM_USER
 
-BASE_URL_PORT = environ.get("PORT")
-if not BASE_URL_PORT:
+BASE_URL_PORT = environ.get("PORT", "")
+if len(BASE_URL_PORT) == 0:
     BASE_URL_PORT = environ.get("BASE_URL_PORT", "")
-    BASE_URL_PORT = 80 if len(BASE_URL_PORT) == 0 else int(BASE_URL_PORT)
+    if len(BASE_URL_PORT) == 0:
+        BASE_URL_PORT = 80
+        
+if len(BASE_URL_PORT) != 0:
+    BASE_URL_PORT = int(BASE_URL_PORT)
 
 BASE_URL = environ.get("BASE_URL", "").rstrip("/")
 IS_HEROKU = False
@@ -437,7 +441,7 @@ if len(BASE_URL) == 0:
         
     else:
         BASE_URL = ""
-        log_warning("BASE_URL is not provided!")
+        log_warning("BASE_URL is not found!")
 
 UPSTREAM_REPO = environ.get("UPSTREAM_REPO", "")
 if len(UPSTREAM_REPO) == 0:

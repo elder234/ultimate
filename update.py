@@ -50,7 +50,7 @@ if bool(os.environ.get("_____REMOVE_THIS_LINE_____")):
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 if len(BOT_TOKEN) == 0:
-    LOGGER.error("BOT_TOKEN variable is missing!")
+    LOGGER.error("BOT_TOKEN is not found!")
     exit(1)
 
 bot_id = BOT_TOKEN.split(":", 1)[0]
