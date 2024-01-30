@@ -204,17 +204,14 @@ TELEGRAM_HASH_PREMIUM = environ.get("TELEGRAM_HASH_PREMIUM", "")
 GDRIVE_ID = environ.get("GDRIVE_ID", "")
 if len(GDRIVE_ID) == 0:
     GDRIVE_ID = ""
-    log_warning("GDRIVE_ID is not found!")
 
 RCLONE_PATH = environ.get("RCLONE_PATH", "")
 if len(RCLONE_PATH) == 0:
     RCLONE_PATH = ""
-    log_warning("RCLONE_PATH is not found!")
 
 RCLONE_FLAGS = environ.get("RCLONE_FLAGS", "")
 if len(RCLONE_FLAGS) == 0:
     RCLONE_FLAGS = ""
-    log_warning("RCLONE_FLAGS is not found!")
 
 DEFAULT_UPLOAD = environ.get("DEFAULT_UPLOAD", "")
 if DEFAULT_UPLOAD != "rc":
@@ -282,23 +279,19 @@ else:
 JD_EMAIL = environ.get("JD_EMAIL", "")
 JD_PASS = environ.get("JD_PASS", "")
 if len(JD_EMAIL) == 0 or len(JD_PASS) == 0:
-    log_warning("JDownloader Credentials is not found!")
     JD_EMAIL = ""
     JD_PASS = ""
 
 UPTOBOX_TOKEN = environ.get("UPTOBOX_TOKEN", "")
 if len(UPTOBOX_TOKEN) == 0:
-    log_warning("UPTOBOX_TOKEN is not found!")
     UPTOBOX_TOKEN = ""
 
 FILELION_API = environ.get("FILELION_API", "")
 if len(FILELION_API) == 0:
-    log_warning("FILELION_API is not found!")
     FILELION_API = ""
 
 STREAMWISH_API = environ.get("STREAMWISH_API", "")
 if len(STREAMWISH_API) == 0:
-    log_warning("STREAMWISH_API is not found!")
     STREAMWISH_API = ""
 
 ALLDEBRID_API = environ.get("ALLDEBRID_API", "")
@@ -306,27 +299,22 @@ if len(ALLDEBRID_API) != 0:
     log_info("You're provided ALLDEBRID_API, Don't forget to auth in email before using this!")
 else:
     ALLDEBRID_API = ""
-    log_warning("ALLDEBRID_API is not found!")
 
 INDEX_URL = environ.get("INDEX_URL", "").rstrip("/")
 if len(INDEX_URL) == 0:
     INDEX_URL = ""
-    log_warning("INDEX_URL is not found!")
 
 SEARCH_API_LINK = environ.get("SEARCH_API_LINK", "").rstrip("/")
 if len(SEARCH_API_LINK) == 0:
     SEARCH_API_LINK = ""
-    log_warning("SEARCH_API_LINK is not found!")
 
 LEECH_FILENAME_PREFIX = environ.get("LEECH_FILENAME_PREFIX", "")
 if len(LEECH_FILENAME_PREFIX) == 0:
     LEECH_FILENAME_PREFIX = ""
-    log_warning("LEECH_FILENAME_PREFIX is not found!")
 
 SEARCH_PLUGINS = environ.get("SEARCH_PLUGINS", "")
 if len(SEARCH_PLUGINS) == 0:
     SEARCH_PLUGINS = ""
-    log_warning("SEARCH_PLUGINS is not found!")
 
 MAX_SPLIT_SIZE = 4194304000 if IS_PREMIUM_USER else 2097152000
 log_info(f"Max Split Size : {MAX_SPLIT_SIZE}")
@@ -350,22 +338,21 @@ else:
 YT_DLP_OPTIONS = environ.get("YT_DLP_OPTIONS", "")
 if len(YT_DLP_OPTIONS) == 0:
     YT_DLP_OPTIONS = ""
-    log_warning("YT_DLP_OPTIONS is not found!")
 
 SEARCH_LIMIT = environ.get("SEARCH_LIMIT", "")
 SEARCH_LIMIT = 0 if len(SEARCH_LIMIT) == 0 else int(SEARCH_LIMIT)
 
 LEECH_CHAT_ID = environ.get("LEECH_CHAT_ID", "")
 if len(LEECH_CHAT_ID) == 0:
-    log_warning("LEECH_CHAT_ID is not found!")
+    LEECH_CHAT_ID = ""
 
 LOG_CHAT_ID = environ.get("LOG_CHAT_ID", "")
 if len(LOG_CHAT_ID) == 0:
-    log_warning("LOG_CHAT_ID is not found!")
+    LOG_CHAT_ID = ""
 
 RSS_CHAT_ID = environ.get("RSS_CHAT_ID", "")
 if len(RSS_CHAT_ID) == 0:
-    log_warning("RSS_CHAT_ID is not found!")
+    RSS_CHAT_ID = ""
 
 STATUS_LIMIT = environ.get("STATUS_LIMIT", "")
 STATUS_LIMIT = 10 if len(STATUS_LIMIT) == 0 else int(STATUS_LIMIT)
@@ -441,12 +428,10 @@ if len(BASE_URL) == 0:
         
     else:
         BASE_URL = ""
-        log_warning("BASE_URL is not found!")
 
 UPSTREAM_REPO = environ.get("UPSTREAM_REPO", "")
 if len(UPSTREAM_REPO) == 0:
     UPSTREAM_REPO = ""
-    log_warning("UPSTREAM_REPO is not found!")
 
 UPSTREAM_BRANCH = environ.get("UPSTREAM_BRANCH", "")
 if len(UPSTREAM_BRANCH) == 0:
@@ -455,7 +440,6 @@ if len(UPSTREAM_BRANCH) == 0:
 RCLONE_SERVE_URL = environ.get("RCLONE_SERVE_URL", "").rstrip("/")
 if len(RCLONE_SERVE_URL) == 0:
     RCLONE_SERVE_URL = ""
-    log_warning("RCLONE_SERVE_URL is not found!")
 
 RCLONE_SERVE_PORT = environ.get("RCLONE_SERVE_PORT", "")
 RCLONE_SERVE_PORT = 8080 if len(
@@ -464,13 +448,10 @@ RCLONE_SERVE_PORT = 8080 if len(
 RCLONE_SERVE_USER = environ.get("RCLONE_SERVE_USER", "")
 if len(RCLONE_SERVE_USER) == 0:
     RCLONE_SERVE_USER = ""
-    log_warning("RCLONE_SERVE_USER is not found!")
 
 RCLONE_SERVE_PASS = environ.get("RCLONE_SERVE_PASS", "")
 if len(RCLONE_SERVE_PASS) == 0:
     RCLONE_SERVE_PASS = ""
-    log_warning("RCLONE_SERVE_PASS is not found!")
-
 
 config_dict = {
     "ALLDEBRID_API": ALLDEBRID_API,
@@ -531,6 +512,14 @@ config_dict = {
     "WEB_PINCODE": WEB_PINCODE,
     "YT_DLP_OPTIONS": YT_DLP_OPTIONS
 }
+
+# Reminder if forgot set something ^^
+for item, value in config_dict.items():
+    if (
+        isinstance(value, str)
+        and len(value) == 0
+    ):
+        log_warning(f"{item} is not found!")
 
 if GDRIVE_ID:
     DRIVES_NAMES.append("Main")
@@ -628,6 +617,6 @@ if not aria2_options:
 else:
     a2c_glo = {op: aria2_options[op] for op in aria2c_global if op in aria2_options}
     aria2.set_global_options(a2c_glo)
-    
+
 log_info("Set up auto Alive...")
 Popen(["python3", "alive.py"])
