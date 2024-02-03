@@ -197,7 +197,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
     if not is_user:
         buttons.ibutton("👀", "status 0 ov", position="header")
     if len(tasks) > STATUS_LIMIT:
-        msg += f"<b>Step :</b> <code>{page_step}</code>"
+        # msg += f"<b>Step :</b> <code>{page_step}</code>"
         msg += f"\n<b>Halaman :</b> <code>{page_no}/{pages}</code>"
         msg += f"\n<b>Total Tugas :</b> <code>{tasks_no}</code>\n"
         buttons.ibutton("⏪", f"status {sid} pre", position="header")

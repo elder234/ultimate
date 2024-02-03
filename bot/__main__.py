@@ -16,7 +16,6 @@ from psutil import (
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
 from pytz import timezone
-from quoters import Quote
 from signal import signal, SIGINT
 from sys import executable
 from time import time
@@ -67,17 +66,6 @@ from .modules import (
     ytdlp
 )
 
-def get_quotes():
-    try:
-        quotez = str(Quote.print_series_quote())
-        quote = quotez.split(": ")[1].replace('"', '')
-        oleh = quotez.split(":")[0]
-        quotes = f"{quote}\n- {oleh}"
-    except:
-        quotes = "Ngga ada Quote bijak buatmu wahai Tuan yang bijaksana :D"
-    return quotes
-
-
 
 async def stats(_, message):
     cpu = cpu_freq()
@@ -94,6 +82,14 @@ async def stats(_, message):
     else:
         commit_time = "UPSTREAM_REPO tidak ditemukan!"
         commit_message = "-"
+    
+    DC_ID = {
+        1: "US",
+        2: "NL",
+        3: "US",
+        4: "NL",
+        5: "SG"
+    }
         
     stats = f"""
 <pre languange='bash'><code>{neofetch}</code>
@@ -129,7 +125,7 @@ async def stats(_, message):
 <b>Google       :</b> <code>v{Version.ga}</code>
 <b>Java         :</b> <code>v{Version.jv}</code>
 <b>MyJD         :</b> <code>v{Version.jd}</code>
-<b>P7Zip        :</b> <code>v{Version.p7}</code>
+<b>P7Zip        :</b> <code>v{Version.p7}</code> 
 <b>Pyro         :</b> <code>v{Version.pr}</code>
 <b>Python       :</b> <code>v{Version.py}</code>
 <b>Qbittorrent  :</b> <code>{Version.qb}</code>
@@ -137,17 +133,18 @@ async def stats(_, message):
 <b>YT-DLP       :</b> <code>v{Version.yt}</code>
 
 <b>Lainnya</b>
+<b>Bot DC       :</b> <code>{bot.me.dc_id} ({DC_ID.get(bot.me.dc_id)})</code>
 <b>Bot ID       :</b> <code>{bot.me.id}</code>
-<b>Bot Name     :</b> <code>{bot.me.first_name}</code>
+<b>Bot Name     :</b> <code>{bot.me.first_name} {(bot.me.last_name or '')}</code>
 <b>Bot Username :</b> <code>@{bot.me.username}</code>
+<b>User DC      :</b> <code>{user.me.dc_id} ({DC_ID.get(user.me.dc_id)})</code>
+<b>User ID      :</b> <code>{user.me.id}</code>
+<b>User Name    :</b> <code>{user.me.first_name} {(user.me.last_name or '')}</code>
 <b>User Status  :</b> <code>{'PREMIUM' if IS_PREMIUM_USER else 'FREE'}</code>
 <b>Uptime Bot   :</b> <code>{bot_uptime}</code>
 <b>Uptime Mesin :</b> <code>{machine_uptime}</code>
 <b>Diperbarui   :</b> <code>{commit_time}</code>
 <b>Pembaruan    :</b> <code>{commit_message}</code>
-
-<b>Quotes       :</b> 
-<code>{get_quotes()}</code>
 </pre>"""
 
     await sendMessage(
@@ -165,13 +162,10 @@ async def start(client, message):
     if await CustomFilters.authorized(client, message):
         start_string = f"""
 <b>Unduh/Unggah dari Tautan Lambat menjadi Tautan Cepat!</b>
+Kirim <code>/{BotCommands.HelpCommand[0]}</code> untuk mendapatkan list perintah yang tersedia!
 
 <b>Note :</b>
 Selalu backup File setelah Tugas Unduh/Unggah selesai untuk menghindari Cloud terhapus!
-
-Ketik <code>/{BotCommands.HelpCommand[0]}</code> untuk mendapatkan list perintah yang tersedia!
-
-Enjoy :D
 """
     else:
         start_string = """
@@ -341,8 +335,6 @@ async def restart_notification():
 <pre languange="bash"><b>Hari      :</b> <code>{now.strftime('%A')}</code>
 <b>Tanggal   :</b> <code>{now.strftime('%d %B %Y')}</code>
 <b>Waktu     :</b> <code>{now.strftime('%H:%M:%S WIB')}</code>
-<b>Quotes    :</b>
-<code>{get_quotes()}</code>
 </pre>           
 """
                 if data.items():
@@ -364,8 +356,6 @@ async def restart_notification():
 <pre languange="bash"><b>Hari      :</b> <code>{now.strftime('%A')}</code>
 <b>Tanggal   :</b> <code>{now.strftime('%d %B %Y')}</code>
 <b>Waktu     :</b> <code>{now.strftime('%H:%M:%S WIB')}</code>
-<b>Quotes    :</b>
-<code>{get_quotes()}</code>
 </pre>           
 """
             await bot.edit_message_text(

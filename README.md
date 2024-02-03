@@ -10,22 +10,22 @@ programming in Python.
 - arakurumi/mltb:heroku
 
 ```
-Small, Lightweight and Minimalist
-Based on Alpine Edge with Heroku Bypass
+Based on Alpine Latest with Heroku Bypass
+Small, Lightweight and Minimalist (Include Python Packages)
 ```
 
 - arakurumi/mltb:alpine
 
 ```
-Based on Alpine Edge with Heroku Bypass
-Include some cool apps like Bento4, Gallery-DL, MegaSDK, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager, VCSI
+Based on Alpine Latest with Heroku Bypass
+Include Python Packages and some cool Apps like Bento4, Gallery-DL, MegaSDK, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager, VCSI, YT-DLP
 ```
 
 - arakurumi/mltb:ubuntu
 
 ```
 Based on Ubuntu 22.04 with Heroku Bypass
-Include some cool apps like AniDL, Bento4, Gallery-DL, MegaSDK, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager, VCSI
+Include Python Packages and some cool Apps like AniDL, Bento4, Gallery-DL, MegaSDK, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager, VCSI, YT-DLP
 ```
 
 ## qBittorrent
