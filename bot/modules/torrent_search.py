@@ -276,7 +276,7 @@ async def torrentSearchUpdate(_, query):
     key = key[1].strip() if len(key) > 1 else None
     data = query.data.split()
     if user_id != int(data[1]):
-        await query.answer("Bukan tugas darimu!", show_alert=True)
+        await query.answer("Bukan Tugas darimu!", show_alert=True)
     elif data[2].startswith("api"):
         await query.answer()
         button = _api_buttons(user_id, data[2])

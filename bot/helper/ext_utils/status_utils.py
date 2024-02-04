@@ -192,7 +192,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
     if len(msg) == 0 and status == "All":
         return None, None
     elif len(msg) == 0:
-        msg = f"<b>Tidak ada tugas</b> <code>{status}</code>!\n\n"
+        msg = f"<b>Tidak ada Tugas</b> <code>{status}</code>!\n\n"
     buttons = ButtonMaker()
     if not is_user:
         buttons.ibutton("👀", "status 0 ov", position="header")

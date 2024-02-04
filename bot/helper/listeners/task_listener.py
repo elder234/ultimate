@@ -123,7 +123,7 @@ class TaskListener(TaskConfig):
         files_to_delete = []
 
         if multi_links:
-            await self.onUploadError("Selesai diunduh, Menunggu tugas unduh lain selesai diunduh...")
+            await self.onUploadError("Selesai diunduh, Menunggu Tugas unduh lain selesai diunduh...")
             return
 
         if not await aiopath.exists(f"{self.dir}/{self.name}"):
