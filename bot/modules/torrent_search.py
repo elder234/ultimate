@@ -63,7 +63,7 @@ async def _search(key, site, message, method):
         SEARCH_API_LINK = config_dict["SEARCH_API_LINK"]
         SEARCH_LIMIT = config_dict["SEARCH_LIMIT"]
         if method == "apisearch":
-            LOGGER.info(f"API Searching: {key} from {site}")
+            LOGGER.info(f"Searching (Api) : {key} from {site}")
             if site == "all":
                 api = f"{SEARCH_API_LINK}/api/v1/all/search?query={key}&limit={SEARCH_LIMIT}"
             else:
@@ -108,7 +108,7 @@ async def _search(key, site, message, method):
             await editMessage(message, str(e))
             return
     else:
-        LOGGER.info(f"PLUGINS Searching: {key} from {site}")
+        LOGGER.info(f"Searching (Plugins) : {key} from {site}")
         client = await sync_to_async(get_qb_client)
         search = await sync_to_async(
             client.search_start, pattern=key, plugins=site, category="all"
