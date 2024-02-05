@@ -18,6 +18,7 @@ from bot.helper.telegram_helper.message_utils import editMessage, sendMessage
 
 PLUGINS = []
 SITES = None
+MAX_LIMIT = 500
 TELEGRAPH_LIMIT = 300
 
 msg_dict = {}
@@ -92,7 +93,7 @@ async def _search(key, site, message, method):
                     f"<b>Pencarian tidak ditemukan!</b>\n╾────────────╼\n<b>Situs :</b> <code>{SITES.get(site)}</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n",
                 )
                 return
-            msg = f"<b>Menemukan</b> <code>{min(search_results['total'], TELEGRAPH_LIMIT)}</code> <b>hasil pencarian!</b>"
+            msg = f"<b>Menemukan</b> <code>{min(search_results['total'], MAX_LIMIT)}</code> <b>hasil pencarian!</b>"
             msg += "\n╾────────────╼\n"
             msg += f"<b>Situs :</b> <code>{SITES.get(site)}</code>"
             if method == "apitrend":
@@ -122,7 +123,7 @@ async def _search(key, site, message, method):
             if status != "Running":
                 break
         dict_search_results = await sync_to_async(
-            client.search_results, search_id=search_id, limit=TELEGRAPH_LIMIT
+            client.search_results, search_id=search_id, limit=MAX_LIMIT
         )
         search_results = dict_search_results.results
         total_results = dict_search_results.total
@@ -132,7 +133,7 @@ async def _search(key, site, message, method):
                 f"<b>Pencarian tidak ditemukan!</b>\n╾────────────╼\n<b>Situs :</b> <code>{site.capitalize()}</code>\n<b>Metode :</b> <code>Plugins Search</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n",
             )
             return
-        msg = f"<b>Menemukan</b> <code>{min(total_results, TELEGRAPH_LIMIT)}</code> <b>hasil pencarian!</b>\n╾────────────╼\n<b>Situs :</b>{site.capitalize()}\n<b>Metode :</b> <code>Plugins Search</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n"
+        msg = f"<b>Menemukan</b> <code>{min(total_results, MAX_LIMIT)}</code> <b>hasil pencarian!</b>\n╾────────────╼\n<b>Situs :</b>{site.capitalize()}\n<b>Metode :</b> <code>Plugins Search</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n"
         await sync_to_async(client.search_delete, search_id=search_id)
         await sync_to_async(client.auth_log_out)
     
