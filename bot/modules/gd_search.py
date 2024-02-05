@@ -3,7 +3,7 @@ from math import ceil
 from pyrogram.filters import command, regex
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 
-from bot import LOGGER, USE_TELEGRAPH, bot, config_dict, user_data
+from bot import LOGGER, USE_TELEGRAPH, bot, user_data
 from bot.helper.ext_utils.bot_utils import sync_to_async, new_task, get_telegraph_list
 from bot.helper.mirror_utils.gdrive_utils.search import gdSearch
 from bot.helper.telegram_helper.bot_commands import BotCommands
@@ -14,7 +14,8 @@ from bot.helper.telegram_helper.message_utils import sendMessage, editMessage
 
 msg_dict = {}
 max_total = 5
-task_list_lock = Lock()
+telegram_list_lock = Lock()
+
 
 async def list_buttons(user_id, isRecursive=True, user_token=False):
     buttons = ButtonMaker()
@@ -83,7 +84,7 @@ async def _list_drive(key, message, item_type, isRecursive, user_token, user_id)
             
             msg_dict[msgId] = [page, pages, page_no, page_cur, key, msgId]
             
-            async with task_list_lock:
+            async with telegram_list_lock:
                 page_cur = ceil(len(pages) / max_total)
                 msg_dict[msgId][3] = page_cur
 

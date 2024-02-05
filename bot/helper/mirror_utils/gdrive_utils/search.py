@@ -149,7 +149,7 @@ class gdSearch(GoogleDriveHelper):
                 if mime_type == self.G_DRIVE_DIR_MIME_TYPE:
                     furl = self.G_DRIVE_DIR_BASE_DOWNLOAD_URL.format(file.get("id"))
                     if USE_TELEGRAPH:
-                        msg += f"📁 <code>{file.get('name')}<br>(Folder)</code><br>"
+                        msg += f"📁 <code>{file.get('name')} (Folder)</code><br>"
                     else:
                         msg += f"<b>{num}</b>. <code>{file.get('name')} (Folder)</code>\n"
                     msg += f"<b><a href={furl}>☁️ Drive</a></b>"
@@ -167,7 +167,7 @@ class gdSearch(GoogleDriveHelper):
                 else:
                     furl = self.G_DRIVE_BASE_DOWNLOAD_URL.format(file.get("id"))
                     if USE_TELEGRAPH:
-                        msg += f"📄 <code>{file.get('name')}<br>({get_readable_file_size(int(file.get('size', 0)))})</code><br>"
+                        msg += f"📄 <code>{file.get('name')} ({get_readable_file_size(int(file.get('size', 0)))})</code><br>"
                     else:
                         msg += f"<b>{num}</b>. <code>{file.get('name')} ({get_readable_file_size(int(file.get('size', 0)))})</code>\n"
                     msg += f"<b><a href={furl}>☁️ Drive</a></b>"
