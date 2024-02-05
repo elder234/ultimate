@@ -69,13 +69,13 @@ async def _search(key, site, message, method):
             else:
                 api = f"{SEARCH_API_LINK}/api/v1/search?site={site}&query={key}&limit={SEARCH_LIMIT}"
         elif method == "apitrend":
-            LOGGER.info(f"API Trending from {site}")
+            LOGGER.info(f"Api Trending from {site}")
             if site == "all":
                 api = f"{SEARCH_API_LINK}/api/v1/all/trending?limit={SEARCH_LIMIT}"
             else:
                 api = f"{SEARCH_API_LINK}/api/v1/trending?site={site}&limit={SEARCH_LIMIT}"
         elif method == "apirecent":
-            LOGGER.info(f"API Recent from {site}")
+            LOGGER.info(f"Api Recent from {site}")
             if site == "all":
                 api = f"{SEARCH_API_LINK}/api/v1/all/recent?limit={SEARCH_LIMIT}"
             else:
@@ -102,8 +102,8 @@ async def _search(key, site, message, method):
             else:
                 msg += f"\n<b>Metode :</b> <code>Api Search</code>"
                 msg += f"\n<b>Kata Kunci :</b> <code>{key.title()}</code>"
-            search_results = search_results["data"]
             msg += "\n╾────────────╼\n"
+            search_results = search_results["data"]
         except Exception as e:
             await editMessage(message, str(e))
             return
@@ -129,7 +129,7 @@ async def _search(key, site, message, method):
         if total_results == 0:
             await editMessage(
                 message,
-                f"<b>Pencarian tidak ditemukan!</b>\n╾────────────╼\n<b>Situs :</b> <code>{site.capitalize()}</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n",
+                f"<b>Pencarian tidak ditemukan!</b>\n╾────────────╼\n<b>Situs :</b> <code>{site.capitalize()}</code>\n<b>Metode :</b> <code>Plugins Search</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n",
             )
             return
         msg = f"<b>Menemukan</b> <code>{min(total_results, TELEGRAPH_LIMIT)}</code> <b>hasil pencarian!</b>\n╾────────────╼\n<b>Situs :</b>{site.capitalize()}\n<b>Metode :</b> <code>Plugins Search</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n"
@@ -383,25 +383,25 @@ async def torrentSearch(_, message):
             message, "<b>Api atau Plugin tidak tersedia!</b>"
         )
     elif len(key) == 1 and SITES is None:
-        await sendMessage(message, "<b>Kirim perintah disertai dengan kata kunci!</b>")
+        await sendMessage(message, "<b>Kirim perintah disertai dengan Kata Kunci!</b>")
     elif len(key) == 1:
         buttons.ibutton("Trending", f"torser {user_id} apitrend")
         buttons.ibutton("Recent", f"torser {user_id} apirecent")
         buttons.ibutton("Cancel", f"torser {user_id} cancel")
         button = buttons.build_menu(2)
-        await sendMessage(message, "<b>Kirim perintah disertai dengan kata kunci!</b>", button)
+        await sendMessage(message, "<b>Kirim perintah disertai dengan Kata Kunci!</b>", button)
     elif SITES is not None and SEARCH_PLUGINS:
         buttons.ibutton("Api", f"torser {user_id} apisearch")
         buttons.ibutton("Plugins", f"torser {user_id} plugin")
         buttons.ibutton("Cancel", f"torser {user_id} cancel")
         button = buttons.build_menu(2)
-        await sendMessage(message, "<b>Pilih alat untuk mencari :</b>", button)
+        await sendMessage(message, "<b>Pilih Alat untuk mencari :</b>", button)
     elif SITES is not None:
         button = _api_buttons(user_id, "apisearch")
-        await sendMessage(message, "<b>Pilih situs untuk dicari | API :</b>", button)
+        await sendMessage(message, "<b>Pilih Situs untuk dicari | Api :</b>", button)
     else:
         button = await _plugin_buttons(user_id)
-        await sendMessage(message, "<b>Pilih situs untuk dicari | Plugins :</b>", button)
+        await sendMessage(message, "<b>Pilih Situs untuk dicari | Plugins :</b>", button)
 
 
 @new_task
@@ -425,25 +425,38 @@ async def torrentSearchUpdate(_, query):
         await query.answer()
         site = data[2]
         method = data[3]
+        msg += "<b>Mencari Torrent...</b>"
+        msg += "\n╾────────────╼\n"
         if method.startswith("api"):
+            msg += f"<b>Situs :</b> <code>{SITES.get(site)}</code>"
             if key is None:
                 if method == "apirecent":
-                    endpoint = "Recent"
+                    endpoint = "Api Recent"
                 elif method == "apitrend":
-                    endpoint = "Trending"
+                    endpoint = "Api Trending"
+                msg += f"\n<b>Metode :</b> <code>{endpoint}</code>"
+                msg += "\n╾────────────╼\n"
                 await editMessage(
                     message,
-                    f"<b>Mencari {endpoint} Torrent...</b>\n<b>Situs Torrent:</b>\n<code>{SITES.get(site)}</code>",
+                    msg,
                 )
             else:
+                msg += f"<b>Situs :</b> <code>{SITES.get(site)}</code>"
+                msg += f"\n<b>Metode :</b> <code>Api Search</code>"
+                msg += f"\n<b>Kata Kunci :</b> <code>{key.title()}</code>"
+                msg += "\n╾────────────╼\n"
                 await editMessage(
                     message,
-                    f"<b>Mencari Torrent...</b>\n╾────────────╼\n<b>Situs :</b> <code>{SITES.get(site)}</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n",
+                    f"<b>Situs :</b> <code>{SITES.get(site)}</code>\n\n╾────────────╼\n",
                 )
         else:
+            msg += f"<b>Situs :</b> <code>{site.capitalize()}</code>"
+            msg += f"\n<b>Metode :</b> <code>Plugins Search</code>"
+            msg += f"\n<b>Kata Kunci :</b> <code>{key.title()}</code>"
+            msg += "\n╾────────────╼\n"
             await editMessage(
                 message,
-                f"<b>Mencari Torrent...</b>\n╾────────────╼\n<b>Situs :</b> <code>{site.capitalize()}</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n",
+                msg,
             )
         await _search(key, site, message, method)
     else:

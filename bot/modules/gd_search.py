@@ -146,9 +146,9 @@ async def select_type(_, query):
     msg = f"<b>Mencari Google Drive...</b>"
     msg += f"\n╾────────────╼\n"
     msg += f"<b>Tipe :</b> <code>{item_type.capitalize()}</code>"
+    msg += f"\n<b>Kata Kunci :</b> <code>{key.title()}</code>"
     msg += f"\n<b>Recursive :</b> <code>{'Yes' if isRecursive else 'No'}</code>"
     msg += f"\n<b>User Token :</b> <code>{'Yes' if user_token else 'No'}</code>"
-    msg += f"\n<b>Kata Kunci :</b> <code>{key.title()}</code>"
     msg += "\n╾────────────╼\n"
     await editMessage(message, msg)
     await _list_drive(key, message, item_type, isRecursive, user_token, user_id)
