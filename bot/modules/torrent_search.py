@@ -256,13 +256,13 @@ async def _getResult(search_results, key, method):
                         if "torrent" in subres.keys():
                             Torrent = True
                             msg += f"<a href='{subres['torrent']}'>🦠 Unduh</a>"
-                            msg += f"<b> | <a href='http://t.me/share/url?url={subres['torrent']}'>⚡ Direct</a></b>"
+                            msg += f"<b> | <a href='{subres['torrent']}'>⚡ Direct</a></b>"
                             
                         if "magnet" in subres.keys():
                             if Torrent:
-                                msg += f"<b> | <a href='http://t.me/share/url?url={subres['magnet']}'>🧲 Magnet</a></b>"
+                                msg += f"<b> | <a href='{subres['magnet']}'>🧲 Magnet</a></b>"
                             else:
-                                msg += f"<b><a href='http://t.me/share/url?url={subres['magnet']}'>🧲 Magnet</a></b>"
+                                msg += f"<b><a href='{subres['magnet']}'>🧲 Magnet</a></b>"
                     
                 else:
                     msg += f"<b>Size :</b> <code>{result['size']}</code>"
@@ -285,13 +285,13 @@ async def _getResult(search_results, key, method):
                     if "torrent" in result.keys():
                         Torrent = True
                         msg += f"<b><a href='{result['torrent']}'>🦠 Unduh</a></b>"
-                        msg += f"<b> | <a href='http://t.me/share/url?url={result['torrent']}'>⚡ Direct</a></b>"
+                        msg += f"<b> | <a href='{result['torrent']}'>⚡ Direct</a></b>"
                         
                     elif "magnet" in result.keys():
                         if Torrent:
-                            msg += f"<b> | <a href='http://t.me/share/url?url={result['magnet']}'>🧲 Magnet</a></b>"
+                            msg += f"<b> | <a href='{result['magnet']}'>🧲 Magnet</a></b>"
                         else:
-                            msg += f"<b><a href='http://t.me/share/url?url={result['magnet']}'>🧲 Magnet</a></b>"
+                            msg += f"<b><a href='{result['magnet']}'>🧲 Magnet</a></b>"
                             
                     else:
                         if USE_TELEGRAPH:
@@ -325,10 +325,10 @@ async def _getResult(search_results, key, method):
             link = result.fileUrl
             
             if link.startswith("magnet:"):
-                msg += f"<b><a href='http://t.me/share/url?url={link}'>🧲 Magnet</a></b>"
+                msg += f"<b><a href='{link}'>🧲 Magnet</a></b>"
             else:
                 msg += f"<b><a href='{link}'>🦠 Unduh</a></b>"
-                msg += f"<b> | <a href='http://t.me/share/url?url={link}'>⚡ Direct</a></b>"
+                msg += f"<b> | <a href='{link}'>⚡ Direct</a></b>"
 
         if USE_TELEGRAPH:
             msg += "<br><br>"
