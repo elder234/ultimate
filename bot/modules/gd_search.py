@@ -157,10 +157,12 @@ async def gdrive_search(_, message):
 @new_task
 async def telegram_list(_, query):
     data = query.data.split()
+    user_id = query.from_user.id
+    
     userId = int(data[1])
     buttons = ButtonMaker()
-
-    if query.from_user.id != int(userId):
+    
+    if user_id != userId:
         return await query.answer(text="Bukan Tugas darimu!", show_alert=True)
 
     try:

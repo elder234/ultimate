@@ -137,9 +137,9 @@ async def stats(_, message):
 <b>Bot ID       :</b> <code>{bot.me.id}</code>
 <b>Bot Name     :</b> <code>{bot.me.first_name} {(bot.me.last_name or '')}</code>
 <b>Bot Username :</b> <code>@{bot.me.username}</code>
-<b>User DC      :</b> <code>{user.me.dc_id if len(user) != 0 else '-'} {('(' + DC_ID.get(user.me.dc_id) + ')' if len(user) != 0 else '')}</code>
-<b>User ID      :</b> <code>{user.me.id if len(user) != 0 else '-'}</code>
-<b>User Name    :</b> <code>{(user.me.first_name if len(user) != 0 else '-')} {(user.me.last_name if len(user) != 0 else '' or '')}</code>
+<b>User DC      :</b> <code>{user.me.dc_id if user else '-'} {('(' + DC_ID.get(user.me.dc_id) + ')' if user else '')}</code>
+<b>User ID      :</b> <code>{user.me.id if user else '-'}</code>
+<b>User Name    :</b> <code>{(user.me.first_name if user else '-')} {((user.me.last_name if user else '') or '')}</code>
 <b>User Status  :</b> <code>{'PREMIUM' if IS_PREMIUM_USER else 'FREE'}</code>
 <b>Uptime Bot   :</b> <code>{bot_uptime}</code>
 <b>Uptime Mesin :</b> <code>{machine_uptime}</code>
