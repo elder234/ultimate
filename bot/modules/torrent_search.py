@@ -425,7 +425,7 @@ async def torrentSearchUpdate(_, query):
         await query.answer()
         site = data[2]
         method = data[3]
-        msg += "<b>Mencari Torrent...</b>"
+        msg = "<b>Mencari Torrent...</b>"
         msg += "\n╾────────────╼\n"
         if method.startswith("api"):
             msg += f"<b>Situs :</b> <code>{SITES.get(site)}</code>"
