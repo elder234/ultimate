@@ -2,12 +2,12 @@ from asyncio import Event, sleep
 
 from bot import (
     config_dict,
+    LOGGER,
+    non_queued_dl,
+    non_queued_up,
+    queue_dict_lock,
     queued_dl,
     queued_up,
-    non_queued_up,
-    non_queued_dl,
-    queue_dict_lock,
-    LOGGER,
     USE_TELEGRAPH,
 )
 from bot.helper.ext_utils.bot_utils import (

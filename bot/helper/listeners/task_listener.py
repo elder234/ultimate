@@ -5,20 +5,21 @@ from html import escape
 from requests import utils as rutils
 
 from bot import (
-    bot,
-    Intervals,
     aria2,
-    DOWNLOAD_DIR,
-    task_dict,
-    task_dict_lock,
-    LOGGER,
-    DATABASE_URL,
+    bot,
     config_dict,
-    non_queued_up,
+    DATABASE_URL,
+    DOWNLOAD_DIR,
+    Intervals,
+    LOGGER,
     non_queued_dl,
-    queued_up,
-    queued_dl,
+    non_queued_up,
     queue_dict_lock,
+    queued_dl,
+    queued_up,
+    task_dict_lock,
+    task_dict,
+    USE_TELEGRAPH,
 )
 from bot.helper.common import TaskConfig
 from bot.helper.ext_utils.bot_utils import sync_to_async
@@ -390,7 +391,10 @@ class TaskListener(TaskConfig):
         msg += "\n<b>Tugasmu dihentikan karena :</b>"
         msg += f"\n<code>{escape(error)}</code>"
         
-        if "file/folder ini sudah ada di google drive!" in escape(error).lower():
+        if (
+            not USE_TELEGRAPH
+            and "file/folder ini sudah ada di google drive!" in escape(error).lower()
+        ):
             content = [content for content in button for content in content.split("\n\n")]
             
             for _, data in enumerate(content, start=1):
@@ -400,9 +404,9 @@ class TaskListener(TaskConfig):
                 msg += "\n" + data
             
             button = None
-                
-        if len(msg) > 4096:
-            msg = msg[:4090] + "\n..."
+            
+            if len(msg) > 4096:
+                msg = msg[:4090] + "\n..."
             
         await sendMessage(self.message, msg, button)
         
