@@ -397,6 +397,9 @@ class TaskListener(TaskConfig):
                 msg += "\n\n" + data
             
             button = None
+        
+        if len(msg) > 4096:
+            msg = msg[:4090] + "\n..."
             
         await sendMessage(self.message, msg, button)
         
