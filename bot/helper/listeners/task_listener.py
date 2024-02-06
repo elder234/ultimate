@@ -390,17 +390,17 @@ class TaskListener(TaskConfig):
         msg += "\n<b>Tugasmu dihentikan karena :</b>"
         msg += f"\n<code>{escape(error)}</code>"
         
-        if "File/Folder ini sudah ada di Google Drive!" in error:
+        if "file/folder ini sudah ada di google drive!" in escape(error).lower():
             content = [content for content in button for content in content.split("\n\n")]
             
             for _, data in enumerate(content, start=1):
+                if "Hasil pencarian Google Drive" in data:
+                    data = data.replace("Hasil pencarian Google Drive", "")
+                    
                 msg += "\n" + data
             
             button = None
-        
-        if "Hasil pencarian Google Drive" in msg:
-            msg = msg.replace("Hasil pencarian Google Drive", "")
-        
+                
         if len(msg) > 4096:
             msg = msg[:4090] + "\n..."
             
