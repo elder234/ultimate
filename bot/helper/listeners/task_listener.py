@@ -399,7 +399,7 @@ class TaskListener(TaskConfig):
             
             for _, data in enumerate(content, start=1):
                 if "Hasil pencarian Google Drive" in data:
-                    data = data.replace("\n\n", "")
+                    data = data.replace("\n", "")
                     data = data.replace("Hasil pencarian Google Drive", "")
                     
                 msg += "\n\n" + data
