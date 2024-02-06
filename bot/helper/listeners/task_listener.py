@@ -394,9 +394,12 @@ class TaskListener(TaskConfig):
             content = [content for content in button for content in content.split("\n\n")]
             
             for _, data in enumerate(content, start=1):
-                msg += "\n\n" + data
+                msg += "\n" + data
             
             button = None
+        
+        if "Hasil pencarian Google Drive" in msg:
+            msg = msg.replace("Hasil pencarian Google Drive", "")
         
         if len(msg) > 4096:
             msg = msg[:4090] + "\n..."
