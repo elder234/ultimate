@@ -256,7 +256,7 @@ class TaskListener(TaskConfig):
             if not files:
                 await sendMessage(self.message, msg)
             else:
-                fmsg = ""
+                fmsg = "<b>List File</b>\n"
                 for index, (link, name) in enumerate(files.items(), start=1):
                     fmsg += f"<b>{index:02d}.</b> <a href='{link}'>{name}</a>\n"
                     if len(fmsg.encode() + msg.encode()) > 4000:
@@ -311,7 +311,7 @@ class TaskListener(TaskConfig):
                         buttons.ubutton("⚡ Index Link", share_url)
                         if mime_type.startswith(("image", "video", "audio")):
                             share_urls = f"{INDEX_URL}findpath?id={dir_id}&view=true"
-                            buttons.ubutton("🌐 View Link", share_urls)
+                            buttons.ubutton("🎬 View Link", share_urls)
                 button = buttons.build_menu(2)
             else:
                 msg += f"\n\n<b>Path :</b> <code>{rclonePath}</code>"
@@ -385,8 +385,21 @@ class TaskListener(TaskConfig):
                 del task_dict[self.mid]
             count = len(task_dict)
             self.removeFromSameDir()
-        msg = f"<b>Hai {self.tag} !</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{escape(error)}</code>"
+        
+        msg = f"<b>Hai {self.tag} !</b>"
+        msg += "\n<b>Tugasmu dihentikan karena :</b>"
+        msg += f"\n<code>{escape(error)}</code>"
+        
+        if "File/Folder ini sudah ada di Google Drive!" in error:
+            content = [content for content in button for content in content.split("\n\n")]
+            
+            for _, data in enumerate(content, start=1):
+                msg += "\n\n" + data
+            
+            button = None
+            
         await sendMessage(self.message, msg, button)
+        
         if count == 0:
             await self.clean()
         else:

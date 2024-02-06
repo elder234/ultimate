@@ -18,7 +18,7 @@ Small, Lightweight and Minimalist (Include Python Packages)
 
 ```
 Based on Alpine Latest with Heroku Bypass
-Include Python Packages and some cool Apps like Bento4, Gallery-DL, MegaSDK, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager, VCSI, YT-DLP
+Include Python Packages and some cool Apps like AniDL, Bento4, Gallery-DL, MegaSDK, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager, VCSI, YT-DLP
 ```
 
 - arakurumi/mltb:ubuntu
