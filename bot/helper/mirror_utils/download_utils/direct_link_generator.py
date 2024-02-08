@@ -2090,7 +2090,7 @@ def qiwi(url: str) -> str:
         
         r = session.get(url)
         if r.ok:
-            data = BeautifulSoup(r.text, "html_parser")
+            data = BeautifulSoup(r.text, "html.parser")
             name = data.find("h1", class_="page_TextHeading__VsM7r")
             
             if name:
