@@ -44,9 +44,9 @@ async def mirror_status(_, message):
         msg += f"\n\n<b>Note :</b>\nTambahkan <code>me</code> atau <code>userId</code> setelah perintah untuk menampilkan Tugas secara spesifik!"
         msg += "\n___________________________"
         msg += (
-            f"\n<b>CPU :</b> <code>{cpu_percent()}%</code> | <b>FREE :</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code>" \
-            f"\n<b>RAM :</b> <code>{virtual_memory().percent}%</code> | <b>UPTIME :</b> <code>{get_readable_time(time() - botStartTime)}</code>" \
-            f"\n<b>T.Unduh :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code> | <b>T.Unggah :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code>" 
+            f"\n<b>CPU :</b> <code>{cpu_percent()}%</code> | <b>RAM :</b> <code>{virtual_memory().percent}%</code>" \
+            f"\n<b>DISK :</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code> | <b>UPTIME :</b> <code>{get_readable_time(time() - botStartTime)}</code>" \
+            f"\n<b>T.Unduh :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>T.Unggah :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>" 
         )
         reply_message = await sendMessage(message, msg)
         await auto_delete_message(message, reply_message)
@@ -147,9 +147,11 @@ EX : {tasks['Extract']} | SP : {tasks['Split']} | QD : {tasks['QueueDl']} | QU :
 CL : {tasks['Clone']} | CH : {tasks['CheckUp']} | PA : {tasks['Pause']} | SV : {tasks['SamVid']}
 CM : {tasks['ConvertMedia']}
 
-Kec. Seed : {get_readable_file_size(seed_speed)}/s
 Kec. Unduh : {get_readable_file_size(dl_speed)}/s
 Kec. Unggah : {get_readable_file_size(up_speed)}/s
+
+Tot. Unduh : {get_readable_file_size(net_io_counters().bytes_recv)}
+Tot. Unggah : {get_readable_file_size(net_io_counters().bytes_sent)}
 
 @{bot.me.username}
 """
