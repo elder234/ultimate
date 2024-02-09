@@ -213,5 +213,5 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
     button = buttons.build_menu(8)
     msg += f"\n<b>CPU :</b> <code>{cpu_percent()}%</code> | <b>RAM :</b> <code>{virtual_memory().percent}%</code>"
     msg += f"\n<b>DISK :</b> <code>{get_readable_file_size(disk_usage(config_dict['DOWNLOAD_DIR']).free)}</code> | <b>UPTIME :</b> <code>{get_readable_time(time() - botStartTime)}</code>"
-    msg += f"<b>T.Unduh :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>T.Unggah :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>"
+    msg += f"\n<b>T.Unduh :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>T.Unggah :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>"
     return msg, button
