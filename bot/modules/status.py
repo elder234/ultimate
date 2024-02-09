@@ -46,7 +46,7 @@ async def mirror_status(_, message):
         msg += (
             f"\n<b>CPU :</b> <code>{cpu_percent()}%</code> | <b>RAM :</b> <code>{virtual_memory().percent}%</code>" \
             f"\n<b>DISK :</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code> | <b>UPTIME :</b> <code>{get_readable_time(time() - botStartTime)}</code>" \
-            f"\n<b>T.Unduh :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>T.Unggah :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>" 
+            f"\n<b>T.Unduh :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>T. Unggah :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>" 
         )
         reply_message = await sendMessage(message, msg)
         await auto_delete_message(message, reply_message)
@@ -149,9 +149,6 @@ CM : {tasks['ConvertMedia']}
 
 Kec. Unduh : {get_readable_file_size(dl_speed)}/s
 Kec. Unggah : {get_readable_file_size(up_speed)}/s
-
-Tot. Unduh : {get_readable_file_size(net_io_counters().bytes_recv)}
-Tot. Unggah : {get_readable_file_size(net_io_counters().bytes_sent)}
 
 @{bot.me.username}
 """
