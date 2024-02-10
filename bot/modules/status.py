@@ -9,13 +9,14 @@ from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from time import time
 
 from bot import (
-    task_dict_lock,
-    status_dict,
-    task_dict,
+    bot,
+    bot_name,
     botStartTime,
     DOWNLOAD_DIR,
     Intervals,
-    bot,
+    status_dict,
+    task_dict_lock,
+    task_dict,
 )
 from bot.helper.ext_utils.bot_utils import new_task, sync_to_async
 from bot.helper.ext_utils.status_utils import (
@@ -150,7 +151,7 @@ CM : {tasks['ConvertMedia']}
 Kec. Unduh : {get_readable_file_size(dl_speed)}/s
 Kec. Unggah : {get_readable_file_size(up_speed)}/s
 
-@{bot.me.username}
+@{bot_name}
 """
         await query.answer(msg, show_alert=True)
 

@@ -8,10 +8,10 @@ from bot.helper.ext_utils.status_utils import get_readable_file_size
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.message_utils import (
-    sendMessage, 
-    sendPhoto, 
-    deleteMessage, 
-    editMessage
+    sendMessage,
+    sendPhoto,
+    deleteMessage,
+    editMessage,
 )
 
 
@@ -34,7 +34,7 @@ async def speedtest(_, message):
 <b>Terkirim     :</b> <code>{get_readable_file_size(int(result['bytes_sent']))}</code>
 <b>Diterima     :</b> <code>{get_readable_file_size(int(result['bytes_received']))}</code>
 
-<b>Informasi Client</b>
+<b>Client</b>
 <b>IP           :</b> <code>{result['client']['ip']}</code>
 <b>Nama         :</b> <code>{result['client']['isp']}</code>
 <b>Rating       :</b> <code>{result['client']['isprating']}</code>
@@ -42,7 +42,7 @@ async def speedtest(_, message):
 <b>Latitude     :</b> <code>{result['client']['lat']}</code>
 <b>Longitude    :</b> <code>{result['client']['lon']}</code>
 
-<b>Informasi Server</b>
+<b>Server</b>
 <b>Nama         :</b> <code>{result['server']['name']}</code>
 <b>Sponsor      :</b> <code>{result['server']['sponsor']}</code>
 <b>Latency      :</b> <code>{result['server']['latency']}</code>
