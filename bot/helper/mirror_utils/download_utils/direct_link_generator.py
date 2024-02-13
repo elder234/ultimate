@@ -267,6 +267,8 @@ def direct_link_generator(link: str):
         return qiwi(link)
     elif "sharepoint.com" in domain:
         return sharepoint(link)
+    elif "berkasdrive.com" in domain:
+        return berkasdrive(link)
     # Add AllDebrid supported link here
     elif any(
         x in domain
@@ -1551,7 +1553,7 @@ def filelions_and_streamwish(url):
         apiKey = config_dict["STREAMWISH_API"]
         apiUrl = "https://api.streamwish.com"
     if not apiKey:
-        raise DirectDownloadLinkException(f"ERROR: Api Key tidak ditemukan! URL : {scheme}://{hostname}")
+        raise DirectDownloadLinkException(f"ERROR: Api Key tidak ditemukan! Source :{scheme}://{hostname}")
     file_code = url.split("/")[-1]
     quality = ""
     if bool(file_code.endswith(("_o", "_h", "_n", "_l"))):
@@ -1627,7 +1629,7 @@ def pcloud(url):
 # Added from other repositories
 def alldebrid(url: str):
     """
-    URL : 
+    Source :
     https://api.alldebrid.com/
     
     Documentation :
@@ -1657,7 +1659,7 @@ def alldebrid(url: str):
 
 def pake(url: str):
     """
-    URL : 
+    Source :
     https://api.pake.tk/
     
     Supported Sites :
@@ -1983,8 +1985,8 @@ def hexupload(url: str):
 
 def bigota(url):
     """
-    URL : 
-    https://github.com/aenulrofik/pikabot_v2/ (Source)
+    Source :
+    https://github.com/aenulrofik/pikabot_v2/
     
     Supported Sites : 
     https://bigota.d.miui.com/
@@ -1994,8 +1996,8 @@ def bigota(url):
 
 def yandex_disk(url):
     """
-    URL : 
-    https://github.com/aenulrofik/pikabot_v2/ (Source)
+    Source :
+    https://github.com/aenulrofik/pikabot_v2/
     
     Supported Sites : 
     - https://disk.yandex.ru/
@@ -2007,27 +2009,30 @@ def yandex_disk(url):
             "public_key": url,
         }
     )
-    
-    if r.ok:
-        data = r.json()
-        return data["href"]
-    
-    else:
+
+    if not r.ok:
         raise DirectDownloadLinkException(f"ERROR: [{r.status_code}] {r.text}")
+    
+    data = r.json()
+    return data["href"]
+    
     
 
 def sfile(url):
     """
-    URL : 
-    https://github.com/aenulrofik/pikabot_v2/ (Source)
+    Source :
+    https://github.com/aenulrofik/pikabot_v2/
     
     Supported Sites : 
     https://sfile.mobi/
     """
     with Session() as session:
-        r = session.get(url).text
-        bs = BeautifulSoup(r, "html.parser")
-        download_link = bs.find("a", class_= "w3-button w3-blue w3-round").get("href")
+        r = session.get(url)
+        if not r.ok:
+            raise DirectDownloadLinkException(f"ERROR: [{r.status_code}] {r.text}")
+
+        html = BeautifulSoup(r.text, "html.parser")
+        download_link = html.find("a", class_= "w3-button w3-blue w3-round").get("href")
         
         r = session.get(
             download_link,
@@ -2038,27 +2043,29 @@ def sfile(url):
                 "Upgrade-Insecure-Requests": "1", 
             }
         )
+
+        if not r.ok:
+            raise DirectDownloadLinkException(f"ERROR: [{r.status_code}] {r.text}")
         
-        if r.ok:
-            pattern = compile(r"location\.href=this\.href\+\'&k=\'\+\'([a-f0-9]{1,32})\'(?:;return\sfalse;)?")
-            pattern_match = pattern.search(r.text)
-            if pattern_match:
-                pattern_match = pattern_match.group(1)
-            else:
-                pattern_match = ""
-            
-            bs = BeautifulSoup(r, "html.parser")
-            direct_link = bs.find("a", {"id": "download"}).get("href")
+        pattern = compile(r"location\.href=this\.href\+\'&k=\'\+\'([a-f0-9]{1,32})\'(?:;return\sfalse;)?")
+        pattern_match = pattern.search(r.text)
+        if pattern_match:
+            pattern_match = pattern_match.group(1)
+        else:
+            pattern_match = ""
+        
+        html = BeautifulSoup(r, "html.parser")
+        if direct_link := html.find("a", {"id": "download"}).get("href"):
             return f"{direct_link}&k={pattern_match}", f"Referer: {download_link}"
         
         else:
-            raise DirectDownloadLinkException(f"ERROR: [{r.status_code}] {r.text}")
+            raise DirectDownloadLinkException(f"ERROR: Link File tidak ditemukan!")
 
 
 def qiwi(url: str) -> str:
     """
-    URL : 
-    https://github.com/aenulrofik/pikabot_v2/ (Source)
+    Source :
+    https://github.com/aenulrofik/pikabot_v2/
     
     Supported Sites : 
     https://qiwi.gg/
@@ -2067,25 +2074,22 @@ def qiwi(url: str) -> str:
         ids = url.split("/")[-1]
         
         r = session.get(url)
-        if r.ok:
-            data = BeautifulSoup(r.text, "html.parser")
-            name = data.find("h1", class_="page_TextHeading__VsM7r")
-            
-            if name:
-                ext = name.text.split(".")[-1]
-                return f"https://qiwi.lol/{ids}.{ext}"
-
-            else:
-                raise DirectDownloadLinkException(f"ERROR: Link File tidak ditemukan!")
-        
-        else:
+        if not r.ok:
             raise DirectDownloadLinkException(f"ERROR: [{r.status_code}] {r.text}")
+        
+        html = BeautifulSoup(r.text, "html.parser")
+        if name := html.find("h1", class_="page_TextHeading__VsM7r"):
+            ext = name.text.split(".")[-1]
+            return f"https://qiwi.lol/{ids}.{ext}"
 
+        else:
+            raise DirectDownloadLinkException(f"ERROR: Link File tidak ditemukan!")
+        
 
 def sharepoint(url: str) -> str:
     """
-    URL : 
-    https://github.com/aenulrofik/pikabot_v2/ (Source)
+    Source :
+    https://github.com/aenulrofik/pikabot_v2/
     
     Supported Sites : 
     https://www.microsoft.com/ (SharePoint)
@@ -2099,3 +2103,24 @@ def sharepoint(url: str) -> str:
             url += "?"
         url += "download=1"
     return url
+
+
+def berkasdrive(url: str) -> str:
+    """
+    Source :
+    https://github.com/aenulrofik/pikabot_v2/
+    
+    Supported Sites : 
+    https://berkasdrive.com/
+    """
+    with Session() as session:
+        r = session.get(url)
+        if not r.ok:
+            raise DirectDownloadLinkException(f"ERROR: [{r.status_code}] {r.text}")
+    
+        html = HTML(r.text)
+        if direct_link := html.xpath('//script')[0].text.split('"')[1]:
+            return base64.b64decode(direct_link).decode("UTF-8")
+        
+        else:
+            raise DirectDownloadLinkException(f"ERROR: Link File tidak ditemukan!")
