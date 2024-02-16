@@ -267,7 +267,7 @@ class TgUploader:
                             from_chat_id=self._sent_msg.chat.id,
                             message_id=self._sent_msg.id,
                             message_thread_id=self._forwardThreadId,
-                            reply_to_message_id=(self._forwardMsg.id or self._listener.mid),
+                            reply_to_message_id=(self._forwardMsg.id if self._forwardMsg is not None else self._listener.mid),
                             is_media_group=True
                         )
                     )[-1]
@@ -589,7 +589,7 @@ class TgUploader:
                             from_chat_id=self._sent_msg.chat.id, 
                             message_id=self._sent_msg.id, 
                             message_thread_id=self._forwardThreadId,
-                            reply_to_message_id=(self._forwardMsg.id or self._listener.mid)
+                            reply_to_message_id=(self._forwardMsg.id if self._forwardMsg is not None else self._listener.mid)
                         )
                 except Exception as e:
                     LOGGER.error(f"Failed to forward Message! ERROR: {e}")
