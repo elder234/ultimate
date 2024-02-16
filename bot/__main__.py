@@ -145,8 +145,8 @@ async def stats(_, message):
 <b>Uptime Bot   :</b> <code>{bot_uptime}</code>
 <b>Uptime Mesin :</b> <code>{machine_uptime}</code>
 <b>Diperbarui   :</b> <code>{commit_time}</code>
-<b>Pembaruan    :</b> <code>{commit_message}</code>
-</pre>"""
+<b>Pembaruan    :</b> <code>{commit_message}</code></pre>
+"""
 
     await sendMessage(
         message, 
