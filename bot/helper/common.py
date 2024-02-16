@@ -462,7 +462,10 @@ class TaskConfig:
                                 return False
                             code = self.suproc.returncode
                             if code != 0:
-                                stderr = stderr.decode().strip()
+                                try:
+                                    stderr = stderr.decode().strip()
+                                except:
+                                    stderr = "Unable to decode the error!"
                                 LOGGER.error(
                                     f"{stderr}. Unable to extract archive splits!. Path: {f_path}"
                                 )
@@ -515,7 +518,10 @@ class TaskConfig:
                             self.cancelled = True
                     return up_path
                 elif code != -9:
-                    stderr = stderr.decode().strip()
+                    try:
+                        stderr = stderr.decode().strip()
+                    except:
+                        stderr = "Unable to decode the error!"
                     LOGGER.error(
                         f"{stderr}. Unable to extract archive! Uploading anyway. Path: {dl_path}"
                     )
@@ -599,7 +605,10 @@ class TaskConfig:
             await clean_target(self.newDir)
             if not delete:
                 self.newDir = ""
-            stderr = stderr.decode().strip()
+            try:
+                stderr = stderr.decode().strip()
+            except:
+                stderr = "Unable to decode the error!"
             LOGGER.error(f"{stderr}. Unable to zip this path: {dl_path}")
             return dl_path
         else:
