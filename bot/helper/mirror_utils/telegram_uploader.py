@@ -261,7 +261,7 @@ class TgUploader:
             # Send ScreenShots to ForwardChatId
             try:
                 if self._forwardChatId != "":
-                    await copyMessage(
+                    self._forwardMsg = await copyMessage(
                         chat_id=self._forwardChatId,
                         from_chat_id=self._sent_msg.chat.id,
                         message_id=self._sent_msg.id,
@@ -587,7 +587,7 @@ class TgUploader:
                             from_chat_id=self._sent_msg.chat.id, 
                             message_id=self._sent_msg.id, 
                             message_thread_id=self._forwardThreadId,
-                            reply_to_message_id=self._forwardMsg
+                            reply_to_message_id=(self._forwardMsg or self._listener.mid)
                         )
                 except Exception as e:
                     LOGGER.error(f"Failed to forward Message! ERROR: {e}")
