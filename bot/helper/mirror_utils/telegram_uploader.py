@@ -65,6 +65,7 @@ class TgUploader:
         self._up_path = ""
         self._lprefix = ""
         self._media_group = False
+        self._forwardMsg = None
         self._forwardChatId = None
         self._forwardThreadId = None
 
@@ -260,12 +261,13 @@ class TgUploader:
             # Send ScreenShots to ForwardChatId
             try:
                 if self._forwardChatId != "":
-                    await bot.send_media_group(
+                    await copyMessage(
                         chat_id=self._forwardChatId,
-                        media=inputs,
-                        disable_notification=True,
+                        from_chat_id=self._sent_msg.chat.id,
+                        message_id=self._sent_msg.id,
                         message_thread_id=self._forwardThreadId,
-                        reply_to_message_id=self._listener.mid
+                        reply_to_message_id=self._listener.mid,
+                        is_media_group=True
                     )
             except Exception as e:
                 LOGGER.error(f"Failed to forward Message! ERROR: {e}")
@@ -580,11 +582,12 @@ class TgUploader:
             ):
                 try:
                     if self._forwardChatId != "":
-                        await copyMessage(
+                        self._forwardMsg = await copyMessage(
                             chat_id=self._forwardChatId, 
                             from_chat_id=self._sent_msg.chat.id, 
                             message_id=self._sent_msg.id, 
-                            message_thread_id=self._forwardThreadId
+                            message_thread_id=self._forwardThreadId,
+                            reply_to_message_id=self._forwardMsg
                         )
                 except Exception as e:
                     LOGGER.error(f"Failed to forward Message! ERROR: {e}")
