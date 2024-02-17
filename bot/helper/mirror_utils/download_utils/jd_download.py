@@ -8,7 +8,6 @@ from bot import (
     task_dict,
     task_dict_lock,
     LOGGER,
-    IS_HEROKU,
     non_queued_dl,
     queue_dict_lock,
     jd_lock,
@@ -272,8 +271,7 @@ async def add_jd_download(listener, path):
 
     download_packages = await retry_function(
         jdownloader.device.downloads.query_packages,
-        [{"saveTo": True}],
-        retry=(100 if IS_HEROKU else 10)
+        [{"saveTo": True}]
     )
     async with jd_lock:
         packages = []
