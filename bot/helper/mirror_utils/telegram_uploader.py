@@ -535,7 +535,7 @@ class TgUploader:
             ):
                 await remove(thumb)
             if (
-                not self._is_cancelled
+                not self._listener.isCancelled
                 and not self._is_corrupted
             ):
                 try:
