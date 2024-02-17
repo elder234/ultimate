@@ -105,6 +105,7 @@ class JDownloaderStatus:
         return self._gid
 
     async def cancel_task(self):
+        self.listener.isCancelled = True
         LOGGER.info(f"Cancelling Download: {self.name()}")
         await retry_function(
             jdownloader.device.downloads.remove_links,

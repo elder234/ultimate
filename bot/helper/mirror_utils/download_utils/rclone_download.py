@@ -44,9 +44,11 @@ async def add_rclone_download(listener, path):
     res1, res2 = await gather(cmd_exec(cmd1), cmd_exec(cmd2))
     if res1[2] != res2[2] != 0:
         if res1[2] != -9:
-            err = res1[1] or res2[1]
-            if not err:
-                err = "Kirim perintah /shell cat rlog.txt untuk melihat Informasi Error!"
+            err = (
+                res1[1]
+                or res2[1]
+                or "Kirim perintah /shell cat rlog.txt untuk melihat Informasi Error!"
+            )
             await listener.onDownloadError(f"ERROR: Gagal mendapatkan info file Rclone!\nPath : {remote}:{listener.link}\n\nStderr :\n{err[:4000]}")
         return
     try:
@@ -83,9 +85,8 @@ async def add_rclone_download(listener, path):
             if listener.multi <= 1:
                 await sendStatusMessage(listener.message)
             await event.wait()
-            async with task_dict_lock:
-                if listener.mid not in task_dict:
-                    return
+            if listener.isCancelled:
+                return
     else:
         add_to_queue = False
 
