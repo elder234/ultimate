@@ -200,7 +200,7 @@ async def get_document_type(path):
                 path,
             ]
         )
-        if res := result[1]:
+        if result[1]:
             if mime_type.startswith("video"):
                 is_video = True
     except Exception as e:
@@ -495,7 +495,7 @@ async def split_file(
 async def createSampleVideo(listener, video_file, sample_duration, part_duration):
     filter_complex = ""
     dir, name = video_file.rsplit("/", 1)
-    output_file = f"{dir}/SAMPLE.{name}"
+    output_file = f"{dir}/SV.{name}"
     segments = [(0, part_duration)]
     duration = (await get_media_info(video_file))[0]
     remaining_duration = duration - (part_duration * 2)

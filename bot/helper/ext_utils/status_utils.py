@@ -19,15 +19,15 @@ SIZE_UNITS = ["B", "KB", "MB", "GB", "TB", "PB"]
 class MirrorStatus:
     STATUS_DOWNLOADING = "Unduh"
     STATUS_UPLOADING = "Unggah"
+    STATUS_CLONING = "Clone"
     STATUS_QUEUEDL = "AntriDownload"
     STATUS_QUEUEUP = "AntriUpload"
     STATUS_PAUSED = "Henti"
+    STATUS_CHECKING = "Cek"
     STATUS_ARCHIVING = "Arsip"
     STATUS_EXTRACTING = "Ekstrak"
-    STATUS_CLONING = "Clone"
     STATUS_SEEDING = "Seed"
     STATUS_SPLITTING = "Bagi"
-    STATUS_CHECKING = "Cek"
     STATUS_SAMVID = "SampelVideo"
     STATUS_CONVERTING = "Konversi"
      
@@ -35,17 +35,17 @@ STATUS_DICT = {
     "ALL": "All",
     "DL": MirrorStatus.STATUS_DOWNLOADING,
     "UP": MirrorStatus.STATUS_UPLOADING,
+    "CL": MirrorStatus.STATUS_CLONING,
     "QD": MirrorStatus.STATUS_QUEUEDL,
     "QU": MirrorStatus.STATUS_QUEUEUP,
+    "PA": MirrorStatus.STATUS_PAUSED,
+    "CK": MirrorStatus.STATUS_CHECKING,
     "AR": MirrorStatus.STATUS_ARCHIVING,
     "EX": MirrorStatus.STATUS_EXTRACTING,
     "SD": MirrorStatus.STATUS_SEEDING,
     "CM": MirrorStatus.STATUS_CONVERTING,
-    "CL": MirrorStatus.STATUS_CLONING,
     "SP": MirrorStatus.STATUS_SPLITTING,
-    "CK": MirrorStatus.STATUS_CHECKING,
     "SV": MirrorStatus.STATUS_SAMVID,
-    "PA": MirrorStatus.STATUS_PAUSED,
 }
 
 
