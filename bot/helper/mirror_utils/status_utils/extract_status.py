@@ -52,14 +52,14 @@ class ExtractStatus:
     async def status(self):
         return MirrorStatus.STATUS_EXTRACTING
 
+    async def processed_raw(self):
+        if self.listener.newDir:
+            self._proccessed_bytes = await get_path_size(self.listener.newDir)
+        else:
+            self._proccessed_bytes = await get_path_size(self.listener.dir) - self._size
+
     def processed_bytes(self):
         return get_readable_file_size(self._proccessed_bytes)
-
-    def processed_raw(self):
-        if self.listener.newDir:
-            self._proccessed_bytes = get_path_size(self.listener.newDir)
-        else:
-            self._proccessed_bytes = get_path_size(self.listener.dir) - self._size
 
     def task(self):
         return self

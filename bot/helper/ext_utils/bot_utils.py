@@ -172,7 +172,7 @@ def update_user_ldata(id_, key, value):
     user_data[id_][key] = value
 
 
-async def retry_function(func, *args, retry=(90 if IS_HEROKU else 30), **kwargs):
+async def retry_function(func, *args, retry=(300 if IS_HEROKU else 30), **kwargs):
     try:
         return await func(*args, **kwargs)
     except:
