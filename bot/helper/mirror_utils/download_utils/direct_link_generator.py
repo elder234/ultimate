@@ -231,8 +231,6 @@ def direct_link_generator(link: str):
         ]
     ):
         raise DirectDownloadLinkException(f"ERROR: R.I.P {domain}")
-    elif "mp4upload.com" in domain:
-        return mp4upload(link)
     elif "androiddatahost.com" in domain:
         return androiddatahost(link)
     elif "apkadmin.com" in domain or "sharemods.com" in domain:
@@ -259,10 +257,12 @@ def direct_link_generator(link: str):
         return sfile(link)
     elif "qiwi.gg" in domain:
         return qiwi(link)
-    elif "sharepoint.com" in domain:
-        return sharepoint(link)
+    elif "mp4upload.com" in domain:
+        return mp4upload(link)
     elif "berkasdrive.com" in domain:
         return berkasdrive(link)
+    elif "sharepoint.com" in domain:
+        return sharepoint(link)
     # Add AllDebrid supported link here
     elif any(
         x in domain
@@ -574,15 +574,25 @@ def github(url):
 
 
 def hxfile(url):
-    with create_scraper() as session:
+    if not ospath.isfile("hxfile.txt"):
+        raise DirectDownloadLinkException("ERROR: hxfile.txt (cookies) Not Found!")
+    try:
+        jar = MozillaCookieJar()
+        jar.load("hxfile.txt")
+    except Exception as e:
+        raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}") from e
+    cookies = {}
+    for cookie in jar:
+        cookies[cookie.name] = cookie.value
+    with Session() as session:
         try:
             file_code = url.split("/")[-1]
-            html = HTML(session.post(url, data={"op": "download2", "id": file_code}).text)
+            html = HTML(session.post(url, data={"op": "download2", "id": file_code}, cookies=cookies).text)
         except Exception as e:
             raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}") from e
-    if direct_link:= html.xpath("//a[@class='btn btn-dow']/@href"):
+    if direct_link := html.xpath("//a[@class='btn btn-dow']/@href"):
         return direct_link[0]
-    raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
+    raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!") from e
 
 
 def onedrive(link):
@@ -1683,40 +1693,6 @@ def pake(url: str):
             raise DirectDownloadLinkException(f"ERROR: Link File tidak ditemukan!")
 
 
-def mp4upload(url: str):
-    with Session() as session:
-        try:
-            url = url.replace("embed-", "")
-            req = session.get(url).text
-            soup = BeautifulSoup(req, "lxml")
-            inputs = soup.find_all("input")
-            data = {input.get("name"): input.get("value") for input in inputs}
-            if not data:
-                raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
-            post = session.post(
-                url, 
-                data=data, 
-                headers={
-                    "User-Agent": userAgent, 
-                    "Referer": "https://www.mp4upload.com/"
-                }).text
-            soup = BeautifulSoup(post, "lxml")
-            inputs = soup.find_all("form", {"name": "F1"})[0].find_all("input")
-            data = {input.get("name"): input.get("value").replace(" ", "") for input in inputs}
-            if not data:
-                raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
-            data["referer"] = url
-            urllib3.disable_warnings()
-            direct_link = session.post(
-                url, 
-                data=data, 
-                verify=False
-            ).url
-            return direct_link
-        except:
-            raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
-    
-
 def androiddatahost(url: str):
     with create_scraper() as session:
         try:
@@ -2012,7 +1988,7 @@ def yandex_disk(url):
     
     
 
-def sfile(url):
+def sfile(url: str) -> tuple:
     """
     Source :
     https://github.com/aenulrofik/pikabot_v2/
@@ -2080,23 +2056,38 @@ def qiwi(url: str) -> str:
             raise DirectDownloadLinkException(f"ERROR: Link File tidak ditemukan!")
         
 
-def sharepoint(url: str) -> str:
-    """
-    Source :
-    https://github.com/aenulrofik/pikabot_v2/
-    
-    Supported Sites : 
-    https://www.microsoft.com/ (SharePoint)
-    """
-    url = sub("e=[\w]+", "", url)
-    url = url.replace("??", "?")
-    if not search(r"download=1", url):
-        if "?" in url:
-            url += "&"
-        else:
-            url += "?"
-        url += "download=1"
-    return url
+def mp4upload(url: str) -> tuple:
+    with Session() as session:
+        try:
+            url = url.replace("embed-", "")
+            req = session.get(url).text
+            soup = BeautifulSoup(req, "lxml")
+            inputs = soup.find_all("input")
+            data = {input.get("name"): input.get("value") for input in inputs}
+            if not data:
+                raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
+            post = session.post(
+                url, 
+                data=data, 
+                headers={
+                    "User-Agent": userAgent, 
+                    "Referer": "https://www.mp4upload.com/"
+                }).text
+            soup = BeautifulSoup(post, "lxml")
+            inputs = soup.find_all("form", {"name": "F1"})[0].find_all("input")
+            data = {input.get("name"): input.get("value").replace(" ", "") for input in inputs}
+            if not data:
+                raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
+            data["referer"] = url
+            urllib3.disable_warnings()
+            direct_link = session.post(
+                url, 
+                data=data, 
+                verify=False
+            ).url
+            return direct_link, {"Referer": "https://www.mp4upload.com/"}
+        except:
+            raise DirectDownloadLinkException("ERROR: Link File tidak ditemukan!")
 
 
 def berkasdrive(url: str) -> str:
@@ -2118,3 +2109,22 @@ def berkasdrive(url: str) -> str:
         
         else:
             raise DirectDownloadLinkException(f"ERROR: Link File tidak ditemukan!")
+
+
+def sharepoint(url: str) -> str:
+    """
+    Source :
+    https://github.com/aenulrofik/pikabot_v2/
+    
+    Supported Sites : 
+    https://www.microsoft.com/ (SharePoint)
+    """
+    url = sub("e=[\w]+", "", url)
+    url = url.replace("??", "?")
+    if not search(r"download=1", url):
+        if "?" in url:
+            url += "&"
+        else:
+            url += "?"
+        url += "download=1"
+    return url

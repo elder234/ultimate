@@ -12,6 +12,15 @@ programming in Python.
 ```
 Based on Alpine Latest with Heroku Bypass
 Small, Lightweight and Minimalist (Include Python Packages)
+Note : Sometimes I often change the Docker Image for testing purposes, maybe some apps are not running properly
+```
+
+- arakurumi/mltb:dev
+
+```
+Based on Ubuntu 22.04 with Heroku Bypass
+Small, Lightweight and Minimalist (Include Python Packages)
+Note : Sometimes I often change the Docker Image for testing purposes, maybe some apps are not running properly
 ```
 
 - arakurumi/mltb:alpine
@@ -27,6 +36,14 @@ Include Python Packages and some cool Apps like AniDL, Bento4, Gallery-DL, MegaS
 Based on Ubuntu 22.04 with Heroku Bypass
 Include Python Packages and some cool Apps like AniDL, Bento4, Gallery-DL, MegaSDK, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager, VCSI, YT-DLP
 ```
+
+## Custom Packages Name
+- Aria2c : Chrome
+- FFMPEG : Opera
+- Java : Safari
+- QBittorrent : Nightly
+- QBittorrent-Nox : Firefox
+- RClone : Edge
 
 ## qBittorrent
 
@@ -162,13 +179,14 @@ Include Python Packages and some cool Apps like AniDL, Bento4, Gallery-DL, MegaS
 - Add sudo users
 - Supported Direct links Generators:
 
-> mediafire (file/folders), hxfile.co, streamtape.com, streamsb.net, streamhub.ink, streamvid.net, doodstream.com,
+> mediafire (file/folders), hxfile.co (need cookies txt with name) [hxfile.txt], streamtape.com, streamsb.net, streamhub.ink,
+> streamvid.net, doodstream.com,
 > feurl.com, upload.ee, pixeldrain.com, racaty.net, 1fichier.com, 1drv.ms (Only works for file not folder or business
 > account), filelions.com, streamwish.com, send.cm (file/folders), solidfiles.com, linkbox.to (file/folders),
 > shrdsk.me (
 > sharedisk.io), akmfiles.com, wetransfer.com, pcloud.link, gofile.io (file/folders), easyupload.io, mdisk.me (with
 > ytdl),
-> tmpsend.com, terabox.com (file/folders) (you need to add cookies txt with
+> tmpsend.com, qiwi.gg, berkasdrive.com, mp4upload.com, terabox.com (file/folders) (you need to add cookies txt with
 > name) [terabox.txt](https://github.com/ytdl-org/youtube-dl#how-do-i-pass-cookies-to-youtube-dl).
 
 # How to deploy?
