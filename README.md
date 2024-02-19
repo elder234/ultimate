@@ -37,7 +37,7 @@ Based on Ubuntu 22.04 with Heroku Bypass
 Include Python Packages and some cool Apps like AniDL, Bento4, Gallery-DL, MegaSDK, MKVToolnix, N_m3u8DL-RE (m3u8), PhantomJS, Shaka-Packager, VCSI, YT-DLP
 ```
 
-## Custom Packages Name
+## Custom Apps Name
 - Aria2c : Chrome
 - FFMPEG : Opera
 - Java : Safari
