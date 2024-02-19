@@ -5,8 +5,8 @@ from bot.helper.ext_utils.status_utils import get_readable_file_size, MirrorStat
 class QueueStatus:
     def __init__(self, listener, gid, status):
         self.listener = listener
-        self._size = self.listener.size
         self._gid = gid
+        self._size = self.listener.size
         self._status = status
 
     def gid(self):

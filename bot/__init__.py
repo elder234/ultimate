@@ -70,29 +70,59 @@ class Version:
     ar = ""
     ff = ""
     ga = ""
+    jd = ""
     jv = ""
+    mg = ""
     p7 = ""
     pr = ""
     py = ""
-    rc = ""
     qb = ""
+    rc = ""
     yt = ""
 
 # Version Check
 try:
-    Version.ar = check_output(["chrome --v"], shell=True).decode().split("\n")[0].split(" ")[2] 
+    Version.ar = check_output(["chrome --v"], shell=True).decode().split("\n")[0].split(" ")[2]
+except Exception as e:
+    LOGGER.warning(f"Failed to get Aria2c version! ERROR: {e}")
+try:
     Version.ff = check_output(["opera -version | grep 'ffmpeg version' | sed -e 's/ffmpeg version //' -e 's/[^0-9.].*//'"], shell=True).decode().replace("\n", "")
+except Exception as e:
+    LOGGER.warning(f"Failed to get FFMPEG version! ERROR: {e}")
+try:
     Version.ga = check_output(["pip show google-api-python-client | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
-    Version.jd = jdv
+except Exception as e:
+    LOGGER.warning(f"Failed to get Google Api version! ERROR: {e}")
+Version.jd = jdv
+try:
     Version.jv = check_output(["safari --version"], shell=True).decode().split(" ")[1]
+except Exception as e:
+    LOGGER.warning(f"Failed to get Java version! ERROR: {e}")
+try:
+    Version.mg = check_output(["pip show megasdk | grep Version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
+except Exception as e:
+    LOGGER.warning(f"Failed to get MegaSDK version! ERROR: {e}")
+try:
     Version.p7 = check_output(["7z | grep 7-Zip"], shell=True).decode().split(" ")[2]
-    Version.pr = prv
+except Exception as e:
+    LOGGER.warning(f"Failed to get P7Zip version! ERROR: {e}")
+Version.pr = prv
+try:
     Version.py = check_output(["python --version"], shell=True).decode().split()[-1]
+except Exception as e:
+    LOGGER.warning(f"Failed to get Python version! ERROR: {e}")
+try:
     Version.qb = check_output(["firefox --version"], shell=True).decode().split(" ", 1)[1].replace("\n", "")
+except Exception as e:
+    LOGGER.warning(f"Failed to get QBittorrent version! ERROR: {e}")
+try:
     Version.rc = check_output(["edge --version"], shell=True).decode().split("\n")[0].split(" ")[1]
+except Exception as e:
+    LOGGER.warning(f"Failed to get RClone version! ERROR: {e}")
+try:
     Version.yt = check_output(["yt-dlp --version"], shell=True).decode().split("\n")[0]
 except Exception as e:
-    LOGGER.warning(f"Failed to get Apps version! ERROR: {e}")
+    LOGGER.warning(f"Failed to get YT-DLP version! ERROR: {e}")
 
 try:
     if bool(environ.get("_____REMOVE_THIS_LINE_____")):
@@ -282,9 +312,11 @@ if len(JD_EMAIL) == 0 or len(JD_PASS) == 0:
     JD_EMAIL = ""
     JD_PASS = ""
 
-UPTOBOX_TOKEN = environ.get("UPTOBOX_TOKEN", "")
-if len(UPTOBOX_TOKEN) == 0:
-    UPTOBOX_TOKEN = ""
+MEGA_EMAIL = environ.get("MEGA_EMAIL", "")
+MEGA_PASS = environ.get("MEGA_PASS", "")
+if len(MEGA_EMAIL) == 0 or len(MEGA_PASS) == 0:
+    MEGA_EMAIL= ""
+    MEGA_PASS = ""
 
 FILELION_API = environ.get("FILELION_API", "")
 if len(FILELION_API) == 0:
@@ -357,10 +389,10 @@ if len(RSS_CHAT_ID) == 0:
 STATUS_LIMIT = environ.get("STATUS_LIMIT", "")
 STATUS_LIMIT = 10 if len(STATUS_LIMIT) == 0 else int(STATUS_LIMIT)
 
-CMD_SUFFIX = environ.get("CMD_SUFFIX", "")
-
 RSS_DELAY = environ.get("RSS_DELAY", "")
 RSS_DELAY = 600 if len(RSS_DELAY) == 0 else int(RSS_DELAY)
+
+CMD_SUFFIX = environ.get("CMD_SUFFIX", "")
 
 TORRENT_TIMEOUT = environ.get("TORRENT_TIMEOUT", "")
 TORRENT_TIMEOUT = "" if len(TORRENT_TIMEOUT) == 0 else int(TORRENT_TIMEOUT)
@@ -404,14 +436,13 @@ MEDIA_GROUP = MEDIA_GROUP.lower() == "true"
 USER_TRANSMISSION = environ.get("USER_TRANSMISSION", "")
 USER_TRANSMISSION = USER_TRANSMISSION.lower() == "true" and IS_PREMIUM_USER
 
-BASE_URL_PORT = environ.get("PORT", "")
+BASE_URL_PORT = str(environ.get("PORT", ""))
 if len(BASE_URL_PORT) == 0:
-    BASE_URL_PORT = environ.get("BASE_URL_PORT", "")
+    BASE_URL_PORT = str(environ.get("BASE_URL_PORT", ""))
     if len(BASE_URL_PORT) == 0:
         BASE_URL_PORT = 80
         
-if len(BASE_URL_PORT) != 0:
-    BASE_URL_PORT = int(BASE_URL_PORT)
+BASE_URL_PORT = int(BASE_URL_PORT)
 
 BASE_URL = environ.get("BASE_URL", "").rstrip("/")
 IS_HEROKU = False
@@ -481,6 +512,8 @@ config_dict = {
     "MEDIA_GROUP": MEDIA_GROUP,
     "JD_EMAIL": JD_EMAIL,
     "JD_PASS": JD_PASS,
+    "MEGA_EMAIL": MEGA_EMAIL,
+    "MEGA_PASS": MEGA_PASS,
     "OWNER_ID": OWNER_ID,
     "QUEUE_ALL": QUEUE_ALL,
     "QUEUE_DOWNLOAD": QUEUE_DOWNLOAD,
@@ -509,7 +542,6 @@ config_dict = {
     "USER_TRANSMISSION": USER_TRANSMISSION,
     "UPSTREAM_REPO": UPSTREAM_REPO,
     "UPSTREAM_BRANCH": UPSTREAM_BRANCH,
-    "UPTOBOX_TOKEN": UPTOBOX_TOKEN,
     "USER_SESSION_STRING": USER_SESSION_STRING,
     "USE_SERVICE_ACCOUNTS": USE_SERVICE_ACCOUNTS,
     "USE_TELEGRAPH": USE_TELEGRAPH,

@@ -7,9 +7,9 @@ from bot.helper.ext_utils.status_utils import (
 
 class DirectStatus:
     def __init__(self, listener, obj, gid):
+        self.listener = listener
         self._gid = gid
         self._obj = obj
-        self.listener = listener
 
     def gid(self):
         return self._gid

@@ -20,10 +20,10 @@ def get_download(client, tag, old_info=None):
 
 class QbittorrentStatus:
     def __init__(self, listener, seeding=False, queued=False):
+        self.listener = listener
         self.client = get_qb_client()
         self.queued = queued
         self.seeding = seeding
-        self.listener = listener
         self._info = None
 
     def update(self):

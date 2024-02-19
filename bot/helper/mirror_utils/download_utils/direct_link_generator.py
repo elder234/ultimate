@@ -49,8 +49,6 @@ def direct_link_generator(link: str):
     elif any(
         x in domain
         for x in [
-            "mega.nz",
-            "mega.co.nz",
             "devuploads.com",
             "get.pixelexperience.org"
         ]
@@ -67,10 +65,6 @@ def direct_link_generator(link: str):
         raise DirectDownloadLinkException(
             "ERROR: Link ini tidak dapat Unduh/Leech menggunakan Bot!"
         )
-    # elif "drive.usercontent.google.com" in domain:
-    #     raise DirectDownloadLinkException(
-    #         "ERROR: Link ini tidak bersifat Publik. Gunakan Link drive.google.com!"
-    #     )
     elif match(r"https?://(bigota|hugeota)\.d\.miui\.com/\S+", link):
         return bigota(link)
     elif "mediafire.com" in domain:

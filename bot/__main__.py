@@ -125,6 +125,7 @@ async def stats(_, message):
 <b>FFMPEG       :</b> <code>v{Version.ff}</code>
 <b>Google       :</b> <code>v{Version.ga}</code>
 <b>Java         :</b> <code>v{Version.jv}</code>
+<b>MegaSDK      :</b> <code>v{Version.mg}</code>
 <b>MyJD         :</b> <code>v{Version.jd}</code>
 <b>P7Zip        :</b> <code>v{Version.p7}</code> 
 <b>Pyro         :</b> <code>v{Version.pr}</code>

@@ -807,6 +807,12 @@ async def load_config():
         JD_EMAIL = ""
         JD_PASS = ""
 
+    MEGA_EMAIL = environ.get("MEGA_EMAIL", "")
+    MEGA_PASS = environ.get("MEGA_PASS", "")
+    if len(MEGA_EMAIL) == 0 or len(MEGA_PASS) == 0:
+        MEGA_EMAIL= ""
+        MEGA_PASS = ""
+
     FILELION_API = environ.get("FILELION_API", "")
     if len(FILELION_API) == 0:
         FILELION_API = ""
@@ -864,21 +870,21 @@ async def load_config():
 
     LEECH_CHAT_ID = environ.get("LEECH_CHAT_ID", "")
     LEECH_CHAT_ID = "" if len(LEECH_CHAT_ID) == 0 else LEECH_CHAT_ID
-    if LEECH_CHAT_ID.isdigit() or LEECH_CHAT_ID.startswith("-"):
+    if LEECH_CHAT_ID.isdigit() or (LEECH_CHAT_ID.startswith("-") and ":" not in LEECH_CHAT_ID):
         LEECH_CHAT_ID = int(LEECH_CHAT_ID)
 
     LOG_CHAT_ID = environ.get("LOG_CHAT_ID", "")
     LOG_CHAT_ID = "" if len(LOG_CHAT_ID) == 0 else LOG_CHAT_ID
-    if LOG_CHAT_ID.isdigit() or LOG_CHAT_ID.startswith("-"):
+    if LOG_CHAT_ID.isdigit() or (LOG_CHAT_ID.startswith("-") and ":" not in LOG_CHAT_ID):
         LOG_CHAT_ID = int(LOG_CHAT_ID)
-
-    STATUS_LIMIT = environ.get("STATUS_LIMIT", "")
-    STATUS_LIMIT = 10 if len(STATUS_LIMIT) == 0 else int(STATUS_LIMIT)
 
     RSS_CHAT_ID= environ.get("RSS_CHAT_ID", "")
     RSS_CHAT_ID = "" if len(RSS_CHAT_ID) == 0 else RSS_CHAT_ID
-    if RSS_CHAT_ID.isdigit() or RSS_CHAT_ID.startswith("-"):
+    if RSS_CHAT_ID.isdigit() or (RSS_CHAT_ID.startswith("-") and ":" not in RSS_CHAT_ID):
         RSS_CHAT_ID = int(RSS_CHAT_ID)
+
+    STATUS_LIMIT = environ.get("STATUS_LIMIT", "")
+    STATUS_LIMIT = 10 if len(STATUS_LIMIT) == 0 else int(STATUS_LIMIT)
 
     RSS_DELAY = environ.get("RSS_DELAY", "")
     RSS_DELAY = 600 if len(RSS_DELAY) == 0 else int(RSS_DELAY)
@@ -1038,6 +1044,8 @@ async def load_config():
             "IS_TEAM_DRIVE": IS_TEAM_DRIVE,
             "JD_EMAIL": JD_EMAIL,
             "JD_PASS": JD_PASS,
+            "MEGA_EMAIL": MEGA_EMAIL,
+            "MEGA_PASS": MEGA_PASS,
             "LEECH_CHAT_ID": LEECH_CHAT_ID,
             "LEECH_FILENAME_PREFIX": LEECH_FILENAME_PREFIX,
             "LEECH_SPLIT_SIZE": LEECH_SPLIT_SIZE,

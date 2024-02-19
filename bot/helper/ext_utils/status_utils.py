@@ -1,4 +1,4 @@
-from asyncio import gather
+from asyncio import gather, iscoroutinefunction
 from html import escape
 from psutil import (
     cpu_percent, 
@@ -43,9 +43,9 @@ STATUS_DICT = {
     "AR": MirrorStatus.STATUS_ARCHIVING,
     "EX": MirrorStatus.STATUS_EXTRACTING,
     "SD": MirrorStatus.STATUS_SEEDING,
-    "CM": MirrorStatus.STATUS_CONVERTING,
     "SP": MirrorStatus.STATUS_SPLITTING,
     "SV": MirrorStatus.STATUS_SAMVID,
+    "CM": MirrorStatus.STATUS_CONVERTING,
 }
 
 
@@ -171,7 +171,12 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             msg += f"<blockquote><code>PRIVATE 🤓</code></blockquote>"
         else: 
             msg += f"<blockquote><code>{escape(f'{task.name()}')}</code></blockquote>"
-        msg += f"\n<b>┌┤{get_progress_bar_string(task.progress())} <code>{task.progress()}</code>├┐</b>"
+        progress = (
+            await task.progress()
+            if iscoroutinefunction(task.progress)
+            else task.progress()
+        )
+        msg += f"\n<b>┌┤{get_progress_bar_string(progress)} <code>{progress}</code>├┐</b>"
         if task.listener.isSuperChat:
             msg += f"\n<b>├ Status :</b> <a href='{task.listener.message.link}'>{tstatus}</a>"
         else:

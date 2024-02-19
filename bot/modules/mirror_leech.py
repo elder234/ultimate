@@ -19,6 +19,7 @@ from bot.helper.ext_utils.links_utils import (
     is_gdrive_id,
     is_gdrive_link,
     is_magnet,
+    is_mega_link,
     is_rclone_path,
     is_telegram_link,
     is_url,
@@ -26,16 +27,13 @@ from bot.helper.ext_utils.links_utils import (
 from bot.helper.listeners.task_listener import TaskListener
 from bot.helper.mirror_utils.download_utils.aria2_download import add_aria2c_download
 from bot.helper.mirror_utils.download_utils.direct_downloader import add_direct_download
+from bot.helper.mirror_utils.download_utils.direct_link_generator import direct_link_generator
 from bot.helper.mirror_utils.download_utils.gd_download import add_gd_download
 from bot.helper.mirror_utils.download_utils.jd_download import add_jd_download
+from bot.helper.mirror_utils.download_utils.mega_download import add_mega_download
 from bot.helper.mirror_utils.download_utils.qbit_download import add_qb_torrent
 from bot.helper.mirror_utils.download_utils.rclone_download import add_rclone_download
-from bot.helper.mirror_utils.download_utils.telegram_download import (
-    TelegramDownloadHelper,
-)
-from bot.helper.mirror_utils.download_utils.direct_link_generator import (
-    direct_link_generator,
-)
+from bot.helper.mirror_utils.download_utils.telegram_download import TelegramDownloadHelper
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.message_utils import (
@@ -298,6 +296,7 @@ class Mirror(TaskListener):
             and not is_rclone_path(self.link)
             and not is_gdrive_id(self.link)
             and not is_gdrive_link(self.link)
+            and not is_mega_link(self.link)
         ):
             await sendMessage(
                 self.message, COMMAND_USAGE["mirror"][0], COMMAND_USAGE["mirror"][1]
@@ -321,6 +320,7 @@ class Mirror(TaskListener):
             and not is_magnet(self.link)
             and not is_rclone_path(self.link)
             and not is_gdrive_link(self.link)
+            and not is_mega_link(self.link)
             and not self.link.endswith(".torrent")
             and file_ is None
             and not is_gdrive_id(self.link)
@@ -370,10 +370,12 @@ class Mirror(TaskListener):
                 return
         elif self.isQbit:
             await add_qb_torrent(self, path, ratio, seed_time)
-        elif is_rclone_path(self.link):
-            await add_rclone_download(self, f"{path}/")
         elif is_gdrive_link(self.link) or is_gdrive_id(self.link):
             await add_gd_download(self, path)
+        elif is_mega_link(self.link):
+            await add_mega_download(self, f"{path}/")
+        elif is_rclone_path(self.link):
+            await add_rclone_download(self, f"{path}/")
         else:
             ussr = args["-au"]
             pssw = args["-ap"]
