@@ -40,6 +40,7 @@ from bot.helper.ext_utils.links_utils import (
 from bot.helper.ext_utils.media_utils import (
     createThumb,
     createSampleVideo,
+    take_ss,
 )
 from bot.helper.ext_utils.media_utils import (
     split_file,
@@ -47,13 +48,17 @@ from bot.helper.ext_utils.media_utils import (
     convert_video,
     convert_audio,
 )
-from bot.helper.mirror_utils.gdrive_utils.list import gdriveList
-from bot.helper.mirror_utils.rclone_utils.list import RcloneList
-from bot.helper.mirror_utils.status_utils.extract_status import ExtractStatus
-from bot.helper.mirror_utils.status_utils.sample_video_status import SampleVideoStatus
-from bot.helper.mirror_utils.status_utils.media_convert_status import MediaConvertStatus
-from bot.helper.mirror_utils.status_utils.split_status import SplitStatus
-from bot.helper.mirror_utils.status_utils.zip_status import ZipStatus
+from bot.helper.mirror_leech_utils.gdrive_utils.list import gdriveList
+from bot.helper.mirror_leech_utils.rclone_utils.list import RcloneList
+from bot.helper.mirror_leech_utils.status_utils.extract_status import ExtractStatus
+from bot.helper.mirror_leech_utils.status_utils.sample_video_status import (
+    SampleVideoStatus
+)
+from bot.helper.mirror_leech_utils.status_utils.media_convert_status import (
+    MediaConvertStatus
+)
+from bot.helper.mirror_leech_utils.status_utils.split_status import SplitStatus
+from bot.helper.mirror_leech_utils.status_utils.zip_status import ZipStatus
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.message_utils import (
     sendMessage,
@@ -452,14 +457,14 @@ class TaskConfig:
                             if not pswd:
                                 del cmd[2]
                             if self.isCancelled:
-                                return False
+                                return ""
                             async with subprocess_lock:
                                 self.suproc = await create_subprocess_exec(
                                     *cmd, stderr=PIPE
                                 )
                             _, stderr = await self.suproc.communicate()
                             if self.isCancelled:
-                                return False
+                                return ""
                             code = self.suproc.returncode
                             if code != 0:
                                 try:
@@ -469,9 +474,6 @@ class TaskConfig:
                                 LOGGER.error(
                                     f"{stderr}. Unable to extract archive splits!. Path: {f_path}"
                                 )
-                            elif code == -9:
-                                self.isCancelled = True
-                                return ""
                     if (
                         not self.seed
                         and self.suproc is not None
@@ -502,14 +504,17 @@ class TaskConfig:
                 if not pswd:
                     del cmd[2]
                 if self.isCancelled:
-                    return False
+                    return ""
                 async with subprocess_lock:
                     self.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
                 _, stderr = await self.suproc.communicate()
                 if self.isCancelled:
-                    return False
+                    return ""
                 code = self.suproc.returncode
-                if code == 0:
+                if code == -9:
+                    self.isCancelled = True
+                    return ""
+                elif code == 0:
                     LOGGER.info(f"Extracted Path: {up_path}")
                     if not self.seed:
                         try:
@@ -517,7 +522,7 @@ class TaskConfig:
                         except:
                             self.isCancelled = True
                     return up_path
-                elif code != -9:
+                else:
                     try:
                         stderr = stderr.decode().strip()
                     except:
@@ -527,9 +532,6 @@ class TaskConfig:
                     )
                     self.newDir = ""
                     return dl_path
-                else:
-                    self.isCancelled = True
-                    return ""
         except NotSupportedExtractionArchive:
             LOGGER.info(
                 f"Not any valid archive, uploading file as it is. Path: {dl_path}"
@@ -564,8 +566,7 @@ class TaskConfig:
             dl_path,
         ]
         if await aiopath.isdir(dl_path):
-            for ext in GLOBAL_EXTENSION_FILTER:
-                cmd.append(f"-xr!*.{ext}")
+            cmd.extend(f"-xr!*.{ext}" for ext in GLOBAL_EXTENSION_FILTER)
             if o_files:
                 for f in o_files:
                     if self.newDir and self.newDir in f:
@@ -582,14 +583,17 @@ class TaskConfig:
             if not pswd:
                 del cmd[3]
         if self.isCancelled:
-            return False
+            return ""
         async with subprocess_lock:
             self.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
         _, stderr = await self.suproc.communicate()
         if self.isCancelled:
-            return
+            return ""
         code = self.suproc.returncode
-        if code == 0:
+        if code == -9:
+            self.isCancelled = True
+            return ""
+        elif code == 0:
             if not self.seed or delete:
                 await clean_target(dl_path)
             for f in ft_delete:
@@ -600,7 +604,7 @@ class TaskConfig:
                         pass
             ft_delete.clear()
             return up_path
-        elif code != -9:
+        else:
             await clean_target(self.newDir)
             if not delete:
                 self.newDir = ""
@@ -610,9 +614,6 @@ class TaskConfig:
                 stderr = "Unable to decode the error!"
             LOGGER.error(f"{stderr}. Unable to zip this path: {dl_path}")
             return dl_path
-        else:
-            self.isCancelled = True
-            return ""
 
     async def proceedSplit(self, up_dir, m_size, o_files, gid):
         checked = False
@@ -679,6 +680,8 @@ class TaskConfig:
                     newfolder = ospath.splitext(dl_path)[0]
                     name = dl_path.rsplit("/", 1)[1]
                     if self.seed and not self.newDir:
+                        if self.isLeech and not self.compress:
+                            return self.dir
                         self.newDir = f"{self.dir}10000"
                         newfolder = newfolder.replace(self.dir, self.newDir)
                         await makedirs(newfolder, exist_ok=True)
@@ -693,7 +696,6 @@ class TaskConfig:
                             move(res, f"{newfolder}/SV.{name}"),
                         )
                     return newfolder
-            return dl_path
         else:
             for dirpath, _, files in await sync_to_async(walk, dl_path, topdown=False):
                 for file_ in files:
@@ -707,7 +709,7 @@ class TaskConfig:
                             LOGGER.info(f"Creating Sample videos: {self.name}")
                         if self.isCancelled:
                             cpu_eater_lock.release()
-                            return False
+                            return ""
                         res = await createSampleVideo(
                             self, f_path, sample_duration, part_duration
                         )
@@ -715,6 +717,7 @@ class TaskConfig:
                             ft_delete.append(res)
             if checked:
                 cpu_eater_lock.release()
+
             return dl_path
 
     async def convertMedia(self, dl_path, gid, o_files, m_size, ft_delete):
@@ -777,7 +780,7 @@ class TaskConfig:
                     await cpu_eater_lock.acquire()
                     LOGGER.info(f"Converting: {self.name}")
                 res = await convert_video(self, m_path, vext)
-                return False if self.isCancelled else res
+                return "" if self.isCancelled else res
             elif (
                 is_audio
                 and aext
@@ -796,9 +799,9 @@ class TaskConfig:
                     await cpu_eater_lock.acquire()
                     LOGGER.info(f"Converting: {self.name}")
                 res = await convert_audio(self, m_path, aext)
-                return False if self.isCancelled else res
+                return "" if self.isCancelled else res
             else:
-                return False
+                return ""
 
         async with task_dict_lock:
             task_dict[self.mid] = MediaConvertStatus(self, gid)
@@ -818,15 +821,14 @@ class TaskConfig:
                     try:
                         await remove(dl_path)
                     except:
-                        return False
+                        pass
                     return output_file
-            return dl_path
         else:
             for dirpath, _, files in await sync_to_async(walk, dl_path, topdown=False):
                 for file_ in files:
                     if self.isCancelled:
                         cpu_eater_lock.release()
-                        return False
+                        return ""
                     f_path = ospath.join(dirpath, file_)
                     LOGGER.info(f"Converting: {f_path}")
                     res = await proceedConvert(f_path)
@@ -840,8 +842,42 @@ class TaskConfig:
                             try:
                                 await remove(f_path)
                             except:
-                                cpu_eater_lock.release()
-                                return False
+                                pass
             if checked:
                 cpu_eater_lock.release()
+        return dl_path
+
+    async def generateScreenshots(self, dl_path):
+        ss_nb = int(self.screenShots) if isinstance(self.screenShots, str) else 10
+        if await aiopath.isfile(dl_path):
+            if (await get_document_type(dl_path))[0]:
+                LOGGER.info(f"Creating Screenshot for: {dl_path}")
+                res = await take_ss(dl_path, ss_nb)
+                if res:
+                    newfolder = ospath.splitext(dl_path)[0]
+                    name = dl_path.rsplit("/", 1)[1]
+                    if self.seed and not self.newDir:
+                        if self.isLeech and not self.compress:
+                            return self.dir
+                        await makedirs(newfolder, exist_ok=True)
+                        self.newDir = f"{self.dir}10000"
+                        newfolder = newfolder.replace(self.dir, self.newDir)
+                        await gather(
+                            copy2(dl_path, f"{newfolder}/{name}"),
+                            move(res, newfolder),
+                        )
+                    else:
+                        await makedirs(newfolder, exist_ok=True)
+                        await gather(
+                            move(dl_path, f"{newfolder}/{name}"),
+                            move(res, newfolder),
+                        )
+                return newfolder
+        else:
+            LOGGER.info(f"Creating Screenshot for: {dl_path}")
+            for dirpath, _, files in await sync_to_async(walk, dl_path, topdown=False):
+                for file_ in files:
+                    f_path = ospath.join(dirpath, file_)
+                    if (await get_document_type(f_path))[0]:
+                        await take_ss(self._up_path, ss_nb)
             return dl_path
