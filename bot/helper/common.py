@@ -240,7 +240,7 @@ class TaskConfig:
             self.upDest = (
                 self.upDest
                 # or self.userDict.get("leech_dest")
-                or config_dict["LEECH_DUMP_CHAT"]
+                or config_dict["LEECH_CHAT_ID"]
             )
             if self.upDest:
                 if not isinstance(self.upDest, int):
