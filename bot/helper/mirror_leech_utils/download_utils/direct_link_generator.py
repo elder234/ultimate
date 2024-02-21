@@ -561,6 +561,22 @@ def osdn(url):
         return f"https://osdn.net{direct_link[0]}"
 
 
+# def yandex_disk(url: str) -> str:
+#     """Yandex.Disk direct link generator
+#     Based on https://github.com/wldhx/yadisk-direct"""
+#     try:
+#         link = findall(r"\b(https?://(yadi.sk|disk.yandex.com)\S+)", url)[0][0]
+#     except IndexError:
+#         return "ERROR: Link File tidak ditemukan!"
+#     api = "https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key={}"
+#     try:
+#         return get(api.format(link), verify=False).json()["href"]
+#     except KeyError as e:
+#         raise DirectDownloadLinkException(
+#             "ERROR: Link File tidak ditemukan!"
+#         ) from e
+
+
 def github(url):
     try:
         findall(r"\bhttps?://.*github\.com.*releases\S+", url)[0]
@@ -646,7 +662,7 @@ def pixeldrain(url):
         dl_link = f"https://pixeldrain.com/api/file/{file_id}?download"
     with create_scraper() as session:
         try:
-            resp = session.get(info_link, verify=False).json()
+            resp = session.get(info_link).json()
         except Exception as e:
             raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}") from e
     if resp["success"]:

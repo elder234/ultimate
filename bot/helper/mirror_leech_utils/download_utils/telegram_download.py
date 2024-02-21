@@ -97,6 +97,7 @@ class TelegramDownloadHelper:
         if (
             self.session not in ["user", "bot"] 
             and self._listener.userTransmission
+            # and self._listener.isSuperChat
             and not self._listener.isPrivateChat
         ):
             self.session = "user"

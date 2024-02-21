@@ -897,5 +897,5 @@ class TaskConfig:
                 for file_ in files:
                     f_path = ospath.join(dirpath, file_)
                     if (await get_document_type(f_path))[0]:
-                        await take_ss(self._up_path, ss_nb)
-            return dl_path
+                        await take_ss(f_path, ss_nb)
+        return dl_path
