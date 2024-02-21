@@ -224,7 +224,7 @@ async def get_document_type(path):
 
 
 async def take_ss(video_file, ss_nb) -> bool:
-    ss_nb = min(ss_nb, 10)
+    ss_nb = min(ss_nb, (5 if IS_HEROKU else 10))
     duration = (await get_media_info(video_file))[0]
     if duration != 0:
         dirpath, name = video_file.rsplit("/", 1)
