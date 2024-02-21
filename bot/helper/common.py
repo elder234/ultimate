@@ -250,7 +250,11 @@ class TaskConfig:
                     elif self.upDest.startswith("u:"):
                         self.upDest = self.upDest.replace("u:", "", 1)
                         self.userTransmission = IS_PREMIUM_USER
-                    elif self.upDest.lower() == "pm":
+                    
+                    if (
+                        len(config_dict["LEECH_CHAT_ID"]) == 0
+                        and self.upDest.lower() == "pm"
+                    ):
                         self.upDest = self.userId
 
                     if ":" in self.upDest:
