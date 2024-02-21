@@ -272,14 +272,6 @@ class TaskListener(TaskConfig):
                         fmsg = ""
                 if fmsg != "":
                     await sendMessage(self.message, msg + fmsg)
-            if self.seed:
-                if self.newDir:
-                    await clean_target(self.newDir)
-                async with queue_dict_lock:
-                    if self.mid in non_queued_up:
-                        non_queued_up.remove(self.mid)
-                await start_from_queued()
-                return
         else:
             msg += f"\n\n<b>Tipe :</b> <code>{mime_type}</code>"
             if mime_type == "Folder":
@@ -361,15 +353,15 @@ class TaskListener(TaskConfig):
                     )
                 except Exception as e:
                     LOGGER.error(f"Failed to forward Message! ERROR: {e}")
-            if self.seed:
-                if self.newDir:
-                    await clean_target(self.newDir)
-                async with queue_dict_lock:
-                    if self.mid in non_queued_up:
-                        non_queued_up.remove(self.mid)
-                await start_from_queued()
-                return
-
+        
+        if self.seed:
+            if self.newDir:
+                await clean_target(self.newDir)
+            async with queue_dict_lock:
+                if self.mid in non_queued_up:
+                    non_queued_up.remove(self.mid)
+            await start_from_queued()
+            return
         await clean_download(self.dir)
         async with task_dict_lock:
             if self.mid in task_dict:

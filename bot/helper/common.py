@@ -3,6 +3,7 @@ from aioshutil import move, copy2
 from asyncio import sleep, create_subprocess_exec, gather
 from asyncio.subprocess import PIPE
 from os import walk, path as ospath
+from pyrogram.enums import ChatAction
 from secrets import token_urlsafe
 
 from bot import (
@@ -159,14 +160,16 @@ class TaskConfig:
             if "excluded_extensions" not in self.userDict
             else ["aria2", "!qB"]
         )
-        if not self.isYtDlp and not self.isJd:
-            if self.link not in ["rcl", "gdl"]:
+        if self.link not in ["rcl", "gdl"]:
+            if not self.isYtDlp and not self.isJd:
                 await self.isTokenExists(self.link, "dl")
-            elif self.link == "rcl":
+        elif self.link == "rcl":
+            if not self.isYtDlp and not self.isJd:
                 self.link = await RcloneList(self).get_rclone_path("rcd")
                 if not is_rclone_path(self.link):
                     raise ValueError(self.link)
-            elif self.link == "gdl":
+        elif self.link == "gdl":
+            if not self.isYtDlp and not self.isJd:
                 self.link = await gdriveList(self).get_target_id("gdd")
                 if not is_gdrive_id(self.link):
                     raise ValueError(self.link)
@@ -234,23 +237,60 @@ class TaskConfig:
                 ) != self.getConfigPath(self.upDest):
                     raise ValueError("<b>Kamu harus menggunakan config yang sama untuk clone!</b>")
         else:
+            self.upDest = (
+                self.upDest
+                # or self.userDict.get("leech_dest")
+                or config_dict["LEECH_DUMP_CHAT"]
+            )
             if self.upDest:
+                if not isinstance(self.upDest, int):
+                    if self.upDest.startswith("b:"):
+                        self.upDest = self.upDest.replace("b:", "", 1)
+                        self.userTransmission = False
+                    elif self.upDest.startswith("u:"):
+                        self.upDest = self.upDest.replace("u:", "", 1)
+                        self.userTransmission = IS_PREMIUM_USER
+                    elif self.upDest.lower() == "pm":
+                        self.upDest = self.userId
+
+                    if ":" in self.upDest:
+                        self.threadId = self.upDest.split(":")[1]
+                        self.upDest = self.upDest.split(":")[0]
+
+                    if self.upDest.isdigit():
+                        self.upDest = int(self.upDest)
+
+                    if self.threadId.isdigit():
+                        self.threadId = int(self.threadId)
+
                 if self.userTransmission:
                     chat = await user.get_chat(self.upDest)
                     uploader_id = user.me.id
                 else:
                     chat = await self.client.get_chat(self.upDest)
                     uploader_id = self.client.me.id
-                if chat.type.name not in ["SUPERGROUP", "CHANNEL"]:
+
+                if chat.type.name in ["SUPERGROUP", "CHANNEL"]:
+                    member = await chat.get_member(uploader_id)
+                    if (
+                        not member.privileges.can_manage_chat
+                        or not member.privileges.can_delete_messages
+                    ):
+                        raise ValueError(
+                            "<b>Bot tidak memiliki cukup perizinan pada Chat ini!</b>"
+                        )
+                elif self.userTransmission:
                     raise ValueError(
                         "<b>Tujuan leech kustom hanya untuk SuperGroup atau Channel!</b>"
                     )
-                member = await chat.get_member(uploader_id)
-                if (
-                    not member.privileges.can_manage_chat
-                    or not member.privileges.can_delete_messages
-                ):
-                    raise ValueError("<b>Kamu tidak memiliki ijin pada chat ini!</b>")
+                
+                else:
+                    try:
+                        await self.client.send_chat_action(
+                            self.upDest, ChatAction.TYPING
+                        )
+                    except:
+                        raise ValueError("Mulai Bot dan coba lagi!")
             elif (
                 self.userTransmission 
                 and not self.isSuperChat
@@ -276,28 +316,6 @@ class TaskConfig:
             )
             self.maxSplitSize = MAX_SPLIT_SIZE if self.userTransmission else 2097152000
             self.splitSize = min(self.splitSize, self.maxSplitSize)
-            self.upDest = (
-                self.upDest
-                # or self.userDict.get("leech_dest")
-                or config_dict["LEECH_CHAT_ID"]
-            )
-            if not isinstance(self.upDest, int):
-                if self.upDest.startswith("b:"):
-                    self.upDest = self.upDest.replace("b:", "", 1)
-                    self.userTransmission = False
-                elif self.upDest.startswith("u:"):
-                    self.upDest = self.upDest.replace("u:", "", 1)
-                    self.userTransmission = IS_PREMIUM_USER
-                if ":" in self.upDest:
-                    self.threadId = self.upDest.split(":")[1]
-                    self.upDest = self.upDest.split(":")[0]
-                if (
-                    self.upDest.isdigit() 
-                    or self.upDest.startswith("-")
-                ):
-                    self.upDest = int(self.upDest)
-                if self.threadId.isdigit():
-                    self.threadId = int(self.threadId)
             self.asDoc = (
                 self.userDict.get("as_doc", False)
                 or config_dict["AS_DOCUMENT"]
