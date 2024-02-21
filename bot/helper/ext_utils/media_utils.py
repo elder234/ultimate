@@ -261,9 +261,9 @@ async def take_ss(video_file, ss_nb) -> bool:
                 )
                 await rmtree(dirpath, ignore_errors=True)
                 return False
-        except:
+        except Exception as e:
             LOGGER.error(
-                f"Error while creating sreenshots from video. Path: {video_file}. Error: Timeout some issues with ffmpeg with specific arch!"
+                f"Error while creating sreenshots from video. Path: {video_file}. Error: Timeout some issues with ffmpeg with specific arch! -> {e}"
             )
             await rmtree(dirpath, ignore_errors=True)
             return False
@@ -330,9 +330,9 @@ async def create_thumbnail(video_file, duration):
                 f"Error while extracting thumbnail from video. Name: {video_file} stderr: {err}"
             )
             return None
-    except:
+    except Exception as e:
         LOGGER.error(
-            f"Error while extracting thumbnail from video. Name: {video_file}. Error: Timeout some issues with ffmpeg with specific arch!"
+            f"Error while extracting thumbnail from video. Name: {video_file}. Error: Timeout some issues with ffmpeg with specific arch! -> {e}"
         )
         return None
     return des_dir
