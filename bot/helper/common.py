@@ -266,6 +266,8 @@ class TaskConfig:
 
                     if self.threadId.isdigit():
                         self.threadId = int(self.threadId)
+                
+                LOGGER.info(f"Upload Destination : {self.upDest}")
 
                 if self.userTransmission:
                     chat = await user.get_chat(self.upDest)
@@ -303,8 +305,6 @@ class TaskConfig:
                 raise ValueError(
                     "<b>Gunakan SuperGroup/Dump Channel untuk mengupload menggunakan User Session pada Private Chat!</b>"
                 )
-
-            LOGGER.info(f"Upload Destination : {self.upDest}")
 
             if self.splitSize:
                 if self.splitSize.isdigit():
