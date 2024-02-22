@@ -171,6 +171,7 @@ class TgUploader:
                 )
         else:
             self._sent_msg = self._listener.message
+            
         return True
 
     async def _prepare_file(self, file_, dirpath, delete_file):

@@ -251,15 +251,15 @@ class TaskConfig:
                         self.upDest = self.upDest.replace("u:", "", 1)
                         self.userTransmission = IS_PREMIUM_USER
                     
-                    if (
-                        len(config_dict["LEECH_CHAT_ID"]) == 0
-                        and self.upDest.lower() == "pm"
-                    ):
-                        self.upDest = self.userId
-
                     if ":" in self.upDest:
                         self.threadId = self.upDest.split(":")[1]
                         self.upDest = self.upDest.split(":")[0]
+
+                    if (
+                        self.upDest.lower() == "pm"
+                        and len(config_dict["LEECH_CHAT_ID"]) == 0 
+                    ):
+                        self.upDest = self.userId
 
                     if self.upDest.isdigit():
                         self.upDest = int(self.upDest)
@@ -303,6 +303,9 @@ class TaskConfig:
                 raise ValueError(
                     "<b>Gunakan SuperGroup/Dump Channel untuk mengupload menggunakan User Session pada Private Chat!</b>"
                 )
+
+            LOGGER.info(f"Upload Destination : {self.upDest}")
+
             if self.splitSize:
                 if self.splitSize.isdigit():
                     self.splitSize = int(self.splitSize)
