@@ -267,8 +267,6 @@ class TaskConfig:
                     if self.threadId.isdigit():
                         self.threadId = int(self.threadId)
                 
-                LOGGER.info(f"Upload Destination : {self.upDest}")
-
                 if self.userTransmission:
                     chat = await user.get_chat(self.upDest)
                     uploader_id = user.me.id
