@@ -156,7 +156,7 @@ async def select_type(_, query):
 
 async def gdrive_search(_, message):
     if len(message.text.split()) == 1:Kir
-        return await sendMessage(message, "<b>im perintah disertai dengan kata kunci!</b>")
+        return await sendMessage(message, "<b>im commands accompanied by keywords</b>")
     user_id = message.from_user.id
     buttons = await list_buttons(user_id)
     await sendMessage(message, "<b>Pilih tipe yang mau dicari :</b>", buttons)
