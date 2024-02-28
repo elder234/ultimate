@@ -172,16 +172,16 @@ class Clone(TaskListener):
                 return
             error, button = await stop_duplicate_check(self)
             if error:
-                msg = f"<b>Hai {self.tag} !</b>"
-                msg += "\n<b>Tugasmu dihentikan karena :</b>"
+                msg = f"<b>Hey {self.tag} !</b>"
+                msg += "\n<b>Your Work was Stopped because :</b>"
                 msg += f"\n<code>{escape(error)}</code>"
                 
                 if not USE_TELEGRAPH:
                     content = [content for content in button for content in content.split("\n\n")]
                     
                     for _, data in enumerate(content, start=1):
-                        if "Hasil pencarian Google Drive" in data:
-                            data = data.replace("Hasil pencarian Google Drive", "")
+                        if "Google Drive search results" in data:
+                            data = data.replace("Google Drive search results", "")
                             msg += data
                             
                         else:
@@ -198,7 +198,7 @@ class Clone(TaskListener):
             drive = gdClone(self)
             if files <= 10:
                 msg = await sendMessage(
-                    self.message, f"<b>Mengclone :</b>\n<code>{self.link}</code>"
+                    self.message, f"<b>Cloning :</b>\n<code>{self.link}</code>"
                 )
             else:
                 msg = ""
@@ -238,7 +238,7 @@ class Clone(TaskListener):
             res = await cmd_exec(cmd)
             if res[2] != 0:
                 if res[2] != -9:
-                    msg = f"<b>Gagal mendapatkan link path Rclone</b>\n<b>Path :</b> <code>{remote}:{src_path}</code>\n\n<b>Stderr :</b>\n<code>{res[1][:4000]}</code>"
+                    msg = f"<b>Failed to Get Rclone path link</b>\n<b>Path :</b> <code>{remote}:{src_path}</code>\n\n<b>Stderr :</b>\n<code>{res[1][:4000]}</code>"
                     await sendMessage(self.message, msg)
                 return
             rstat = loads(res[0])

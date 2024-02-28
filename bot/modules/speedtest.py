@@ -17,7 +17,7 @@ from bot.helper.telegram_helper.message_utils import (
 
 @new_task
 async def speedtest(_, message):
-    msg = await sendMessage(message, "<b>Mengetes kecepatan Unduh & Unggah...</b>")
+    msg = await sendMessage(message, "<b>Test Your Download and Upload Speed...</b>")
     test = Speedtest()
     test.get_best_server()
     test.download()
@@ -26,27 +26,27 @@ async def speedtest(_, message):
     result = test.results.dict()
     caption = f"""
 <pre languange='bash'>
-<b>Hasil SpeedTest</b>
+<i>SpeedTest Results</i>
 <b>Ping         :</b> <code>{result['ping']} ms</code>
-<b>Waktu        :</b> <code>{result['timestamp']}</code>
-<b>Unggah       :</b> <code>{get_readable_file_size(result['upload'] / 8)}/s</code>
-<b>Upload       :</b> <code>{get_readable_file_size(result['download'] / 8)}/s</code>
-<b>Terkirim     :</b> <code>{get_readable_file_size(int(result['bytes_sent']))}</code>
-<b>Diterima     :</b> <code>{get_readable_file_size(int(result['bytes_received']))}</code>
+<b>Time        :</b> <code>{result['timestamp']}</code>
+<b>Upload       :</b> <code>{get_readable_file_size(result['upload'] / 8)}/s</code>
+<b>Download       :</b> <code>{get_readable_file_size(result['download'] / 8)}/s</code>
+<b>Sent     :</b> <code>{get_readable_file_size(int(result['bytes_sent']))}</code>
+<b>Recieved     :</b> <code>{get_readable_file_size(int(result['bytes_received']))}</code>
 
 <b>Client</b>
 <b>IP           :</b> <code>{result['client']['ip']}</code>
 <b>Nama         :</b> <code>{result['client']['isp']}</code>
 <b>Rating       :</b> <code>{result['client']['isprating']}</code>
-<b>Negara       :</b> <code>{result['client']['country']}</code>
+<b>Country       :</b> <code>{result['client']['country']}</code>
 <b>Latitude     :</b> <code>{result['client']['lat']}</code>
 <b>Longitude    :</b> <code>{result['client']['lon']}</code>
 
 <b>Server</b>
-<b>Nama         :</b> <code>{result['server']['name']}</code>
+<b>Name         :</b> <code>{result['server']['name']}</code>
 <b>Sponsor      :</b> <code>{result['server']['sponsor']}</code>
 <b>Latency      :</b> <code>{result['server']['latency']}</code>
-<b>Negara       :</b> <code>{result['server']['country']} ({result['server']['cc']})</code>
+<b>Country       :</b> <code>{result['server']['country']} ({result['server']['cc']})</code>
 <b>Latitude     :</b> <code>{result['server']['lat']}</code>
 <b>Longitude    :</b> <code>{result['server']['lon']}</code>
 </pre>

@@ -81,7 +81,7 @@ class TelegramDownloadHelper:
                 file_name=path, progress=self._onDownloadProgress
             )
             if self._listener.isCancelled:
-                await self._onDownloadError("Unduhan dibatalkan oleh User!")
+                await self._onDownloadError("Upload canceleed by user!")
                 return
         except Exception as e:
             LOGGER.error(str(e))
@@ -158,7 +158,7 @@ class TelegramDownloadHelper:
                 await self._onDownloadStart(gid, add_to_queue)
                 await self._download(message, path)
             else:
-                await self._onDownloadError("File ini sudah ditambahkan di Tugas unduh!")
+                await self._onDownloadError("This file is has been added in task download!")
         else:
             await self._onDownloadError(
                 "Tidak ada dokumen/media di pesan yang dibalas!"

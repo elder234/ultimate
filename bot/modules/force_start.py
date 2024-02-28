@@ -26,19 +26,19 @@ async def remove_from_queue(_, message):
         gid = msg[2] if status else msg[1]
         task = await getTaskByGid(gid)
         if task is None:
-            await sendMessage(message, f"<b>Tugas dengan GID</b> <code>{gid}</code> <b>tidak ditemukan!</b>")
+            await sendMessage(message, f"<b>Task with GID</b> <code>{gid}</code> <b>Not Found !</b>")
             return
     elif reply_to_id := message.reply_to_message_id:
         async with task_dict_lock:
             task = task_dict.get(reply_to_id)
         if task is None:
-            await sendMessage(message, "<b>Bukan Tugas Aktif!</b>")
+            await sendMessage(message, "<b>Not Active Duty</b>")
             return
     elif len(msg) in {1, 2}:
         msg = (
-            "<b>Balas ke pesan perintah saat digunakan untuk memulai Tugas</b>" \
-            f" <b>atau kirim</b> <code>/{BotCommands.ForceStartCommand[0]} [GID]</code> <b>atau</b> <code>/{BotCommands.ForceStartCommand[1]} [GID]</code> <b>untuk memulai Tugas secara paksa!</b>" \
-            f" <b>Kamu dapat menambahkan</b> <code>fd/fu</code> <b>setelah perintah untuk memulai Tugas secara paksa untuk Unduh/Unggah!</b>"
+            "<b>Respond to a command message when used to start a Task</b>" \
+            f" <b>or send</b> <code>/{BotCommands.ForceStartCommand[0]} [GID]</code> <b>atau</b> <code>/{BotCommands.ForceStartCommand[1]} [GID]</code> <b>untuk memulai Tugas secara paksa!</b>" \
+            f" <b>You can add</b> <code>fd/fu</code> <b>after the command to forcefully start the Task to Download/Upload!</b>"
         )
         await sendMessage(message, msg)
         return
@@ -47,7 +47,7 @@ async def remove_from_queue(_, message):
         and task.listener.userId != user_id
         and (user_id not in user_data or not user_data[user_id].get("is_sudo"))
     ):
-        await sendMessage(message, "<b>Bukan Tugas darimu!</b>")
+        await sendMessage(message, "<b>Not Your Duty Buddy !</b>")
         return
     obj = task.task()
     listener = obj.listener
@@ -57,21 +57,21 @@ async def remove_from_queue(_, message):
             listener.forceUpload = True
             if listener.mid in queued_up:
                 await start_up_from_queued(listener.mid)
-                msg = "<b>Tugas berhasil dimulai secara paksa untuk Unggah!</b>"
+                msg = "<b>Task successfully started forcefully to Upload!</b>"
         elif status == "fd":
             listener.forceDownload = True
             if listener.mid in queued_dl:
                 await start_dl_from_queued(listener.mid)
-                msg = "<b>Tugas berhasil dimulai secara paksa untuk Unduh!</b>"
+                msg = "<b>Task successfully started forcefully to Download!</b>"
         else:
             listener.forceDownload = True
             listener.forceUpload = True
             if listener.mid in queued_up:
                 await start_up_from_queued(listener.mid)
-                msg = "<b>Tugas berhasil dimulai secara paksa untuk Unggah!</b>"
+                msg = "<b>Task successfully started forcefully to Upload!</b>"
             elif listener.mid in queued_dl:
                 await start_dl_from_queued(listener.mid)
-                msg = "<b>Tugas berhasil dimulai paksa untuk Unduh dan akan Unggah setelah proses Unduh selesai!</b>"
+                msg = "<b>Task successfully started force to Download and will Upload after Download process is complete!</b>"
     if msg:
         await sendMessage(message, msg)
 

@@ -67,7 +67,7 @@ class DirectListener:
             return
         if self._failed == len(contents):
             async_to_sync(
-                self.listener.onDownloadError, "Semua File gagal diunduh!"
+                self.listener.onDownloadError, "All Files  failed to Download"
             )
             return
         async_to_sync(self.listener.onDownloadComplete)

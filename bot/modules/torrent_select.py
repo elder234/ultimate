@@ -25,7 +25,7 @@ from bot.helper.telegram_helper.message_utils import (
 
 async def select(_, message):
     if not config_dict["BASE_URL"]:
-        await sendMessage(message, "<b>BASE_URL tidak ditemukan!</b>")
+        await sendMessage(message, "<b>BASE_URL Not Found</b>")
         return
     user_id = message.from_user.id
     msg = message.text.split()
@@ -33,19 +33,19 @@ async def select(_, message):
         gid = msg[1]
         task = await getTaskByGid(gid)
         if task is None:
-            await sendMessage(message, f"<b>Tugas dengan ID</b> <code>{gid}</code> <b>tidak ditemukan!</b>")
+            await sendMessage(message, f"<b>Task with ID</b> <code>{gid}</code> <b>Not Found</b>")
             return
     elif reply_to_id := message.reply_to_message_id:
         async with task_dict_lock:
             task = task_dict.get(reply_to_id)
         if task is None:
-            await sendMessage(message, "<b>Bukan Tugas Aktif!</b>")
+            await sendMessage(message, "<b>No Active Duty</b>")
             return
     elif len(msg) == 1:
         msg = (
-            "<b>Balas ke Tugas Aktif dengan perintah atau tambahkan ID Tugas setelah perintah!</b>\n\n"
-            + "<b>Perintah ini hanya untuk memilih file yang ingin diunduh dan hanya bisa digunakan untuk Torrent!</b>"
-            + "<b>Kamu juga dapat menambahkan args -s sebelum memulai mengunduh!</b>"
+            "<b>Reply to Active Task with command or add Task ID after command!</b>\n\n"
+            + "<b>This command is only to select the file you want to download and can only be used for Torrent!</b>"
+            + "<b>You can also add args -s before starting the download!</b>"
         )
         await sendMessage(message, msg)
         return
@@ -55,7 +55,7 @@ async def select(_, message):
         and task.listener.userId != user_id
         and (user_id not in user_data or not user_data[user_id].get("is_sudo"))
     ):
-        await sendMessage(message, "<b>Bukan Tugas darimu!</b>")
+        await sendMessage(message, "<b>Not Your Duty!</b>")
         return
     if await sync_to_async(task.status) not in [
         MirrorStatus.STATUS_DOWNLOADING,
@@ -64,11 +64,11 @@ async def select(_, message):
     ]:
         await sendMessage(
             message,
-            "<b>Tugas ini baru diunduh, dihentikan atau menunggu antrian!</b>",
+            "<b>This task has just downloaded, stopped or is waiting in the queue!</b>",
         )
         return
     if task.name().startswith("[METADATA]"):
-        await sendMessage(message, "<b>Coba lagi setelah metadata selesai diunduh!</b>")
+        await sendMessage(message, "<b>Try again after the metadata has finished downloading!</b>")
         return
 
     try:
@@ -88,11 +88,11 @@ async def select(_, message):
                     )
         task.listener.select = True
     except:
-        await sendMessage(message, "<b>Bukan Tugas bittorrent!</b>")
+        await sendMessage(message, "<b>Not a Torrent task</b>")
         return
 
     SBUTTONS = bt_selection_buttons(id_)
-    msg = "<b>Download dihentikan...</b>\n<b>Pilih file yang mau diunduh lalu tekan</b> <code>Done Selecting</code> <b>untuk melanjutkan!</b>"
+    msg = "<b>Download dihentikan...</b>\n<b>Select the file you want to download and press</b> <code>Done Selecting</code> <b>untuk melanjutkan!</b>"
     await sendMessage(message, msg, SBUTTONS)
 
 
@@ -102,11 +102,11 @@ async def get_confirm(_, query):
     message = query.message
     task = await getTaskByGid(data[2])
     if task is None:
-        await query.answer("Tugas dibatalkan oleh User!", show_alert=True)
+        await query.answer("Task cancelled by user!", show_alert=True)
         await deleteMessage(message)
         return
     if user_id != task.listener.userId:
-        await query.answer("Bukan Tugas darimu!", show_alert=True)
+        await query.answer("Not your Duty", show_alert=True)
     elif data[1] == "pin":
         await query.answer(data[3], show_alert=True)
     elif data[1] == "done":

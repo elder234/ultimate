@@ -157,7 +157,7 @@ async def get_user_settings(from_user):
     buttons.ibutton("Close", f"userset {user_id} close")
 
     text = f"""
-<b>Pengaturan untuk user</b> <code>{name}</code>
+<b>User setttings</b> <code>{name}</code>
 <pre languange="bash"><b>Leech By         :</b> <code>{leech_method} Session</code>
 <b>Leech To         :</b> <code>{leech_dest}</code>
 <b>Leech Type       :</b> <code>{ltype}</code>
@@ -424,7 +424,7 @@ async def edit_user_settings(client, query):
         buttons.ibutton("Back", f"userset {user_id} back")
         buttons.ibutton("Close", f"userset {user_id} close")
         text = f"""
-<b>Pengaturan Leech untuk user</b> <code>{name}</code>
+<b>Leech settings for users</b> <code>{name}</code>
 <pre languange="bash"><b>Leech By         :</b> <code>{leech_method} Session</code>
 <b>Leech To         :</b> <code>{leech_dest}</code>
 <b>Leech Type       :</b> <code>{ltype}</code>
@@ -451,7 +451,7 @@ async def edit_user_settings(client, query):
         else:
             rccpath = "None"
         text = f"""
-<b>Pengaturan Rclone untuk user</b> <code>{name}</code>
+<b>Rclone Settings</b> <code>{name}</code>
 <pre languange="bash"><b>Rclone Config    :</b> <code>{rccmsg}</code>
 <b>Rclone Path      :</b> <code>{rccpath}</code>
 </pre>
@@ -488,7 +488,7 @@ async def edit_user_settings(client, query):
             gdrive_id = "None"
         index = user_dict["index_url"] if user_dict.get("index_url", False) else "None"
         text = f"""
-<b>Pengaturan Gdrive untuk user</b> <code>{name}</code>
+<b>Gdrive settings for users</b> <code>{name}</code>
 <pre languange="bash"><b>Gdrive Token     :</b> <code>{tokenmsg}</code>
 <b>Gdrive ID        :</b> <code>{gdrive_id}</code>
 <b>Index URL        :</b> <code>{index}</code>
@@ -701,7 +701,7 @@ async def send_users_settings(bot, message):
         #     ):
         #         msg += kmsg + vmsg
         no = 0
-        msg = "<b>Pengaturan Users/Groups</b>"
+        msg = "<b> Users/Groups Settings</b>"
         for item, value in (user_data or {}).items():
             no += 1
             try:

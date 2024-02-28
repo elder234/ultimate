@@ -92,7 +92,7 @@ class JDownloader(Myjdapi):
             return await self.jdconnect()
 
     async def connectToDevice(self):
-        self.error = "Menghubungkan ke Device..."
+        self.error = "Connecting to a Device..."
         while True:
             self.device = None
             if not config_dict["JD_EMAIL"] or not config_dict["JD_PASS"]:

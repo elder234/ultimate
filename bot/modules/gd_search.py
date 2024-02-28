@@ -32,7 +32,7 @@ async def list_buttons(user_id, isRecursive=True, user_token=False):
         f"User Token : {user_token}",
         f"list_types {user_id} ut {isRecursive} {user_token}",
     )
-    buttons.ibutton("Batalkan", f"list_types {user_id} cancel")
+    buttons.ibutton("Cancel it", f"list_types {user_id} cancel")
     return buttons.build_menu(2)
 
 
@@ -63,7 +63,7 @@ async def _list_drive(key, message, item_type, isRecursive, user_token, user_id)
                 await editMessage(message, e)
                 return
 
-            msg = f"<b>Menemukan</b> <code>{contents_no}</code> <b>hasil untuk kata kunci :</b>\n<code>{key}</code>"
+            msg = f"<b>Menemukan</b> <code>{contents_no}</code> <b>Search for keywords :</b>\n<code>{key}</code>"
             await editMessage(message, msg, button)
         
         else:
@@ -115,7 +115,7 @@ async def _list_drive(key, message, item_type, isRecursive, user_token, user_id)
             await editMessage(message, msg, buttons.build_menu(3))
 
     else:
-        await editMessage(message, f"<b>Pencarian dengan kata kunci</b> <code>{key}</code> <b>tidak ditemukan!</b>")
+        await editMessage(message, f"<b>Search By Keyword</b> <code>{key}</code> <b>Not found</b>")
 
 
 @new_task
@@ -125,41 +125,41 @@ async def select_type(_, query):
     key = message.reply_to_message.text.split(maxsplit=1)[1].strip()
     data = query.data.split()
     if user_id != int(data[1]):
-        return await query.answer(text="Bukan Tugas darimu!", show_alert=True)
+        return await query.answer(text="Not Your Duty Buddy", show_alert=True)
     elif data[2] == "rec":
         await query.answer()
         isRecursive = not bool(eval(data[3]))
         buttons = await list_buttons(user_id, isRecursive, eval(data[4]))
-        return await editMessage(message, "<b>Pilih opsi :</b>", buttons)
+        return await editMessage(message, "<b>Choose an option :</b>", buttons)
     elif data[2] == "ut":
         await query.answer()
         user_token = not bool(eval(data[4]))
         buttons = await list_buttons(user_id, eval(data[3]), user_token)
-        return await editMessage(message, "<b>Pilih tipe yang mau dicari :</b>", buttons)
+        return await editMessage(message, "<b>Select the Type you want to search for :</b>", buttons)
     elif data[2] == "cancel":
         await query.answer()
-        return await editMessage(message, "<b>Pencarian dibatalkan!</b>")
+        return await editMessage(message, "<b>Search Cancelled</b>")
     await query.answer()
     item_type = data[2]
     isRecursive = eval(data[3])
     user_token = eval(data[4])
-    msg = f"<b>Mencari Google Drive...</b>"
+    msg = f"<i>Search Google Drive...</i>"
     msg += f"\n╾────────────╼\n"
-    msg += f"<b>Tipe :</b> <code>{item_type.capitalize()}</code>"
+    msg += f"<b>Type :</b> <code>{item_type.capitalize()}</code>"
     msg += f"\n<b>Recursive :</b> <code>{'Yes' if isRecursive else 'No'}</code>"
     msg += f"\n<b>User Token :</b> <code>{'Yes' if user_token else 'No'}</code>"
-    msg += f"\n<b>Kata Kunci :</b> <code>{key.title()}</code>"
+    msg += f"\n<b>KeyWords :</b> <code>{key.title()}</code>"
     msg += "\n╾────────────╼\n"
     await editMessage(message, msg)
     await _list_drive(key, message, item_type, isRecursive, user_token, user_id)
 
 
 async def gdrive_search(_, message):
-    if len(message.text.split()) == 1:Kir
-        return await sendMessage(message, "<b>im perintah disertai dengan kata kunci!</b>")
+    if len(message.text.split()) == 1:
+        return await sendMessage(message, "<b>Submit an order accompanied by a Keyword</b>")
     user_id = message.from_user.id
     buttons = await list_buttons(user_id)
-    await sendMessage(message, "<b>Pilih tipe yang mau dicari :</b>", buttons)
+    await sendMessage(message, "<b>Select the type you want to search for :</b>", buttons)
 
 
 @new_task
@@ -178,7 +178,7 @@ async def telegram_list(_, query):
     except:
         await query.message.delete()
         await query.message.reply_to_message.delete()
-        return await query.answer(text="Waktu query pencarian habis!", show_alert=True)
+        return await query.answer(text="Search query time is over!", show_alert=True)
     
     if data[2] == "pre":
         if msgs[2] == 1:

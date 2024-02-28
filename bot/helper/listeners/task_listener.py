@@ -124,7 +124,7 @@ class TaskListener(TaskConfig):
         files_to_delete = []
 
         if multi_links:
-            await self.onUploadError("Selesai diunduh, Menunggu Tugas unduh lain selesai diunduh...")
+            await self.onUploadError("Finished downloading, Waiting for another download task to complete downloading...")
             return
 
         if not await aiopath.exists(f"{self.dir}/{self.name}"):
@@ -386,18 +386,18 @@ class TaskListener(TaskConfig):
             self.removeFromSameDir()
         
         msg = f"<b>Hai {self.tag} !</b>"
-        msg += "\n<b>Tugasmu dihentikan karena :</b>"
+        msg += "\n<b>Your Task stopped because :</b>"
         msg += f"\n<code>{escape(error)}</code>"
         
         if (
             not USE_TELEGRAPH
-            and "file/folder ini sudah ada di google drive!" in escape(error).lower()
+            and "This file/folder is already in google drive" in escape(error).lower()
         ):
             content = [content for content in button for content in content.split("\n\n")]
             
             for _, data in enumerate(content, start=1):
-                if "Hasil pencarian Google Drive" in data:
-                    data = data.replace("Hasil pencarian Google Drive", "")
+                if "Googl Drive search results" in data:
+                    data = data.replace("Google Drive search results", "")
                     msg += data
                     
                 else:
@@ -445,7 +445,7 @@ class TaskListener(TaskConfig):
             if self.mid in task_dict:
                 del task_dict[self.mid]
             count = len(task_dict)
-        msg = f"<b>Hai {self.tag} !</b>\n<b>Tugasmu dihentikan karena :</b>\n<code>{escape(error)}</code>"
+        msg = f"<b>Hai {self.tag} !</b>\n<b>Your Task stopped because :</b>\n<code>{escape(error)}</code>"
         await sendMessage(self.message, msg)
         if count == 0:
             await self.clean()

@@ -33,7 +33,7 @@ async def countNode(_, message):
                     or ""
                 )
     if is_gdrive_link(link):
-        msg = await sendMessage(message, f"<b>Menghitung :</b>\n<code>{link}</code>")
+        msg = await sendMessage(message, f"<b>Calculate :</b>\n<code>{link}</code>")
         name, mime_type, size, files, folders = await sync_to_async(
             gdCount().count, 
             link, 
@@ -43,15 +43,15 @@ async def countNode(_, message):
         if mime_type is None:
             await sendMessage(message, f"<b>{name}</b>")
             return
-        msg = f"<b>Nama :</b> <code>{name}</code>"
-        msg += f"\n\n<b>Ukuran :</b> <code>{get_readable_file_size(size)}</code>"
-        msg += f"\n\n<b>Tipe :</b> <code>{mime_type}</code>"
+        msg = f"<b>Name :</b> <code>{name}</code>"
+        msg += f"\n\n<b>Size :</b> <code>{get_readable_file_size(size)}</code>"
+        msg += f"\n\n<b>Type :</b> <code>{mime_type}</code>"
         if mime_type == "Folder":
             msg += f"\n\n<b>Sub Folders :</b> <code>{folders}</code>"
             msg += f"\n\n<b>Files :</b> <code>{files}</code>"
-        msg += f"\n\n<b>Oleh :</b> {tag}"
+        msg += f"\n\n<b>By :</b> {tag}"
     else:
-        msg = "<b>Kirim perintah dengan Link Google Drive atau balas Link Google Drive dengan perintah!</b>"
+        msg = "<b>Send an order with a Google Drive Link or reply to a Google Drive Link with an order!</b>"
     await sendMessage(message, msg)
 
 

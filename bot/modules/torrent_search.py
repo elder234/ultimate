@@ -90,19 +90,19 @@ async def _search(key, site, message, method):
             if "error" in search_results or search_results["total"] == 0:
                 await editMessage(
                     message,
-                    f"<b>Pencarian tidak ditemukan!</b>\n╾────────────╼\n<b>Situs :</b> <code>{SITES.get(site)}</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n",
+                    f"<b>Search Not Found</b>\n╾────────────╼\n<b>Site :</b> <code>{SITES.get(site)}</code>\n<b>Keywords :</b> <code>{key.title()}</code>\n╾────────────╼\n",
                 )
                 return
-            msg = f"<b>Menemukan</b> <code>{min(search_results['total'], MAX_LIMIT)}</code> <b>hasil pencarian!</b>"
+            msg = f"<b>Finding</b> <code>{min(search_results['total'], MAX_LIMIT)}</code> <b>Method!</b>"
             msg += "\n╾────────────╼\n"
-            msg += f"<b>Situs :</b> <code>{SITES.get(site)}</code>"
+            msg += f"<b>Site :</b> <code>{SITES.get(site)}</code>"
             if method == "apitrend":
-                msg += f"\n<b>Metode :</b> <code>Api Trending</code>"
+                msg += f"\n<b>Method :</b> <code>Api Trending</code>"
             elif method == "apirecent":
-                msg += f"\n<b>Metode :</b> <code>Api Trending</code>"
+                msg += f"\n<b>Method :</b> <code>Api Trending</code>"
             else:
-                msg += f"\n<b>Metode :</b> <code>Api Search</code>"
-                msg += f"\n<b>Kata Kunci :</b> <code>{key.title()}</code>"
+                msg += f"\n<b>Method :</b> <code>Api Search</code>"
+                msg += f"\n<b>Keywords :</b> <code>{key.title()}</code>"
             msg += "\n╾────────────╼\n"
             search_results = search_results["data"]
         except Exception as e:
@@ -130,10 +130,10 @@ async def _search(key, site, message, method):
         if total_results == 0:
             await editMessage(
                 message,
-                f"<b>Pencarian tidak ditemukan!</b>\n╾────────────╼\n<b>Situs :</b> <code>{site.capitalize()}</code>\n<b>Metode :</b> <code>Plugins Search</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n",
+                f"<b>Search Not Found</b>\n╾────────────╼\n<b>Site :</b> <code>{site.capitalize()}</code>\n<b>Method :</b> <code>Plugins Search</code>\n<b>Search Not Found :</b> <code>{key.title()}</code>\n╾────────────╼\n",
             )
             return
-        msg = f"<b>Menemukan</b> <code>{min(total_results, MAX_LIMIT)}</code> <b>hasil pencarian!</b>\n╾────────────╼\n<b>Situs :</b>{site.capitalize()}\n<b>Metode :</b> <code>Plugins Search</code>\n<b>Kata Kunci :</b> <code>{key.title()}</code>\n╾────────────╼\n"
+        msg = f"<b>Finding</b> <code>{min(total_results, MAX_LIMIT)}</code> <b>Method</b>\n╾────────────╼\n<b>Site :</b>{site.capitalize()}\n<b>Method :</b> <code>Plugins Search</code>\n<b>Search Not Found :</b> <code>{key.title()}</code>\n╾────────────╼\n"
         await sync_to_async(client.search_delete, search_id=search_id)
         await sync_to_async(client.auth_log_out)
     
@@ -201,33 +201,33 @@ async def _getResult(search_results, key, method):
     Torrent = False
 
     if USE_TELEGRAPH:
-        msg += f"<h4>Hasil pencarian Torrent</h4>"
+        msg += f"<h4>Torren Search Results</h4>"
     else:
-        msg += f"<b>Hasil pencarian Torrent</b>"
+        msg += f"<b>Torren Search Results</b>"
 
     msg += "\n╾────────────╼\n"
     
     if method == "apirecent":
-        msg += "<b>Metode :</b> <code>Api Recent</code>"
+        msg += "<b>Method :</b> <code>Api Recent</code>"
         
     elif method == "apisearch":
-        msg += "<b>Metode :</b> <code>Api Search</code>"
+        msg += "<b>Method :</b> <code>Api Search</code>"
         if USE_TELEGRAPH:
             msg += "<br>"
         else:
             msg += "\n"
-        msg += f"<b>Kata Kunci :</b> <code>{key.title()}</code>"
+        msg += f"<b>Search Not Found :</b> <code>{key.title()}</code>"
         
     elif method == "apitrend":
-        msg += "<b>Metode :</b> <code>Api Trending</code>"
+        msg += "<b>Method :</b> <code>Api Trending</code>"
         
     else:
-        msg += "<b>Metode :</b> <code>Plugins Search</code>"
+        msg += "<b>Method :</b> <code>Plugins Search</code>"
         if USE_TELEGRAPH:
             msg += "<br>"
         else:
             msg += "\n"
-        msg += f"<b>Kata Kunci :</b> <code>{key.title()}</code>"
+        msg += f"<b>Search Not Found :</b> <code>{key.title()}</code>"
         
     msg += "\n╾────────────╼\n"
         
@@ -255,7 +255,7 @@ async def _getResult(search_results, key, method):
                             
                         if "torrent" in subres.keys():
                             Torrent = True
-                            msg += f"<a href='{subres['torrent']}'>🦠 Unduh</a>"
+                            msg += f"<a href='{subres['torrent']}'>🦠 Download</a>"
                             msg += f"<b> | <a href='{subres['torrent']}'>⚡ Direct</a></b>"
                             
                         if "magnet" in subres.keys():
@@ -284,7 +284,7 @@ async def _getResult(search_results, key, method):
                     
                     if "torrent" in result.keys():
                         Torrent = True
-                        msg += f"<b><a href='{result['torrent']}'>🦠 Unduh</a></b>"
+                        msg += f"<b><a href='{result['torrent']}'>🦠 Download</a></b>"
                         msg += f"<b> | <a href='{result['torrent']}'>⚡ Direct</a></b>"
                         
                     elif "magnet" in result.keys():
@@ -327,7 +327,7 @@ async def _getResult(search_results, key, method):
             if link.startswith("magnet:"):
                 msg += f"<b><a href='http://t.me/share/url?url={link}'>🧲 Magnet</a></b>"
             else:
-                msg += f"<b><a href='{link}'>🦠 Unduh</a></b>"
+                msg += f"<b><a href='{link}'>🦠 Download</a></b>"
                 msg += f"<b> | <a href='{link}'>⚡ Direct</a></b>"
 
         if USE_TELEGRAPH:
@@ -381,28 +381,28 @@ async def torrentSearch(_, message):
     SEARCH_PLUGINS = config_dict["SEARCH_PLUGINS"]
     if SITES is None and not SEARCH_PLUGINS:
         await sendMessage(
-            message, "<b>Api atau Plugin tidak tersedia!</b>"
+            message, "<b>Api or plugin is not available</b>"
         )
     elif len(key) == 1 and SITES is None:
-        await sendMessage(message, "<b>Kirim perintah disertai dengan Kata Kunci!</b>")
+        await sendMessage(message, "<b>Search command accompanied by keyword</b>")
     elif len(key) == 1:
         buttons.ibutton("Trending", f"torser {user_id} apitrend")
         buttons.ibutton("Recent", f"torser {user_id} apirecent")
         buttons.ibutton("Cancel", f"torser {user_id} cancel")
         button = buttons.build_menu(2)
-        await sendMessage(message, "<b>Kirim perintah disertai dengan Kata Kunci!</b>", button)
+        await sendMessage(message, "<b>Search Command with keywords</b>", button)
     elif SITES is not None and SEARCH_PLUGINS:
         buttons.ibutton("Api", f"torser {user_id} apisearch")
         buttons.ibutton("Plugins", f"torser {user_id} plugin")
         buttons.ibutton("Cancel", f"torser {user_id} cancel")
         button = buttons.build_menu(2)
-        await sendMessage(message, "<b>Pilih Alat untuk mencari :</b>", button)
+        await sendMessage(message, "<b>Select tool to search :</b>", button)
     elif SITES is not None:
         button = _api_buttons(user_id, "apisearch")
-        await sendMessage(message, "<b>Pilih Situs untuk dicari | Api :</b>", button)
+        await sendMessage(message, "<b>Select Site to search | Api:</b>", button)
     else:
         button = await _plugin_buttons(user_id)
-        await sendMessage(message, "<b>Pilih Situs untuk dicari | Plugins :</b>", button)
+        await sendMessage(message, "<b>Select Site to search | Plugins :</b>", button)
 
 
 @new_task
@@ -413,15 +413,15 @@ async def torrentSearchUpdate(_, query):
     key = key[1].strip() if len(key) > 1 else None
     data = query.data.split()
     if user_id != int(data[1]):
-        await query.answer("Bukan Tugas darimu!", show_alert=True)
+        await query.answer("Not Your Duty", show_alert=True)
     elif data[2].startswith("api"):
         await query.answer()
         button = _api_buttons(user_id, data[2])
-        await editMessage(message, "<b>Pilih situs :</b>", button)
+        await editMessage(message, "<b>Choose Site :</b>", button)
     elif data[2] == "plugin":
         await query.answer()
         button = await _plugin_buttons(user_id)
-        await editMessage(message, "<b>Pilih situs :</b>", button)
+        await editMessage(message, "<b>Choose Site :</b>", button)
     elif data[2] != "cancel":
         await query.answer()
         site = data[2]
@@ -429,31 +429,31 @@ async def torrentSearchUpdate(_, query):
         msg = "<b>Mencari Torrent...</b>"
         msg += "\n╾────────────╼\n"
         if method.startswith("api"):
-            msg += f"<b>Situs :</b> <code>{SITES.get(site)}</code>"
+            msg += f"<b>Site :</b> <code>{SITES.get(site)}</code>"
             if key is None:
                 if method == "apirecent":
                     endpoint = "Api Recent"
                 elif method == "apitrend":
                     endpoint = "Api Trending"
-                msg += f"\n<b>Metode :</b> <code>{endpoint}</code>"
+                msg += f"\n<b>Method :</b> <code>{endpoint}</code>"
                 msg += "\n╾────────────╼\n"
                 await editMessage(
                     message,
                     msg,
                 )
             else:
-                msg += f"<b>Situs :</b> <code>{SITES.get(site)}</code>"
-                msg += f"\n<b>Metode :</b> <code>Api Search</code>"
-                msg += f"\n<b>Kata Kunci :</b> <code>{key.title()}</code>"
+                msg += f"<b>Site :</b> <code>{SITES.get(site)}</code>"
+                msg += f"\n<b>Method :</b> <code>Api Search</code>"
+                msg += f"\n<b>Search Not Found :</b> <code>{key.title()}</code>"
                 msg += "\n╾────────────╼\n"
                 await editMessage(
                     message,
-                    f"<b>Situs :</b> <code>{SITES.get(site)}</code>\n\n╾────────────╼\n",
+                    f"<b>Site :</b> <code>{SITES.get(site)}</code>\n\n╾────────────╼\n",
                 )
         else:
-            msg += f"<b>Situs :</b> <code>{site.capitalize()}</code>"
-            msg += f"\n<b>Metode :</b> <code>Plugins Search</code>"
-            msg += f"\n<b>Kata Kunci :</b> <code>{key.title()}</code>"
+            msg += f"<b>Site :</b> <code>{site.capitalize()}</code>"
+            msg += f"\n<b>Method :</b> <code>Plugins Search</code>"
+            msg += f"\n<b>Search Not Found :</b> <code>{key.title()}</code>"
             msg += "\n╾────────────╼\n"
             await editMessage(
                 message,
@@ -462,7 +462,7 @@ async def torrentSearchUpdate(_, query):
         await _search(key, site, message, method)
     else:
         await query.answer()
-        await editMessage(message, "<b>Pencarian dibatalkan!</b>")
+        await editMessage(message, "<b>search cancelled</b>")
 
 
 @new_task
@@ -474,14 +474,14 @@ async def telegram_search(_, query):
     buttons = ButtonMaker()
     
     if user_id != userId:
-        return await query.answer(text="Bukan Tugas darimu!", show_alert=True)
+        return await query.answer(text="Not your Duty", show_alert=True)
 
     try:
         msgs = msg_dict[int(data[3])]
     except:
         await query.message.delete()
         await query.message.reply_to_message.delete()
-        return await query.answer(text="Waktu query pencarian habis!", show_alert=True)
+        return await query.answer(text="Search query time is over", show_alert=True)
     
     if data[2] == "pre":
         if msgs[2] == 1:

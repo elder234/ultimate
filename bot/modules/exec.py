@@ -48,7 +48,7 @@ async def send(msg, message):
 @new_task
 async def execute(_, message):
     if len(message.text) < 5:
-        await sendMessage(message, "<b>Kirim perintah disertai dengan Kode yang ingin dieksekusi!</b>")
+        await sendMessage(message, "<b>Send the command accpompanied ny the code you want to execute!</b>")
         return
     await send(await do("exec", message), message)
 
@@ -56,7 +56,7 @@ async def execute(_, message):
 @new_task
 async def aioexecute(_, message):
     if len(message.text) < 5:
-        await sendMessage(message, "<b>Kirim perintah disertai dengan Kode yang ingin dieksekusi!</b>")
+        await sendMessage(message, "<b>Send the command accpompanied ny the code you want to execute!</b>")
         return
     await send(await do("aexec", message), message)
     
@@ -119,7 +119,7 @@ async def clear(_, message):
     global namespaces
     if message.chat.id in namespaces:
         del namespaces[message.chat.id]
-    await send("<b>Locals berhasil dihapus!</b>", message)
+    await send("<b>Locals successfully deleted</b>", message)
 
 
 bot.add_handler(

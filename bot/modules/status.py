@@ -42,13 +42,13 @@ async def mirror_status(_, message):
     async with task_dict_lock:
         count = len(task_dict)
     if count == 0:
-        msg = "<b>Tidak ada Tugas AKTIF!</b>"
-        msg += f"\n\n<b>Note :</b>\nTambahkan <code>me</code> atau <code>userId</code> setelah perintah untuk menampilkan Tugas secara spesifik!"
+        msg = "<b>There are no ACTIVE tasks!</b>"
+        msg += f"\n\n<b>Note :</b>\nAdd <code>me</code> or <code>userId</code> after the command to display Tasks specifically!"
         msg += "\n___________________________"
         msg += (
             f"\n<b>CPU :</b> <code>{cpu_percent()}%</code> | <b>RAM :</b> <code>{virtual_memory().percent}%</code>" \
             f"\n<b>DISK :</b> <code>{get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}</code> | <b>UPTIME :</b> <code>{get_readable_time(time() - botStartTime)}</code>" \
-            f"\n<b>T.Unduh :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>T. Unggah :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>" 
+            f"\n<b>Downloaded :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>Uploaded :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>" 
         )
         reply_message = await sendMessage(message, msg)
         await auto_delete_message(message, reply_message)

@@ -17,19 +17,19 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 SIZE_UNITS = ["B", "KB", "MB", "GB", "TB", "PB"]
 
 class MirrorStatus:
-    STATUS_DOWNLOADING = "Unduh"
-    STATUS_UPLOADING = "Unggah"
+    STATUS_DOWNLOADING = "Download"
+    STATUS_UPLOADING = "Upload"
     STATUS_CLONING = "Clone"
     STATUS_QUEUEDL = "AntriDownload"
     STATUS_QUEUEUP = "AntriUpload"
-    STATUS_PAUSED = "Henti"
-    STATUS_CHECKING = "Cek"
+    STATUS_PAUSED = "Paused"
+    STATUS_CHECKING = "Check"
     STATUS_ARCHIVING = "Arsip"
-    STATUS_EXTRACTING = "Ekstrak"
+    STATUS_EXTRACTING = "Extract"
     STATUS_SEEDING = "Seed"
-    STATUS_SPLITTING = "Bagi"
+    STATUS_SPLITTING = "Spkit"
     STATUS_SAMVID = "SampelVideo"
-    STATUS_CONVERTING = "Konversi"
+    STATUS_CONVERTING = "Convert"
      
 STATUS_DICT = {
     "ALL": "All",
@@ -117,8 +117,8 @@ def get_progress_bar_string(pct) -> str:
         pct = float(pct.strip("%"))
     p = min(max(pct, 0), 100)
     cFull = int(p // 8)
-    p_str = "■" * cFull
-    p_str += "□" * (12 - cFull)
+    p_str = "▓" * cFull
+    p_str += "░" * (12 - cFull)
     return f"[{p_str}]"
 
 
@@ -188,9 +188,9 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             MirrorStatus.STATUS_CONVERTING,
             MirrorStatus.STATUS_QUEUEUP,
         ]:
-            msg += f"\n<b>├ Proses :</b> <code>{task.processed_bytes()}</code> dari <code>{task.size()}</code>"
-            msg += f"\n<b>├ Perkiraan :</b> <code>{task.eta()}</code>"
-            msg += f"\n<b>├ Kecepatan :</b> <code>{task.speed()}</code>"
+            msg += f"\n<b>├ Process :</b> <code>{task.processed_bytes()}</code> dari <code>{task.size()}</code>"
+            msg += f"\n<b>├ ETA :</b> <code>{task.eta()}</code>"
+            msg += f"\n<b>├ Speed :</b> <code>{task.speed()}</code>"
             if hasattr(task, "seeders_num"):
                 try:
                     msg += f"\n<b>├ Seeders :</b> <code>{task.seeders_num()}</code>"
@@ -198,13 +198,13 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
                 except:
                     pass
         elif tstatus == MirrorStatus.STATUS_SEEDING:
-            msg += f"\n<b>├ Rasio : </b> <code>{task.ratio()}</code>"
-            msg += f"\n<b>├ Waktu : </b> <code>{task.seeding_time()}</code>"
-            msg += f"\n<b>├ Ukuran : </b> <code>{task.size()}</code>"
-            msg += f"\n<b>├ Diupload : </b> <code>{task.uploaded_bytes()}</code>"
-            msg += f"\n<b>├ Kecepatan : </b> <code>{task.seed_speed()}</code>"
+            msg += f"\n<b>├ ratio : </b> <code>{task.ratio()}</code>"
+            msg += f"\n<b>├ Time : </b> <code>{task.seeding_time()}</code>"
+            msg += f"\n<b>├ Size : </b> <code>{task.size()}</code>"
+            msg += f"\n<b>├ Uploaded : </b> <code>{task.uploaded_bytes()}</code>"
+            msg += f"\n<b>├ Speed : </b> <code>{task.seed_speed()}</code>"
         else:
-            msg += f"\n<b>├ Ukuran : </b> <code>{task.size()}</code>"
+            msg += f"\n<b>├ Size : </b> <code>{task.size()}</code>"
             
         tgid = task.gid()
         msg += f"\n<b>├ GID :</b> <code>{tgid}</code>"
@@ -226,11 +226,11 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             msg = f"<b>Tidak ada Tugas</b> <code>{status}</code>!\n\n"
     buttons = ButtonMaker()
     if not is_user:
-        buttons.ibutton("👀", "status 0 ov", position="header")
+        buttons.ibutton("☰", "status 0 ov", position="header")
     if len(tasks) > STATUS_LIMIT:
         # msg += f"<b>Step :</b> <code>{page_step}</code>"
-        msg += f"<b>Halaman :</b> <code>{page_no}/{pages}</code>"
-        msg += f"\n<b>Total Tugas :</b> <code>{tasks_no}</code>\n"
+        msg += f"<b>Pages :</b> <code>{page_no}/{pages}</code>"
+        msg += f"\n<b>Total Task :</b> <code>{tasks_no}</code>\n"
         buttons.ibutton("⏪", f"status {sid} pre", position="header")
         buttons.ibutton("⏩", f"status {sid} nex", position="header")
         if tasks_no > 30:
@@ -244,5 +244,5 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
     button = buttons.build_menu(8)
     msg += f"\n<b>CPU :</b> <code>{cpu_percent()}%</code> | <b>RAM :</b> <code>{virtual_memory().percent}%</code>"
     msg += f"\n<b>DISK :</b> <code>{get_readable_file_size(disk_usage(config_dict['DOWNLOAD_DIR']).free)}</code> | <b>UPTIME :</b> <code>{get_readable_time(time() - botStartTime)}</code>"
-    msg += f"\n<b>T.Unduh :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>T.Unggah :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>"
+    msg += f"\n<b>Downloaded :</b> <code>{get_readable_file_size(net_io_counters().bytes_recv)}</code> | <b>Uploaded :</b> <code>{get_readable_file_size(net_io_counters().bytes_sent)}</code>"
     return msg, button

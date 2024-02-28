@@ -37,7 +37,7 @@ async def deletefile(_, message):
             user.id
         )
     else:
-        msg = "Kirim perintah dengan Link Google Drive atau balas Link Google Drive dengan perintah!"
+        msg = "Send an order with a Google Drive Link or reply to a Google Drive Link with an order!"
     reply_message = await sendMessage(message, f"<b>{msg}</b>")
     await auto_delete_message(message, reply_message)
 

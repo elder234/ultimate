@@ -27,18 +27,18 @@ async def cancel_task(_, message):
         else:
             task = await getTaskByGid(gid)
             if task is None:
-                await sendMessage(message, f"<b>Tugas dengan GID</b> <code>{gid}</code> <b>tidak ditemukan!</b>")
+                await sendMessage(message, f"<b>Task with GID</b> <code>{gid}</code> <b>Not Found</b>")
                 return
     elif reply_to_id := message.reply_to_message_id:
         async with task_dict_lock:
             task = task_dict.get(reply_to_id)
         if task is None:
-            await sendMessage(message, "<b>Bukan Tugas Aktif!</b>")
+            await sendMessage(message, "<b>No Active Duty</b>")
             return
     elif len(msg) == 1:
         msg = (
-        "<b>Balas ke pesan perintah saat digunakan untuk memulai Tugas</b>" \
-        f" <b>atau kirim</b> <code>/{BotCommands.CancelTaskCommand[0]} [GID]</code> <b>atau</b> <code>/{BotCommands.CancelTaskCommand[1]} [GID]</code> <b>untuk membatalkan Tugas!</b>"
+        "<b>Respond to the command prompt when used to start a Task</b>" \
+        f" <b>Or send</b> <code>/{BotCommands.CancelTaskCommand[0]} [GID]</code> <b>or</b> <code>/{BotCommands.CancelTaskCommand[1]} [GID]</code> <b>To cancel the task</b>"
         )
         await sendMessage(message, msg)
         return
@@ -47,7 +47,7 @@ async def cancel_task(_, message):
         and task.listener.userId != user_id
         and (user_id not in user_data or not user_data[user_id].get("is_sudo"))
     ):
-        await sendMessage(message, "<b>Bukan Tugas darimu!</b>")
+        await sendMessage(message, "<b>Not Your Dutty Buddy!</b>")
         return
     obj = task.task()
     await obj.cancel_task()
@@ -57,14 +57,14 @@ async def cancel_multi(_, query):
     data = query.data.split()
     user_id = query.from_user.id
     if user_id != int(data[1]) and not await CustomFilters.sudo("", query):
-        await query.answer("Bukan Tugas darimu!", show_alert=True)
+        await query.answer("Not Your Dutty Buddy!", show_alert=True)
         return
     tag = int(data[2])
     if tag in multi_tags:
         multi_tags.discard(int(data[2]))
-        msg = "Tugas dihentikan!"
+        msg = "Task Stoppped"
     else:
-        msg = "Tugas sudah dihentikan/selesai!"
+        msg = "Task has been stopped or completed"
     await query.answer(msg, show_alert=True)
     await deleteMessage(query.message)
 
@@ -103,10 +103,10 @@ async def cancell_all_buttons(_, message):
     async with task_dict_lock:
         count = len(task_dict)
     if count == 0:
-        await sendMessage(message, "<b>Tidak ada Tugas Aktif!</b>")
+        await sendMessage(message, "<b>No Active Task!</b>")
         return
     button = create_cancel_buttons()
-    can_msg = await sendMessage(message, "<b>Pilih jenis Tugas yang ingin dibatalkan :</b>", button)
+    can_msg = await sendMessage(message, "<b>Select the type of task You want to Cancel :</b>", button)
     await auto_delete_message(message, can_msg)
 
 
@@ -121,7 +121,7 @@ async def cancel_all_update(_, query):
         await deleteMessage(message)
     elif data[1] == "back":
         button = create_cancel_buttons()
-        await editMessage(message, "<b>Pilih jenis Tugas yang ingin dibatalkan :</b>", button)
+        await editMessage(message, "<b>Select the type of task you want to cancel :</b>", button)
     elif data[1] == "ms":
         buttons = button_build.ButtonMaker()
         buttons.ibutton("Yes!", f"canall {data[2]}")
@@ -129,14 +129,14 @@ async def cancel_all_update(_, query):
         buttons.ibutton("Close", "canall close")
         button = buttons.build_menu(2)
         await editMessage(
-            message, f"<b>Apa kamu yakin ingin membatalkan semua Tugas</b> <code>{data[2]}</code><b>?</b>", button
+            message, f"<b>Are you sure you want to cancell all task</b> <code>{data[2]}</code><b>?</b>", button
         )
     else:
         button = create_cancel_buttons()
-        await editMessage(message, "<b>Pilih jenis Tugas yang ingin dibatalkan :</b>", button)
+        await editMessage(message, "<b>Select the type of task you want to cancel :</b>", button)
         res = await cancel_all(data[1])
         if not res:
-            await sendMessage(reply_to, f"<b>Tugas</b> <code>{data[1]}</code> <b>tidak ditemukan!</b>")
+            await sendMessage(reply_to, f"<b>Task</b> <code>{data[1]}</code> <b>Not Found!</b>")
 
 
 bot.add_handler(
