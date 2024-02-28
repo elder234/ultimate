@@ -156,10 +156,17 @@ async def select_type(_, query):
 
 async def gdrive_search(_, message):
     if len(message.text.split()) == 1:
+<<<<<<< HEAD
         return await sendMessage(message, "<b>Submit an order accompanied by a Keyword</b>")
     user_id = message.from_user.id
     buttons = await list_buttons(user_id)
     await sendMessage(message, "<b>Select the type you want to search for :</b>", buttons)
+=======
+        return await sendMessage(message, "<b>send commands accompanied by keywords</b>")
+    user_id = message.from_user.id
+    buttons = await list_buttons(user_id)
+    await sendMessage(message, "<b>Select the type you want to search for:</b>", buttons)
+>>>>>>> ddfec327d861be4e275dcacd6f28aba8c2647735
 
 
 @new_task
