@@ -43,7 +43,7 @@ async def mirror_status(_, message):
         count = len(task_dict)
     if count == 0:
         msg = "<b>Tidak ada Tugas AKTIF!</b>"
-        msg += f"\n\n<b>Note :</b>\nTambahkan <code>me</code> atau <code>userId</code> setelah perintah untuk menampilkan Tugas secara spesifik!"
+        msg += f"\n\n<b>Note :</b>\Add <code>me</code> atau <code>userId</code> after the command to display the specific Tasks!"
         msg += "\n___________________________"
         msg += (
             f"\n<b>CPU :</b> <code>{cpu_percent()}%</code> | <b>RAM :</b> <code>{virtual_memory().percent}%</code>" \
