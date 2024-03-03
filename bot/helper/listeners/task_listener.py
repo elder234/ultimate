@@ -252,14 +252,16 @@ class TaskListener(TaskConfig):
             and DATABASE_URL
         ):
             await DbManager().rm_complete_task(self.message.link)
-        msg = f"<b>Nama :</b> <code>{escape(self.name)}</code>"
-        msg += f"\n\n<b>Ukuran :</b> <code>{get_readable_file_size(self.size)}</code>"
+        msg = f"<b>Name :</b> <code>{escape(self.name)}</code>"
+        msg += f"\n\n<b>Size :</b> <code>{get_readable_file_size(self.size)}</code>"
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
-            msg += f"\n\n<b>Jumlah File :</b> <code>{folders}</code>"
+            buttons_ = ButtonMaker()
+            buttons_.ubutton("🎗️View in DM🎗️", link="https://t.me/rillyleechBot")
+            msg += f"\n\n<b>Number of File :</b> <code>{folders}</code>"
             if mime_type != 0:
-                msg += f"\n\n<b>File Rusak :</b> <code>{mime_type}</code>"
-            msg += f'\n\n<b>Oleh :</b> {self.tag}\n\n'
+                msg += f"\n\n<b>corrupt files :</b> <code>{mime_type}</code>"
+            msg += f'\n\n<b>User :</b> {self.tag}\n\n'
             if not files:
                 await sendMessage(self.message, msg)
             else:
@@ -271,12 +273,13 @@ class TaskListener(TaskConfig):
                         await sleep(1)
                         fmsg = ""
                 if fmsg != "":
-                    await sendMessage(self.message, msg + fmsg)
+                    button_ = buttons_.build_menu(1)
+                    await sendMessage(self.message, msg + fmsg, button_)
         else:
-            msg += f"\n\n<b>Tipe :</b> <code>{mime_type}</code>"
+            msg += f"\n\n<b>Type :</b> <code>{mime_type}</code>"
             if mime_type == "Folder":
-                msg += f"\n\n<b>Jumlah Folder :</b> <code>{folders}</code>"
-                msg += f"\n\n<b>Jumlah File :</b> <code>{files}</code>"
+                msg += f"\n\n<b>Number of Folder :</b> <code>{folders}</code>"
+                msg += f"\n\n<b>Number of File :</b> <code>{files}</code>"
             if (
                 link
                 or rclonePath
@@ -315,7 +318,7 @@ class TaskListener(TaskConfig):
             else:
                 msg += f"\n\n<b>Path :</b> <code>{rclonePath}</code>"
                 button = None
-            msg += f"\n\n<b>Oleh :</b> {self.tag}"
+            msg += f"\n\n<b>User :</b> {self.tag}"
             await sendMessage(self.message, msg, button)
             # Log Chat
             LOG_CHAT_ID = None
