@@ -151,8 +151,8 @@ EX : {tasks['Extract']} | SP : {tasks['Split']} | QD : {tasks['QueueDl']} | QU :
 CL : {tasks['Clone']} | CK : {tasks['CheckUp']} | PA : {tasks['Pause']} | SV : {tasks['SamVid']}
 CM : {tasks['ConvertMedia']}
 
-Kec. Unduh : {get_readable_file_size(dl_speed)}/s
-Kec. Unggah : {get_readable_file_size(up_speed)}/s
+ Downloaded : {get_readable_file_size(dl_speed)}/s
+ Uploadded : {get_readable_file_size(up_speed)}/s
 
 @{bot_name}
 """
