@@ -23,7 +23,7 @@ pillow
 psutil
 pycryptodome
 pymongo
-pyrofork
+pyrofork==2.2.10
 python-dotenv
 python-magic
 qbittorrent-api
