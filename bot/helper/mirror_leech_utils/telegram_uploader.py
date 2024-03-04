@@ -96,7 +96,7 @@ class TgUploader:
         
         self._forwardChatId = self._listener.userDict.get("leech_dest")
         if not self._forwardChatId:
-            self._forwardChatId = self._listener.message.chat.id
+            self._forwardChatId = self._listener.message.from_user.id
             self._forwardThreadId = (
                 self._listener.message.message_thread_id
                 if self._listener.message.chat.is_forum
