@@ -258,10 +258,12 @@ class TaskListener(TaskConfig):
         if self.isLeech:
             buttons_ = ButtonMaker()
             buttons_.ubutton("🎗️View in DM🎗️", link="https://t.me/rillyleechBot")
+            buttons_.ubutton("Source 🔗", link=self.link)
             msg += f"\n\n<b>Number of File :</b> <code>{folders}</code>"
             if mime_type != 0:
                 msg += f"\n\n<b>corrupt files :</b> <code>{mime_type}</code>"
             msg += f'\n\n<b>User :</b> {self.tag}\n\n'
+            msg += "<b>Files sent in PM</b>"
             if not files:
                 await sendMessage(self.message, msg)
             else:
@@ -273,8 +275,8 @@ class TaskListener(TaskConfig):
                         await sleep(1)
                         fmsg = ""
                 if fmsg != "":
-                    button_ = buttons_.build_menu(1)
-                    await sendMessage(self.message, msg + fmsg, button_)
+                    button_ = buttons_.build_menu(1,1)
+                    await sendMessage(self.message, msg, button_)
         else:
             msg += f"\n\n<b>Type :</b> <code>{mime_type}</code>"
             if mime_type == "Folder":
