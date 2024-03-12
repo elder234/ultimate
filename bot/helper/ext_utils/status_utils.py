@@ -188,7 +188,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             MirrorStatus.STATUS_CONVERTING,
             MirrorStatus.STATUS_QUEUEUP,
         ]:
-            msg += f"\n<b>├ Process :</b> <code>{task.processed_bytes()}</code> dari <code>{task.size()}</code>"
+            msg += f"\n<b>├ Process :</b> <code>{task.processed_bytes()}</code> of <code>{task.size()}</code>"
             msg += f"\n<b>├ ETA :</b> <code>{task.eta()}</code>"
             msg += f"\n<b>├ Speed :</b> <code>{task.speed()}</code>"
             if hasattr(task, "seeders_num"):
