@@ -31,7 +31,10 @@ try:
     HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", "")
     RENDER_APP_NAME = os.environ.get("RENDER_APP_NAME", "")
     if len(HEROKU_APP_NAME) != 0:
-        BASE_URL = f"https://{HEROKU_APP_NAME}.herokuapp.com"
+        if "://" in HEROKU_APP_NAME:
+            BASE_URL = HEROKU_APP_NAME
+        else:
+            BASE_URL = f"https://{HEROKU_APP_NAME}.herokuapp.com"
     elif len(RENDER_APP_NAME) != 0:
         BASE_URL = f"https://{RENDER_APP_NAME}.onrender.com"
     else:
@@ -45,7 +48,7 @@ try:
             try:
                 sleep(500)
                 send_request(BASE_URL)
-            except:
+            except Exception:
                 pass
 
 except Exception as e:
