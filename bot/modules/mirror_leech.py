@@ -392,7 +392,8 @@ async def mirror(client, message):
     Mirror(client, message).newEvent()
     # add delete function
     if message.reply_to_message:
-        await deleteMessage(message.reply_to_message.id)
+        await deleteMessage(message.reply_to_message)
+        await message.delete()
     await message.delete()
 
 
@@ -400,7 +401,8 @@ async def qb_mirror(client, message):
     Mirror(client, message, isQbit=True).newEvent()
     # add delete function
     if message.reply_to_message:
-        await deleteMessage(message.reply_to_message.id)
+        await deleteMessage(message.reply_to_message)
+        await message.delete()
     await message.delete()
 
 
@@ -408,8 +410,7 @@ async def leech(client, message):
     Mirror(client, message, isLeech=True).newEvent()
     # add delete function
     if message.reply_to_message:
-        reply_id = message.reply_to_message.id
-        await reply_id.delete()
+        await message.reply_to_message.delete()
         await message.delete()
     await message.delete()
 
@@ -418,7 +419,8 @@ async def qb_leech(client, message):
     Mirror(client, message, isQbit=True, isLeech=True).newEvent()
     # add delete function
     if message.reply_to_message:
-        await deleteMessage(message.reply_to_message.id)
+        await deleteMessage(message.reply_to_message)
+        await message.delete()
     await message.delete()
 
 
@@ -426,7 +428,8 @@ async def jd_mirror(client, message):
     Mirror(client, message, isJd=True).newEvent()
     # add delete function
     if message.reply_to_message:
-        await deleteMessage(message.reply_to_message.id)
+        await deleteMessage(message.reply_to_message)
+        await message.delete()
     await message.delete()
 
 
@@ -434,7 +437,8 @@ async def jd_leech(client, message):
     Mirror(client, message, isLeech=True, isJd=True).newEvent()
     # add delete function
     if message.reply_to_message:
-        await deleteMessage(message.reply_to_message.id)
+        await deleteMessage(message.reply_to_message)
+        await message.delete()
     await message.delete()
 
 
