@@ -452,7 +452,10 @@ RENDER_APP_NAME = environ.get("RENDER_APP_NAME", "")
 if len(BASE_URL) == 0:
     if len(HEROKU_APP_NAME) != 0:
         IS_HEROKU = True
-        BASE_URL = f"https://{HEROKU_APP_NAME}.herokuapp.com"
+        if "://" in HEROKU_APP_NAME:
+            BASE_URL = HEROKU_APP_NAME
+        else:
+            BASE_URL = f"https://{HEROKU_APP_NAME}.herokuapp.com"
         log_info("Using HEROKU_APP_NAME as BASE_URL!")
         
     elif len(RENDER_APP_NAME) != 0:
