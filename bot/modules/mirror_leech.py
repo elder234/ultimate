@@ -387,28 +387,53 @@ class Mirror(TaskListener):
             await add_aria2c_download(self, path, headers, ratio, seed_time)
 
 
+
 async def mirror(client, message):
     Mirror(client, message).newEvent()
+    # add delete function
+    if message.reply_to_message:
+        await deleteMessage(message.reply_to_message.id)
+    await message.delete()
 
 
 async def qb_mirror(client, message):
     Mirror(client, message, isQbit=True).newEvent()
+    # add delete function
+    if message.reply_to_message:
+        await deleteMessage(message.reply_to_message.id)
+    await message.delete()
 
 
 async def leech(client, message):
     Mirror(client, message, isLeech=True).newEvent()
+    # add delete function
+    if message.reply_to_message:
+        await deleteMessage(message.reply_to_message.id)
+    await message.delete()
 
 
 async def qb_leech(client, message):
     Mirror(client, message, isQbit=True, isLeech=True).newEvent()
+    # add delete function
+    if message.reply_to_message:
+        await deleteMessage(message.reply_to_message.id)
+    await message.delete()
 
 
 async def jd_mirror(client, message):
     Mirror(client, message, isJd=True).newEvent()
+    # add delete function
+    if message.reply_to_message:
+        await deleteMessage(message.reply_to_message.id)
+    await message.delete()
 
 
 async def jd_leech(client, message):
     Mirror(client, message, isLeech=True, isJd=True).newEvent()
+    # add delete function
+    if message.reply_to_message:
+        await deleteMessage(message.reply_to_message.id)
+    await message.delete()
 
 
 bot.add_handler(
