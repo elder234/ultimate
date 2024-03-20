@@ -408,7 +408,9 @@ async def leech(client, message):
     Mirror(client, message, isLeech=True).newEvent()
     # add delete function
     if message.reply_to_message:
-        await deleteMessage(message.reply_to_message.id)
+        reply_id = message.reply_to_message.id
+        await reply_id.delete()
+        await message.delete()
     await message.delete()
 
 
