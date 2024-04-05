@@ -20,7 +20,7 @@ from pyrogram import Client as tgClient, enums, __version__ as prv
 from qbittorrentapi import Client as qbClient
 from socket import setdefaulttimeout
 from subprocess import Popen, run, check_output
-from time import time, sleep
+from time import time
 from tzlocal import get_localzone
 from uvloop import install
 
@@ -332,6 +332,10 @@ if len(ALLDEBRID_API) != 0:
 else:
     ALLDEBRID_API = ""
 
+DEBRIDLINK_API = environ.get("DEBRIDLINK_API", "")
+if len(DEBRIDLINK_API) == 0:
+    DEBRIDLINK_API = ""
+
 INDEX_URL = environ.get("INDEX_URL", "").rstrip("/")
 if len(INDEX_URL) == 0:
     INDEX_URL = ""
@@ -436,35 +440,45 @@ MEDIA_GROUP = MEDIA_GROUP.lower() == "true"
 USER_TRANSMISSION = environ.get("USER_TRANSMISSION", "")
 USER_TRANSMISSION = USER_TRANSMISSION.lower() == "true" and IS_PREMIUM_USER
 
-BASE_URL_PORT = str(environ.get("PORT", ""))
-if len(BASE_URL_PORT) == 0:
-    BASE_URL_PORT = str(environ.get("BASE_URL_PORT", ""))
-    if len(BASE_URL_PORT) == 0:
-        BASE_URL_PORT = 80
-        
-BASE_URL_PORT = int(BASE_URL_PORT)
-
-BASE_URL = environ.get("BASE_URL", "").rstrip("/")
 IS_HEROKU = False
 IS_RENDER = False
+
+BASE_URL = environ.get("BASE_URL", "")
 HEROKU_APP_NAME = environ.get("HEROKU_APP_NAME", "")
 RENDER_APP_NAME = environ.get("RENDER_APP_NAME", "")
 if len(BASE_URL) == 0:
     if len(HEROKU_APP_NAME) != 0:
         IS_HEROKU = True
+
         if "://" in HEROKU_APP_NAME:
             BASE_URL = HEROKU_APP_NAME
         else:
             BASE_URL = f"https://{HEROKU_APP_NAME}.herokuapp.com"
+
         log_info("Using HEROKU_APP_NAME as BASE_URL!")
         
     elif len(RENDER_APP_NAME) != 0:
         IS_RENDER = True
-        BASE_URL = f"https://{RENDER_APP_NAME}.onrender.com"   
+        
+        if "://" in RENDER_APP_NAME:
+            BASE_URL = RENDER_APP_NAME
+        else:
+            BASE_URL = f"https://{RENDER_APP_NAME}.onrender.com"
+
         log_info("Using RENDER_APP_NAME as BASE_URL!")
         
     else:
         BASE_URL = ""
+
+BASE_URL = BASE_URL.rstrip("/")
+
+BASE_URL_PORT = str(environ.get("PORT", ""))
+if len(BASE_URL_PORT) == 0:
+    BASE_URL_PORT = str(environ.get("BASE_URL_PORT", ""))
+    if len(BASE_URL_PORT) == 0:
+        BASE_URL_PORT = 80
+
+BASE_URL_PORT = int(BASE_URL_PORT)
 
 UPSTREAM_REPO = environ.get("UPSTREAM_REPO", "")
 if len(UPSTREAM_REPO) == 0:
@@ -490,19 +504,24 @@ RCLONE_SERVE_PASS = environ.get("RCLONE_SERVE_PASS", "")
 if len(RCLONE_SERVE_PASS) == 0:
     RCLONE_SERVE_PASS = ""
 
+NAME_SUBSTITUTE = environ.get("NAME_SUBSTITUTE", "")
+NAME_SUBSTITUTE = "" if len(NAME_SUBSTITUTE) == 0 else NAME_SUBSTITUTE
+
+MIXED_LEECH = environ.get("MIXED_LEECH", "")
+MIXED_LEECH = MIXED_LEECH.lower() == "true" and IS_PREMIUM_USER
+
 config_dict = {
     "ALLDEBRID_API": ALLDEBRID_API,
     "AS_DOCUMENT": AS_DOCUMENT,
     "AUTHORIZED_CHATS": AUTHORIZED_CHATS,
-    "BASE_URL": BASE_URL,
     "BASE_URL_PORT": BASE_URL_PORT,
+    "BASE_URL": BASE_URL,
     "BOT_TOKEN": BOT_TOKEN,
     "CMD_SUFFIX": CMD_SUFFIX,
     "DATABASE_URL": DATABASE_URL,
+    "DEBRIDLINK_API": DEBRIDLINK_API,
     "DEFAULT_UPLOAD": DEFAULT_UPLOAD,
     "DOWNLOAD_DIR": DOWNLOAD_DIR,
-    "LEECH_CHAT_ID": LEECH_CHAT_ID,
-    "LOG_CHAT_ID": LOG_CHAT_ID,
     "EQUAL_SPLITS": EQUAL_SPLITS,
     "EXTENSION_FILTER": EXTENSION_FILTER,
     "FILELION_API": FILELION_API,
@@ -510,23 +529,27 @@ config_dict = {
     "INCOMPLETE_TASK_NOTIFIER": INCOMPLETE_TASK_NOTIFIER,
     "INDEX_URL": INDEX_URL,
     "IS_TEAM_DRIVE": IS_TEAM_DRIVE,
-    "LEECH_FILENAME_PREFIX": LEECH_FILENAME_PREFIX,
-    "LEECH_SPLIT_SIZE": LEECH_SPLIT_SIZE,
-    "MEDIA_GROUP": MEDIA_GROUP,
     "JD_EMAIL": JD_EMAIL,
     "JD_PASS": JD_PASS,
+    "LEECH_CHAT_ID": LEECH_CHAT_ID,
+    "LEECH_FILENAME_PREFIX": LEECH_FILENAME_PREFIX,
+    "LEECH_SPLIT_SIZE": LEECH_SPLIT_SIZE,
+    "LOG_CHAT_ID": LOG_CHAT_ID,
+    "MEDIA_GROUP": MEDIA_GROUP,
     "MEGA_EMAIL": MEGA_EMAIL,
     "MEGA_PASS": MEGA_PASS,
+    "MIXED_LEECH": MIXED_LEECH,
+    "NAME_SUBSTITUTE": NAME_SUBSTITUTE,
     "OWNER_ID": OWNER_ID,
     "QUEUE_ALL": QUEUE_ALL,
     "QUEUE_DOWNLOAD": QUEUE_DOWNLOAD,
     "QUEUE_UPLOAD": QUEUE_UPLOAD,
     "RCLONE_FLAGS": RCLONE_FLAGS,
     "RCLONE_PATH": RCLONE_PATH,
-    "RCLONE_SERVE_URL": RCLONE_SERVE_URL,
-    "RCLONE_SERVE_USER": RCLONE_SERVE_USER,
     "RCLONE_SERVE_PASS": RCLONE_SERVE_PASS,
     "RCLONE_SERVE_PORT": RCLONE_SERVE_PORT,
+    "RCLONE_SERVE_URL": RCLONE_SERVE_URL,
+    "RCLONE_SERVE_USER": RCLONE_SERVE_USER,
     "RSS_CHAT_ID": RSS_CHAT_ID,
     "RSS_DELAY": RSS_DELAY,
     "SEARCH_API_LINK": SEARCH_API_LINK,
@@ -537,19 +560,19 @@ config_dict = {
     "STOP_DUPLICATE": STOP_DUPLICATE,
     "STREAMWISH_API": STREAMWISH_API,
     "SUDO_USERS": SUDO_USERS,
-    "TELEGRAM_API": TELEGRAM_API,
-    "TELEGRAM_HASH": TELEGRAM_HASH,
     "TELEGRAM_API_PREMIUM": TELEGRAM_API_PREMIUM,
+    "TELEGRAM_API": TELEGRAM_API,
     "TELEGRAM_HASH_PREMIUM": TELEGRAM_HASH_PREMIUM,
+    "TELEGRAM_HASH": TELEGRAM_HASH,
     "TORRENT_TIMEOUT": TORRENT_TIMEOUT,
-    "USER_TRANSMISSION": USER_TRANSMISSION,
-    "UPSTREAM_REPO": UPSTREAM_REPO,
     "UPSTREAM_BRANCH": UPSTREAM_BRANCH,
-    "USER_SESSION_STRING": USER_SESSION_STRING,
+    "UPSTREAM_REPO": UPSTREAM_REPO,
     "USE_SERVICE_ACCOUNTS": USE_SERVICE_ACCOUNTS,
     "USE_TELEGRAPH": USE_TELEGRAPH,
+    "USER_SESSION_STRING": USER_SESSION_STRING,
+    "USER_TRANSMISSION": USER_TRANSMISSION,
     "WEB_PINCODE": WEB_PINCODE,
-    "YT_DLP_OPTIONS": YT_DLP_OPTIONS
+    "YT_DLP_OPTIONS": YT_DLP_OPTIONS,
 }
 
 # Reminder if forgot set something ^^
